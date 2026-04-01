@@ -16,7 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from marketplace.views import home_view
+from marketplace import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('',home_view, name='home'),
+    path('home/',views.home_view,name='home_view'),
+    path('auth/',views.auth_view,name='Auth_view'),
+    path('terms/',views.terms_view,name='terms_view'),
+    path('privacy/',views.privacy_view,name='privacy_view')
+
 ]
