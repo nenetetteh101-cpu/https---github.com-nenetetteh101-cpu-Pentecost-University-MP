@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — PU-Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    /* ══ TOKENS ══ */
+    :root { --accent:#e8c96a; --accent2:#5be5c5; --danger:#ff6b6b; --radius:16px; --nav-h:64px; --bar-h:82px; --sidebar-w:230px; }
+    [data-theme="dark"]  { --bg:#0d0e11; --bg2:#15171c; --card:#1c1f27; --text:#f0eeea; --muted:#7a7e8a; --border:rgba(255,255,255,0.07); --glass-bg:rgba(20,22,30,0.65); --glass-bdr:rgba(255,255,255,0.13); --shadow:0 8px 32px rgba(0,0,0,.6); --inp:rgba(255,255,255,.06); --img-overlay:rgba(0,0,0,.18); }
+    [data-theme="light"] { --bg:#f2f0ec; --bg2:#e8e5df; --card:#fff; --text:#1a1a1a; --muted:#888; --border:rgba(0,0,0,0.08); --glass-bg:rgba(255,255,255,0.68); --glass-bdr:rgba(255,255,255,0.9); --shadow:0 8px 32px rgba(0,0,0,.1); --inp:rgba(0,0,0,.05); --img-overlay:rgba(0,0,0,.04); }
+
+    /* ══ RESET ══ */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;transition:background .35s,color .35s;padding-bottom:calc(var(--bar-h) + 24px);}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");}
+    img{display:block;width:100%;object-fit:cover;}
+    a{text-decoration:none;color:inherit;}
+
+    /* ══ TOP NAV ══ */
+    .top-nav{position:sticky;top:0;z-index:300;height:var(--nav-h);display:flex;align-items:center;gap:.5rem;padding:0 .9rem;background:var(--glass-bg);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border-bottom:1px solid var(--glass-bdr);box-shadow:var(--shadow);transition:background .35s;}
+    .nav-hamburger{width:42px;height:42px;border-radius:11px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;cursor:pointer;border:none;background:var(--inp);flex-shrink:0;transition:background .2s;}
+    .nav-hamburger:hover{background:rgba(232,201,106,.15);}
+    .nav-hamburger span{display:block;width:19px;height:2px;background:var(--text);border-radius:2px;transition:.3s;}
+    .nav-tabs{display:flex;flex:1;justify-content:center;gap:.2rem;}
+    .nav-tab{padding:.42rem 1rem;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap;}
+    .nav-tab.active{background:var(--accent);color:#0d0e11;}
+    .nav-tab:hover:not(.active){color:var(--text);background:var(--inp);}
+    .theme-toggle{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:var(--inp);font-size:1.15rem;flex-shrink:0;transition:background .2s,transform .35s;}
+    .theme-toggle:hover{background:rgba(232,201,106,.15);transform:rotate(22deg);}
+
+    /* ══ SIDEBAR ══ */
+    .sb-overlay{position:fixed;inset:0;z-index:490;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s;}
+    .sb-overlay.open{opacity:1;pointer-events:all;}
+    .sidebar{position:fixed;top:0;left:calc(-1 * var(--sidebar-w));bottom:0;width:var(--sidebar-w);z-index:500;background:var(--glass-bg);backdrop-filter:blur(28px) saturate(190%);-webkit-backdrop-filter:blur(28px) saturate(190%);border-right:1px solid var(--glass-bdr);transition:left .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto;}
+    .sidebar.open{left:0;}
+    .sb-head{padding:1.3rem 1.4rem .9rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .sb-logo{font-family:'Playfair Display',serif;font-weight:900;font-size:1.15rem;color:var(--accent);}
+    .sb-logo span{color:var(--text);}
+    .sb-close{background:none;border:none;color:var(--muted);font-size:1.25rem;cursor:pointer;line-height:1;}
+    .sb-sec{font-size:.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);font-weight:600;padding:1.1rem 1.4rem .4rem;}
+    .sb-links{list-style:none;padding:0 .6rem .3rem;}
+    .sb-links li a{display:flex;align-items:center;gap:.75rem;color:var(--muted);font-size:.87rem;font-weight:400;padding:.6rem .8rem;border-radius:9px;transition:all .2s;}
+    .sb-links li a:hover,.sb-links li a.active-link{color:var(--text);background:var(--inp);}
+    .sb-links li a.active-link{color:var(--accent);}
+    .sb-icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0;}
+    .sb-div{height:1px;background:var(--border);margin:.4rem 1.4rem;}
+    .sb-foot{padding:1rem 1.4rem;margin-top:auto;font-size:.72rem;color:var(--muted);line-height:1.6;}
+
+    /* ══ PAGE WRAPPER ══ */
+    .page-wrapper{display:flex;}
+    .main{flex:1;min-width:0;position:relative;z-index:1;padding:1rem 1rem 0;}
+
+    /* ══ SEARCH ══ */
+    .search-bar{position:relative;margin-bottom:1rem;}
+    .search-bar input{width:100%;background:var(--inp);border:1.5px solid var(--border);border-radius:14px;padding:.82rem 2.8rem .82rem 2.8rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.93rem;font-weight:300;outline:none;transition:border-color .25s,box-shadow .25s;}
+    .search-bar input:focus{border-color:rgba(232,201,106,.45);box-shadow:0 0 0 4px rgba(232,201,106,.07);}
+    .search-bar input::placeholder{color:var(--muted);}
+    .s-icon{position:absolute;left:1rem;top:50%;transform:translateY(-50%);font-size:.95rem;opacity:.5;pointer-events:none;}
+    .s-clear{position:absolute;right:.9rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);font-size:.9rem;cursor:pointer;opacity:0;transition:opacity .2s;}
+    .search-bar input:not(:placeholder-shown)~.s-clear{opacity:1;}
+
+    /* ══ BOOST BANNER ══ */
+    .boost-banner{position:relative;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg,rgba(30,22,5,.95),rgba(40,30,8,.95));border:1px solid rgba(232,201,106,.28);padding:1.25rem 1.4rem;margin-bottom:1.1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+    [data-theme="light"] .boost-banner{background:linear-gradient(135deg,#fef9e7,#fdedb0);border-color:rgba(232,201,106,.55);}
+    .boost-glow{position:absolute;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(232,201,106,.22) 0%,transparent 70%);right:-30px;top:-60px;pointer-events:none;}
+    .boost-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(232,201,106,.12) 1px,transparent 1px);background-size:18px 18px;pointer-events:none;}
+    .boost-left{position:relative;z-index:1;}
+    .boost-eye{font-size:.66rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:.25rem;}
+    .boost-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;line-height:1.2;margin-bottom:.25rem;}
+    [data-theme="light"] .boost-title{color:#4a3200;}
+    .boost-sub{font-size:.75rem;color:var(--muted);}
+    [data-theme="light"] .boost-sub{color:#7a5e10;}
+    .boost-right{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:.4rem;flex-shrink:0;}
+    .boost-rocket{font-size:1.7rem;animation:bob 2s ease-in-out infinite;}
+    @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+    .boost-btn{background:var(--accent);color:#0d0e11;padding:.6rem 1.2rem;border-radius:9px;font-weight:700;font-size:.8rem;border:none;cursor:pointer;white-space:nowrap;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 14px rgba(232,201,106,.35);font-family:'DM Sans',sans-serif;}
+    .boost-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(232,201,106,.45);}
+
+    /* ══ SECTION LABEL ══ */
+    .sec-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;}
+    .sec-label h2{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;letter-spacing:-.3px;display:flex;align-items:center;gap:.4rem;}
+    .sec-label a{font-size:.78rem;color:var(--accent);font-weight:500;}
+    .sec-label a:hover{text-decoration:underline;}
+
+    /* ══ BOOSTED / FEATURED SLIDER ══ */
+    .featured-wrap{position:relative;margin-bottom:1.4rem;}
+    .featured-track-outer{overflow:hidden;border-radius:var(--radius);}
+    .featured-track{display:flex;transition:transform .55s cubic-bezier(.4,0,.2,1);}
+    .featured-slide{min-width:100%;position:relative;border-radius:var(--radius);overflow:hidden;cursor:pointer;}
+    .featured-slide img{height:210px;object-fit:cover;width:100%;transition:transform .4s;}
+    .featured-slide:hover img{transform:scale(1.03);}
+    .featured-info{position:absolute;bottom:0;left:0;right:0;padding:1rem 1.1rem .9rem;background:linear-gradient(to top,rgba(0,0,0,.82) 0%,rgba(0,0,0,.3) 70%,transparent 100%);}
+    .featured-boost-pill{display:inline-flex;align-items:center;gap:.35rem;background:var(--accent);color:#0d0e11;font-size:.62rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:.2rem .55rem;border-radius:6px;margin-bottom:.4rem;}
+    .featured-name{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:#fff;line-height:1.2;margin-bottom:.2rem;}
+    .featured-meta{display:flex;align-items:center;justify-content:space-between;}
+    .featured-price{font-size:1rem;font-weight:700;color:var(--accent);}
+    .featured-seller{font-size:.72rem;color:rgba(255,255,255,.65);}
+    /* dots */
+    .feat-dots{display:flex;justify-content:center;gap:.4rem;margin-top:.6rem;}
+    .feat-dot{width:6px;height:6px;border-radius:50%;background:var(--border);border:1px solid var(--muted);cursor:pointer;transition:all .3s;}
+    .feat-dot.active{background:var(--accent);border-color:var(--accent);width:18px;border-radius:3px;}
+    /* nav arrows */
+    .feat-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:32px;height:32px;border-radius:50%;background:var(--glass-bg);border:1px solid var(--glass-bdr);backdrop-filter:blur(10px);color:var(--text);font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,opacity .2s;opacity:0;}
+    .featured-wrap:hover .feat-arrow{opacity:1;}
+    .feat-arrow.prev{left:.6rem;}
+    .feat-arrow.next{right:.6rem;}
+    .feat-arrow:hover{background:rgba(232,201,106,.25);}
+
+    /* ══ SERVICES SLIDER ══ */
+    .svc-outer{position:relative;margin-bottom:1.4rem;}
+    .svc-pills-wrap{overflow:hidden;}
+    .svc-pills{display:flex;gap:.55rem;transition:transform .45s cubic-bezier(.4,0,.2,1);}
+    .cat-pill{display:flex;align-items:center;gap:.38rem;padding:.42rem .95rem;border-radius:99px;border:1.5px solid var(--border);background:var(--card);font-size:.78rem;font-weight:500;color:var(--muted);cursor:pointer;flex-shrink:0;white-space:nowrap;transition:all .2s;}
+    .cat-pill.active{background:var(--accent);border-color:var(--accent);color:#0d0e11;font-weight:700;}
+    .cat-pill:hover:not(.active){border-color:rgba(232,201,106,.3);color:var(--text);}
+    .svc-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:28px;height:28px;border-radius:50%;background:var(--glass-bg);border:1px solid var(--glass-bdr);backdrop-filter:blur(10px);color:var(--text);font-size:.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;}
+    .svc-arrow.prev{left:-6px;}
+    .svc-arrow.next{right:-6px;}
+    .svc-arrow:hover{background:rgba(232,201,106,.2);}
+
+    /* service grid */
+    .services-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.9rem;animation:fadeSlide .35s ease;}
+    @keyframes fadeSlide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .service-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;cursor:pointer;position:relative;overflow:hidden;transition:transform .3s,border-color .3s;}
+    .service-card:hover{transform:translateY(-3px);border-color:rgba(91,229,197,.25);}
+    .service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));transform:scaleX(0);transform-origin:left;transition:transform .35s;}
+    .service-card:hover::before{transform:scaleX(1);}
+    .sc-icon{font-size:1.7rem;margin-bottom:.5rem;display:block;}
+    .sc-name{font-size:.85rem;font-weight:600;margin-bottom:.2rem;}
+    .sc-count{font-size:.72rem;color:var(--muted);}
+    .sc-expand{position:absolute;top:.7rem;right:.7rem;font-size:.68rem;color:var(--muted);background:var(--inp);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:transform .3s,color .2s;}
+    .service-card:hover .sc-expand{transform:rotate(45deg);color:var(--accent2);}
+
+    /* ══ LISTINGS GRID ══ */
+    .all-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.9rem;margin-bottom:1.5rem;}
+    .listing-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:transform .3s,border-color .3s;}
+    .listing-card:hover{transform:translateY(-4px);border-color:rgba(232,201,106,.28);}
+    .lc-img-wrap{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--bg2);}
+    .lc-img-wrap img{height:100%;transition:transform .4s;}
+    .listing-card:hover .lc-img-wrap img{transform:scale(1.06);}
+    .lc-badge{position:absolute;top:.5rem;left:.5rem;font-size:.6rem;padding:.18rem .5rem;border-radius:5px;font-weight:700;letter-spacing:.3px;}
+    .lc-body{padding:.75rem .8rem .8rem;}
+    .lc-name{font-size:.83rem;font-weight:600;margin-bottom:.2rem;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    .lc-price{font-size:.9rem;color:var(--accent);font-weight:700;}
+    .lc-meta{display:flex;justify-content:space-between;align-items:center;margin-top:.35rem;}
+    .lc-seller{font-size:.68rem;color:var(--muted);}
+    .lc-fav{background:none;border:none;cursor:pointer;font-size:.88rem;transition:transform .2s;line-height:1;}
+    .lc-fav:hover{transform:scale(1.25);}
+
+    /* ══ SERVICE DRAWER ══ */
+    .svc-drawer{position:fixed;inset:0;z-index:700;display:flex;align-items:flex-end;pointer-events:none;}
+    .svc-drawer.open{pointer-events:all;}
+    .drw-overlay{position:absolute;inset:0;background:rgba(0,0,0,.52);backdrop-filter:blur(4px);opacity:0;transition:opacity .3s;}
+    .svc-drawer.open .drw-overlay{opacity:1;}
+    .drw-sheet{position:relative;width:100%;max-height:82vh;background:var(--glass-bg);backdrop-filter:blur(28px) saturate(190%);-webkit-backdrop-filter:blur(28px) saturate(190%);border-top-left-radius:24px;border-top-right-radius:24px;border-top:1px solid var(--glass-bdr);transform:translateY(100%);transition:transform .42s cubic-bezier(.4,0,.2,1);overflow-y:auto;padding:1.3rem 1.3rem 2rem;max-width:680px;margin:0 auto;left:0;right:0;}
+    .svc-drawer.open .drw-sheet{transform:translateY(0);}
+    .drw-handle{width:38px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 1.1rem;}
+    .drw-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;margin-bottom:.2rem;}
+    .drw-sub{color:var(--muted);font-size:.82rem;margin-bottom:1.2rem;}
+    .drw-items{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+    .drw-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.9rem;display:flex;gap:.75rem;cursor:pointer;transition:border-color .2s;}
+    .drw-item:hover{border-color:rgba(91,229,197,.3);}
+    .di-icon{font-size:1.3rem;flex-shrink:0;}
+    .di-name{font-size:.83rem;font-weight:600;margin-bottom:.18rem;}
+    .di-price{font-size:.76rem;color:var(--accent);font-weight:500;}
+    .di-rating{font-size:.7rem;color:var(--muted);}
+
+    /* ══ POST MODAL ══ */
+    .modal-overlay{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;justify-content:center;padding:1rem;}
+    .modal-overlay.open{opacity:1;pointer-events:all;}
+    .modal{background:var(--glass-bg);backdrop-filter:blur(28px) saturate(190%);-webkit-backdrop-filter:blur(28px) saturate(190%);border:1px solid var(--glass-bdr);border-radius:24px;padding:1.8rem;width:100%;max-width:400px;transform:scale(.92) translateY(20px);transition:transform .35s cubic-bezier(.4,0,.2,1);}
+    .modal-overlay.open .modal{transform:scale(1) translateY(0);}
+    .modal-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;margin-bottom:.2rem;}
+    .modal-sub{color:var(--muted);font-size:.83rem;margin-bottom:1.3rem;}
+    .modal-opts{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem;}
+    .modal-opt{background:var(--card);border:1.5px solid var(--border);border-radius:13px;padding:1.1rem .9rem;text-align:center;cursor:pointer;transition:border-color .2s,transform .2s;}
+    .modal-opt:hover{border-color:rgba(232,201,106,.4);transform:translateY(-2px);}
+    .mopt-icon{font-size:1.7rem;display:block;margin-bottom:.4rem;}
+    .mopt-lbl{font-size:.83rem;font-weight:600;}
+    .modal-cancel{width:100%;padding:.72rem;background:var(--inp);border:1px solid var(--border);border-radius:11px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.88rem;cursor:pointer;transition:background .2s;}
+    .modal-cancel:hover{background:rgba(255,255,255,.08);color:var(--text);}
+
+    /* ══ LIQUID GLASS BOTTOM NAV ══ */
+    .bottom-nav{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:400;display:flex;align-items:center;justify-content:space-around;width:min(500px,calc(100vw - 28px));height:var(--bar-h);padding:0 .8rem;background:var(--glass-bg);backdrop-filter:blur(34px) saturate(220%) brightness(1.08);-webkit-backdrop-filter:blur(34px) saturate(220%) brightness(1.08);border:1px solid var(--glass-bdr);border-radius:42px;box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.1);transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s;}
+    .bottom-nav.hidden{transform:translateX(-50%) translateY(120px);opacity:0;}
+    .bottom-nav::before{content:'';position:absolute;top:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.38),transparent);}
+    .nav-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;cursor:pointer;flex:1;padding:.45rem 0;background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;transition:color .2s;-webkit-tap-highlight-color:transparent;position:relative;}
+    .nav-item:hover{color:var(--text);}
+    .nav-item.active{color:var(--accent);}
+    .nav-item svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s;}
+    .nav-item:hover svg{transform:scale(1.1);}
+    .nav-item.active::after{content:'';position:absolute;bottom:.12rem;width:4px;height:4px;border-radius:50%;background:var(--accent);}
+    .nav-lbl{font-size:.58rem;font-weight:500;letter-spacing:.3px;}
+    .nav-add{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#f5c440);border:3px solid var(--glass-bg);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;box-shadow:0 6px 18px rgba(232,201,106,.5),inset 0 1px 0 rgba(255,255,255,.3);transition:transform .2s,box-shadow .2s;position:relative;}
+    .nav-add::before{content:'';position:absolute;inset:2px;border-radius:50%;background:rgba(255,255,255,.1);}
+    .nav-add:hover{transform:scale(1.1);box-shadow:0 10px 26px rgba(232,201,106,.6);}
+    .nav-add:active{transform:scale(.95);}
+    .nav-add svg{width:21px;height:21px;stroke:#0d0e11;stroke-width:2.6;}
+
+    /* ══ RESPONSIVE ══ */
+    /* Desktop sidebar always on */
+    @media(min-width:900px){
+      .sidebar{position:fixed;left:0!important;top:var(--nav-h);bottom:0;border-top:none;width:var(--sidebar-w);transition:none;}
+      .sb-overlay{display:none!important;}
+      .nav-hamburger{display:none;}
+      .main{margin-left:var(--sidebar-w);padding:1.2rem 1.4rem 0;}
+      .bottom-nav{left:calc(50% + calc(var(--sidebar-w)/2));width:min(500px,calc(100vw - var(--sidebar-w) - 28px));}
+    }
+    @media(min-width:1200px){
+      .all-grid{grid-template-columns:repeat(4,1fr);}
+      .services-grid{grid-template-columns:repeat(4,1fr);}
+      .featured-slide img{height:260px;}
+    }
+    @media(max-width:600px){
+      .all-grid{grid-template-columns:repeat(2,1fr);}
+      .services-grid{grid-template-columns:repeat(2,1fr);}
+      .drw-items{grid-template-columns:1fr;}
+      .boost-banner{flex-direction:column;text-align:center;}
+      .boost-right{flex-direction:row;justify-content:center;}
+      .featured-slide img{height:180px;}
+      .modal-opts{grid-template-columns:1fr 1fr;}
+    }
+    @media(max-width:380px){
+      .nav-tab{font-size:.72rem;padding:.38rem .7rem;}
+    }
+
+    /* ══ MISC ══ */
+    ::-webkit-scrollbar{width:4px;height:4px;}
+    ::-webkit-scrollbar-track{background:transparent;}
+    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+    .tag{display:inline-block;font-size:.6rem;padding:.15rem .48rem;border-radius:5px;font-weight:700;letter-spacing:.3px;}
+    .skeleton{background:linear-gradient(90deg,var(--border) 25%,var(--inp) 50%,var(--border) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  </style>
+</head>
+<body>
+
+<!-- ══ TOP NAV ══ -->
+<nav class="top-nav">
+  <button class="nav-hamburger" id="hamburgerBtn">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-tabs">
+    <button class="nav-tab active">All</button>
+    <button class="nav-tab" onclick="location.href='dashboard-products.html'">Products</button>
+    <button class="nav-tab" onclick="location.href='dashboard-services.html'">Services</button>
+  </div>
+  <button class="theme-toggle" id="themeToggle">🌞</button>
+</nav>
+
+<!-- ══ SIDEBAR OVERLAY ══ -->
+<div class="sb-overlay" id="sbOverlay" onclick="closeSidebar()"></div>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <div class="sb-logo">PU-<span>Marketplace</span></div>
+    <button class="sb-close" onclick="closeSidebar()">✕</button>
+  </div>
+
+  <div class="sb-sec">Navigate</div>
+  <ul class="sb-links">
+    <li><a href="index.html"><span class="sb-icon">🏠</span> Home</a></li>
+    <li><a href="dashboard.html" class="active-link"><span class="sb-icon">⚡</span> Dashboard</a></li>
+    <li><a href="#"><span class="sb-icon">🔔</span> Notifications</a></li>
+    <li><a href="#"><span class="sb-icon">💬</span> Messages</a></li>
+    <li><a href="#"><span class="sb-icon">❤️</span> Wishlist</a></li>
+    <li><a href="#"><span class="sb-icon">📦</span> My Orders</a></li>
+    <li><a href="#"><span class="sb-icon">🏷️</span> My Listings</a></li>
+  </ul>
+
+  <div class="sb-div"></div>
+  <div class="sb-sec">Account</div>
+  <ul class="sb-links">
+    <li><a href="auth.html"><span class="sb-icon">👤</span> Profile</a></li>
+    <li><a href="#"><span class="sb-icon">⚙️</span> Settings</a></li>
+    <li><a href="#"><span class="sb-icon">💳</span> Payments</a></li>
+  </ul>
+
+  <div class="sb-div"></div>
+  <div class="sb-sec">Info &amp; Legal</div>
+  <ul class="sb-links">
+    <li><a href="about.html"><span class="sb-icon">ℹ️</span> About Us</a></li>
+    <li><a href="safety.html"><span class="sb-icon">🛡️</span> Safety</a></li>
+    <li><a href="help.html"><span class="sb-icon">❓</span> Help Centre</a></li>
+    <li><a href="privacy.html"><span class="sb-icon">🔒</span> Privacy Policy</a></li>
+    <li><a href="terms.html"><span class="sb-icon">📄</span> Terms &amp; Conditions</a></li>
+  </ul>
+
+  <div class="sb-div"></div>
+  <ul class="sb-links">
+    <li><a href="auth.html" style="color:var(--danger)"><span class="sb-icon">🚪</span> Log Out</a></li>
+  </ul>
+  <div class="sb-foot">© 2026 PU-Marketplace<br>Built for campus, by students.</div>
+</aside>
+
+<!-- ══ PAGE WRAPPER ══ -->
+<div class="page-wrapper">
+<main class="main">
+
+  <!-- SEARCH -->
+  <div class="search-bar">
+    <span class="s-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search products, services, sellers…" oninput="handleSearch(this)" autocomplete="off"/>
+    <button class="s-clear" onclick="clearSearch()">✕</button>
+  </div>
+
+  <!-- BOOST BANNER -->
+  <div class="boost-banner">
+    <div class="boost-glow"></div>
+    <div class="boost-dots"></div>
+    <div class="boost-left">
+      <div class="boost-eye">⚡ Limited Spots</div>
+      <div class="boost-title">Boost Your Listing to<br>Top Products</div>
+      <div class="boost-sub">Get 10× more visibility — from GH₵ 5/day</div>
+    </div>
+    <div class="boost-right">
+      <span class="boost-rocket">🚀</span>
+      <button class="boost-btn" onclick="openModal()">Boost Now</button>
+    </div>
+  </div>
+
+  <!-- ══ FEATURED / BOOSTED SLIDER ══ -->
+  <div class="sec-label">
+    <h2>🚀 Featured &amp; Boosted</h2>
+    <a href="#">What is Boost?</a>
+  </div>
+  <div class="featured-wrap">
+    <button class="feat-arrow prev" id="featPrev">&#8592;</button>
+    <button class="feat-arrow next" id="featNext">&#8594;</button>
+    <div class="featured-track-outer">
+      <div class="featured-track" id="featTrack">
+
+        <!-- Slide 1 — Boosted Product -->
+        <div class="featured-slide">
+          <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&q=80" alt="Laptop" loading="lazy"/>
+          <div class="featured-info">
+            <div class="featured-boost-pill">🚀 Boosted</div>
+            <div class="featured-name">Dell XPS 13 Laptop — Excellent Condition</div>
+            <div class="featured-meta">
+              <span class="featured-price">GH₵ 2,400</span>
+              <span class="featured-seller">@kofi_tech · Electronics</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2 — Boosted Service -->
+        <div class="featured-slide">
+          <img src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800&q=80" alt="Graphic design" loading="lazy"/>
+          <div class="featured-info">
+            <div class="featured-boost-pill">🚀 Boosted</div>
+            <div class="featured-name">Professional Logo &amp; Brand Design</div>
+            <div class="featured-meta">
+              <span class="featured-price">From GH₵ 60</span>
+              <span class="featured-seller">@ama_designs · Service</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3 — Boosted Product -->
+        <div class="featured-slide">
+          <img src="https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=800&q=80" alt="Headphones" loading="lazy"/>
+          <div class="featured-info">
+            <div class="featured-boost-pill">🚀 Boosted</div>
+            <div class="featured-name">Sony WH-1000XM5 Noise Cancelling</div>
+            <div class="featured-meta">
+              <span class="featured-price">GH₵ 780</span>
+              <span class="featured-seller">@abena_sound · Electronics</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 4 — Boosted Service -->
+        <div class="featured-slide">
+          <img src="https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=800&q=80" alt="Tutoring" loading="lazy"/>
+          <div class="featured-info">
+            <div class="featured-boost-pill">🚀 Boosted</div>
+            <div class="featured-name">1-on-1 STEM Tutoring — All Levels</div>
+            <div class="featured-meta">
+              <span class="featured-price">GH₵ 40/hr</span>
+              <span class="featured-seller">@yaw_teaches · Tutoring</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 5 — Boosted Product -->
+        <div class="featured-slide">
+          <img src="https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=800&q=80" alt="MacBook" loading="lazy"/>
+          <div class="featured-info">
+            <div class="featured-boost-pill">🚀 Boosted</div>
+            <div class="featured-name">MacBook Air M1 — Like New</div>
+            <div class="featured-meta">
+              <span class="featured-price">GH₵ 4,200</span>
+              <span class="featured-seller">@kweku_apple · Electronics</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="feat-dots" id="featDots"></div>
+  </div>
+
+  <!-- ══ EXPLORE SERVICES ══ -->
+  <div class="sec-label">
+    <h2>🛠️ Explore Services</h2>
+    <a href="#">All services</a>
+  </div>
+
+  <div class="svc-outer" style="margin-bottom:.75rem;">
+    <button class="svc-arrow prev" id="pillPrev">&#8592;</button>
+    <button class="svc-arrow next" id="pillNext">&#8594;</button>
+    <div class="svc-pills-wrap">
+      <div class="svc-pills" id="svcPills">
+        <div class="cat-pill active" onclick="filterCat(this,'all')">✨ All</div>
+        <div class="cat-pill" onclick="filterCat(this,'design')">🎨 Design</div>
+        <div class="cat-pill" onclick="filterCat(this,'tutoring')">📖 Tutoring</div>
+        <div class="cat-pill" onclick="filterCat(this,'tech')">💻 Tech &amp; Coding</div>
+        <div class="cat-pill" onclick="filterCat(this,'delivery')">🏃 Delivery</div>
+        <div class="cat-pill" onclick="filterCat(this,'writing')">✍️ Writing</div>
+        <div class="cat-pill" onclick="filterCat(this,'photo')">📸 Photography</div>
+        <div class="cat-pill" onclick="filterCat(this,'food')">🍱 Food</div>
+        <div class="cat-pill" onclick="filterCat(this,'print')">🖨️ Printing</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="services-grid" id="servicesGrid">
+    <div class="service-card" data-cat="design" onclick="openDrawer('design')"><button class="sc-expand">+</button><span class="sc-icon">🎨</span><div class="sc-name">Graphic Design</div><div class="sc-count">14 providers</div></div>
+    <div class="service-card" data-cat="tutoring" onclick="openDrawer('tutoring')"><button class="sc-expand">+</button><span class="sc-icon">📖</span><div class="sc-name">Tutoring</div><div class="sc-count">22 providers</div></div>
+    <div class="service-card" data-cat="tech" onclick="openDrawer('tech')"><button class="sc-expand">+</button><span class="sc-icon">💻</span><div class="sc-name">Tech &amp; Coding</div><div class="sc-count">9 providers</div></div>
+    <div class="service-card" data-cat="delivery" onclick="openDrawer('delivery')"><button class="sc-expand">+</button><span class="sc-icon">🏃</span><div class="sc-name">Campus Delivery</div><div class="sc-count">6 providers</div></div>
+    <div class="service-card" data-cat="writing" onclick="openDrawer('writing')"><button class="sc-expand">+</button><span class="sc-icon">✍️</span><div class="sc-name">Writing &amp; Editing</div><div class="sc-count">11 providers</div></div>
+    <div class="service-card" data-cat="photo" onclick="openDrawer('photo')"><button class="sc-expand">+</button><span class="sc-icon">📸</span><div class="sc-name">Photography</div><div class="sc-count">5 providers</div></div>
+    <div class="service-card" data-cat="food" onclick="openDrawer('food')"><button class="sc-expand">+</button><span class="sc-icon">🍱</span><div class="sc-name">Food &amp; Snacks</div><div class="sc-count">18 providers</div></div>
+    <div class="service-card" data-cat="print" onclick="openDrawer('print')"><button class="sc-expand">+</button><span class="sc-icon">🖨️</span><div class="sc-name">Printing</div><div class="sc-count">4 providers</div></div>
+    <div class="service-card" data-cat="design" onclick="openDrawer('video')"><button class="sc-expand">+</button><span class="sc-icon">🎬</span><div class="sc-name">Video Editing</div><div class="sc-count">7 providers</div></div>
+  </div>
+
+  <!-- ══ ALL LISTINGS ══ -->
+  <div class="sec-label" style="margin-top:1.4rem">
+    <h2>🛒 All Listings</h2>
+    <a href="#">Filter</a>
+  </div>
+  <div class="all-grid" id="allGrid">
+
+    <div class="listing-card">
+      <div class="lc-img-wrap">
+        <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=75" alt="Textbook" loading="lazy"/>
+        <span class="lc-badge" style="background:rgba(91,229,197,.2);color:#5be5c5">Textbook</span>
+      </div>
+      <div class="lc-body">
+        <div class="lc-name">Data Structures &amp; Algorithms Textbook</div>
+        <div class="lc-price">GH₵ 55</div>
+        <div class="lc-meta"><span class="lc-seller">@yaw_cs</span><button class="lc-fav">🤍</button></div>
+      </div>
+    </div>
+
+    <div class="listing-card">
+      <div class="lc-img-wrap">
+        <img src="https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&q=75" alt="Monitor" loading="lazy"/>
+        <span class="lc-badge" style="background:rgba(232,201,106,.2);color:var(--accent)">Electronics</span>
+      </div>
+      <div class="lc-body">
+        <div class="lc-name">LG 24" Full HD Monitor</div>
+        <div class="lc-price">GH₵ 900</div>
+        <div class="lc-meta"><span class="lc-seller">@kojo_tech</span><button class="lc-fav">🤍</button></div>
+      </div>
+    </div>
+
+    <div class="listing-card">
+      <div class="lc-img-wrap">
+        <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&q=75" alt="Backpack" loading="lazy"/>
+        <span class="lc-badge" style="background:rgba(160,120,255,.2);color:#a78bfa">Fashion</span>
+      </div>
+      <div class="lc-body">
+        <div class="lc-name">North Face Student Backpack</div>
+        <div class="lc-price">GH₵ 70</div>
+        <div class="lc-meta"><span class="lc-seller">@ama_bags</span><button class="lc-fav">🤍</button></div>
+      </div>
+    </div>
+
+    <div class="listing-card">
+      <div class="lc-img-wrap">
+        <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&q=75" alt="Keyboard" loading="lazy"/>
+        <span class="lc-badge" style="background:rgba(232,201,106,.2);color:var(--accent)">Electronics</span>
+      </div>
+      <div class="lc-body">
+        <div class="lc-name">Mechanical Keyboard — RGB</div>
+        <div class="lc-price">GH₵ 280</div>
+        <div class="lc-meta"><span class="lc-seller">@kofi_gear</span><button class="lc-fav">🤍</button></div>
+      </div>
+    </div>
+
+    <div class="listing-card">
+      <div class="lc-img-wrap">
+        <img src="https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=400&q=75" alt="Desk" loading="lazy"/>
+        <span class="lc-badge" style="background:rgba(91,229,197,.2);color:#5be5c5">Furniture</span>
+      </div>
+      <div class="lc-body">
+        <div class="lc-name">Compact Study Desk</div>
+        <div class="lc-price">GH₵ 130</div>
+        <div class="lc-meta"><span class="lc-seller">@esi_dorm</span><button class="lc-fav">🤍</button></div>
+      </div>
+    </div>
+
+    <div class="listing-card">
+      <div class="lc-img-wrap">
+        <img src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=400&q=75" alt="Design tools" loading="lazy"/>
+        <span class="lc-badge" style="background:rgba(251,146,60,.2);color:#fb923c">Tools</span>
+      </div>
+      <div class="lc-body">
+        <div class="lc-name">Drawing &amp; Architecture Set</div>
+        <div class="lc-price">GH₵ 35</div>
+        <div class="lc-meta"><span class="lc-seller">@abena_arch</span><button class="lc-fav">🤍</button></div>
+      </div>
+    </div>
+
+    <div class="listing-card">
+      <div class="lc-img-wrap">
+        <img src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&q=75" alt="Phone" loading="lazy"/>
+        <span class="lc-badge" style="background:rgba(232,201,106,.2);color:var(--accent)">Electronics</span>
+      </div>
+      <div class="lc-body">
+        <div class="lc-name">Samsung Galaxy A52 — Used</div>
+        <div class="lc-price">GH₵ 620</div>
+        <div class="lc-meta"><span class="lc-seller">@kweku_phones</span><button class="lc-fav">🤍</button></div>
+      </div>
+    </div>
+
+    <div class="listing-card">
+      <div class="lc-img-wrap">
+        <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&q=75" alt="Chair" loading="lazy"/>
+        <span class="lc-badge" style="background:rgba(91,229,197,.2);color:#5be5c5">Furniture</span>
+      </div>
+      <div class="lc-body">
+        <div class="lc-name">Ergonomic Office Chair</div>
+        <div class="lc-price">GH₵ 350</div>
+        <div class="lc-meta"><span class="lc-seller">@akua_room</span><button class="lc-fav">🤍</button></div>
+      </div>
+    </div>
+
+    <div class="listing-card">
+      <div class="lc-img-wrap">
+        <img src="https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=400&q=75" alt="Calculator" loading="lazy"/>
+        <span class="lc-badge" style="background:rgba(160,120,255,.2);color:#a78bfa">Tools</span>
+      </div>
+      <div class="lc-body">
+        <div class="lc-name">Casio FX-991EX Scientific Calc</div>
+        <div class="lc-price">GH₵ 85</div>
+        <div class="lc-meta"><span class="lc-seller">@maths_queen</span><button class="lc-fav">🤍</button></div>
+      </div>
+    </div>
+
+    <div class="listing-card">
+      <div class="lc-img-wrap">
+        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=75" alt="Sneakers" loading="lazy"/>
+        <span class="lc-badge" style="background:rgba(251,146,60,.2);color:#fb923c">Fashion</span>
+      </div>
+      <div class="lc-body">
+        <div class="lc-name">Nike Air Max — Size 42</div>
+        <div class="lc-price">GH₵ 210</div>
+        <div class="lc-meta"><span class="lc-seller">@sneaker_ato</span><button class="lc-fav">🤍</button></div>
+      </div>
+    </div>
+
+    <div class="listing-card">
+      <div class="lc-img-wrap">
+        <img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=400&q=75" alt="Sports shoes" loading="lazy"/>
+        <span class="lc-badge" style="background:rgba(255,107,107,.2);color:#ff6b6b">Sports</span>
+      </div>
+      <div class="lc-body">
+        <div class="lc-name">Adidas Running Shoes (Used)</div>
+        <div class="lc-price">GH₵ 95</div>
+        <div class="lc-meta"><span class="lc-seller">@gym_adjoa</span><button class="lc-fav">🤍</button></div>
+      </div>
+    </div>
+
+    <div class="listing-card">
+      <div class="lc-img-wrap">
+        <img src="https://images.unsplash.com/photo-1612831455359-970e23a1e4e9?w=400&q=75" alt="Tablet" loading="lazy"/>
+        <span class="lc-badge" style="background:rgba(232,201,106,.2);color:var(--accent)">Electronics</span>
+      </div>
+      <div class="lc-body">
+        <div class="lc-name">iPad 9th Gen 64GB — WiFi</div>
+        <div class="lc-price">GH₵ 1,650</div>
+        <div class="lc-meta"><span class="lc-seller">@tab_kojo</span><button class="lc-fav">🤍</button></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<!-- ══ SERVICE DRAWER ══ -->
+<div class="svc-drawer" id="svcDrawer">
+  <div class="drw-overlay" onclick="closeDrawer()"></div>
+  <div class="drw-sheet">
+    <div class="drw-handle"></div>
+    <div class="drw-title" id="drwTitle"></div>
+    <div class="drw-sub" id="drwSub"></div>
+    <div class="drw-items" id="drwItems"></div>
+  </div>
+</div>
+
+<!-- ══ POST MODAL ══ -->
+<div class="modal-overlay" id="postModal" onclick="handleModalClick(event)">
+  <div class="modal">
+    <div class="modal-title">Post Something 🎉</div>
+    <div class="modal-sub">What would you like to list on PU-Marketplace?</div>
+    <div class="modal-opts">
+      <div class="modal-opt" onclick="location.href='auth.html'"><span class="mopt-icon">📦</span><div class="mopt-lbl">Sell a Product</div></div>
+      <div class="modal-opt" onclick="location.href='auth.html'"><span class="mopt-icon">🛠️</span><div class="mopt-lbl">Offer a Service</div></div>
+      <div class="modal-opt" onclick="location.href='auth.html'"><span class="mopt-icon">🔍</span><div class="mopt-lbl">Request Item</div></div>
+      <div class="modal-opt" onclick="openModal();setTimeout(()=>alert('Boost: coming soon!'),10)"><span class="mopt-icon">🚀</span><div class="mopt-lbl">Boost Listing</div></div>
+    </div>
+    <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- ══ LIQUID GLASS BOTTOM NAV ══ -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="nav-item active" onclick="setActive(this)" title="Home">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span class="nav-lbl">Home</span>
+  </button>
+  <button class="nav-item" onclick="setActive(this)" title="Reels">
+    <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="8" cy="8" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.2" fill="currentColor" stroke="none"/></svg>
+    <span class="nav-lbl">Reels</span>
+  </button>
+  <button class="nav-add" onclick="openModal()" title="Add listing">
+    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </button>
+  <button class="nav-item" onclick="setActive(this)" title="Chat">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    <span class="nav-lbl">Chat</span>
+  </button>
+  <button class="nav-item" onclick="setActive(this);location.href='auth.html'" title="Profile">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span class="nav-lbl">Profile</span>
+  </button>
+</nav>
+
+<script>
+/* ═══════ THEME ═══════ */
+const html=document.documentElement,tBtn=document.getElementById('themeToggle');
+let dark=true;
+function applyTheme(d){html.setAttribute('data-theme',d?'dark':'light');tBtn.textContent=d?'🌞':'🌙';dark=d;localStorage.setItem('pu-theme',d?'dark':'light');}
+const saved=localStorage.getItem('pu-theme');if(saved)applyTheme(saved==='dark');
+tBtn.addEventListener('click',()=>applyTheme(!dark));
+
+/* ═══════ SIDEBAR ═══════ */
+const sidebar=document.getElementById('sidebar'),sbOverlay=document.getElementById('sbOverlay');
+document.getElementById('hamburgerBtn').addEventListener('click',()=>{sidebar.classList.add('open');sbOverlay.classList.add('open');document.body.style.overflow='hidden';});
+function closeSidebar(){sidebar.classList.remove('open');sbOverlay.classList.remove('open');document.body.style.overflow='';}
+if(window.innerWidth>=900){sidebar.classList.add('open');}
+window.addEventListener('resize',()=>{if(window.innerWidth>=900){sidebar.classList.add('open');sbOverlay.classList.remove('open');}});
+
+/* ═══════ FEATURED SLIDER ═══════ */
+const featTrack=document.getElementById('featTrack');
+const slides=[...featTrack.querySelectorAll('.featured-slide')];
+const dotsWrap=document.getElementById('featDots');
+let featIdx=0,featTimer,isDragging=false,dragStartX=0,dragDiff=0;
+
+function buildDots(){
+  dotsWrap.innerHTML='';
+  slides.forEach((_,i)=>{const d=document.createElement('div');d.className='feat-dot'+(i===0?' active':'');d.onclick=()=>goFeat(i);dotsWrap.appendChild(d);});
+}
+function goFeat(i){
+  featIdx=(i+slides.length)%slides.length;
+  featTrack.style.transform=`translateX(-${featIdx*100}%)`;
+  dotsWrap.querySelectorAll('.feat-dot').forEach((d,j)=>d.classList.toggle('active',j===featIdx));
+}
+function nextFeat(){goFeat(featIdx+1);}
+function prevFeat(){goFeat(featIdx-1);}
+
+document.getElementById('featNext').onclick=()=>{clearInterval(featTimer);nextFeat();startFeatAuto();};
+document.getElementById('featPrev').onclick=()=>{clearInterval(featTimer);prevFeat();startFeatAuto();};
+
+function startFeatAuto(){featTimer=setInterval(nextFeat,4000);}
+buildDots();startFeatAuto();
+
+/* touch / drag swipe on featured */
+const fto=document.querySelector('.featured-track-outer');
+fto.addEventListener('touchstart',e=>{dragStartX=e.touches[0].clientX;isDragging=true;clearInterval(featTimer);},{passive:true});
+fto.addEventListener('touchend',e=>{if(!isDragging)return;dragDiff=e.changedTouches[0].clientX-dragStartX;isDragging=false;if(Math.abs(dragDiff)>40){dragDiff<0?nextFeat():prevFeat();}startFeatAuto();},{passive:true});
+fto.addEventListener('mousedown',e=>{dragStartX=e.clientX;isDragging=true;clearInterval(featTimer);});
+fto.addEventListener('mouseup',e=>{if(!isDragging)return;dragDiff=e.clientX-dragStartX;isDragging=false;if(Math.abs(dragDiff)>40){dragDiff<0?nextFeat():prevFeat();}startFeatAuto();});
+
+/* ═══════ SERVICE PILL SLIDER ═══════ */
+const pillsEl=document.getElementById('svcPills');
+let pillOffset=0;
+const PILL_STEP=160;
+
+document.getElementById('pillNext').onclick=()=>{
+  const maxScroll=pillsEl.scrollWidth-pillsEl.parentElement.clientWidth;
+  pillOffset=Math.min(pillOffset+PILL_STEP,maxScroll);
+  pillsEl.style.transform=`translateX(-${pillOffset}px)`;
+};
+document.getElementById('pillPrev').onclick=()=>{
+  pillOffset=Math.max(pillOffset-PILL_STEP,0);
+  pillsEl.style.transform=`translateX(-${pillOffset}px)`;
+};
+
+/* Auto-advance pill highlight every 5s */
+let pillAutoIdx=0;
+const allPills=[...pillsEl.querySelectorAll('.cat-pill')];
+setInterval(()=>{
+  pillAutoIdx=(pillAutoIdx+1)%allPills.length;
+  allPills.forEach(p=>p.classList.remove('active'));
+  allPills[pillAutoIdx].classList.add('active');
+  // auto-filter
+  const cat=allPills[pillAutoIdx].onclick.toString().match(/'([^']+)'/)?.[1]||'all';
+  filterCatByKey(cat);
+  // scroll pill into view
+  const pill=allPills[pillAutoIdx];
+  pillOffset=pill.offsetLeft-10;
+  pillsEl.style.transform=`translateX(-${Math.max(pillOffset,0)}px)`;
+},5000);
+
+/* ═══════ SERVICE FILTER ═══════ */
+function filterCat(pill,cat){
+  allPills.forEach(p=>p.classList.remove('active'));
+  pill.classList.add('active');
+  filterCatByKey(cat);
+}
+function filterCatByKey(cat){
+  document.querySelectorAll('#servicesGrid .service-card').forEach(c=>{
+    c.style.display=(cat==='all'||c.dataset.cat===cat)?'':'none';
+  });
+}
+
+/* ═══════ SERVICE DRAWER ═══════ */
+const drawerData={
+  design:{title:'Graphic Design',sub:'14 providers on campus',items:[{icon:'🖼️',name:'Logo Design',price:'From GH₵ 50',rating:'⭐ 4.9 · 34 reviews'},{icon:'📱',name:'Social Media Graphics',price:'From GH₵ 30',rating:'⭐ 4.7 · 21 reviews'},{icon:'🎨',name:'Flyer & Poster',price:'From GH₵ 25',rating:'⭐ 4.8 · 18 reviews'},{icon:'🖨️',name:'Print Design',price:'From GH₵ 40',rating:'⭐ 4.6 · 12 reviews'}]},
+  tutoring:{title:'Tutoring',sub:'22 providers on campus',items:[{icon:'🔬',name:'Science & STEM',price:'GH₵ 30–60/hr',rating:'⭐ 4.9 · 56 reviews'},{icon:'📊',name:'Maths & Stats',price:'GH₵ 25–50/hr',rating:'⭐ 4.8 · 44 reviews'},{icon:'💬',name:'Language Tutoring',price:'GH₵ 20–40/hr',rating:'⭐ 4.7 · 29 reviews'},{icon:'💼',name:'Business & Accounting',price:'GH₵ 30–55/hr',rating:'⭐ 4.6 · 17 reviews'}]},
+  tech:{title:'Tech & Coding',sub:'9 providers on campus',items:[{icon:'🌐',name:'Web Development',price:'From GH₵ 150',rating:'⭐ 4.9 · 15 reviews'},{icon:'📊',name:'Data Analysis',price:'From GH₵ 80',rating:'⭐ 4.7 · 8 reviews'},{icon:'🤖',name:'Automation Scripts',price:'From GH₵ 60',rating:'⭐ 4.8 · 11 reviews'},{icon:'🔧',name:'Device Repair',price:'From GH₵ 40',rating:'⭐ 4.5 · 22 reviews'}]},
+  delivery:{title:'Campus Delivery',sub:'6 providers on campus',items:[{icon:'🏃',name:'Express Delivery',price:'GH₵ 5–15',rating:'⭐ 4.8 · 43 reviews'},{icon:'📦',name:'Parcel Pickup',price:'GH₵ 8–20',rating:'⭐ 4.6 · 29 reviews'},{icon:'🍱',name:'Food Delivery',price:'GH₵ 5–10',rating:'⭐ 4.7 · 61 reviews'},{icon:'📚',name:'Library Runs',price:'GH₵ 5',rating:'⭐ 4.9 · 18 reviews'}]},
+  writing:{title:'Writing & Editing',sub:'11 providers on campus',items:[{icon:'📝',name:'Essay Proofreading',price:'From GH₵ 20',rating:'⭐ 4.8 · 34 reviews'},{icon:'📄',name:'CV & Cover Letter',price:'From GH₵ 35',rating:'⭐ 4.9 · 27 reviews'},{icon:'📰',name:'Blog Writing',price:'From GH₵ 40',rating:'⭐ 4.7 · 14 reviews'},{icon:'📊',name:'Report Writing',price:'From GH₵ 50',rating:'⭐ 4.6 · 9 reviews'}]},
+  photo:{title:'Photography',sub:'5 providers on campus',items:[{icon:'🎓',name:'Graduation Photos',price:'From GH₵ 100',rating:'⭐ 4.9 · 38 reviews'},{icon:'🎤',name:'Event Coverage',price:'From GH₵ 200',rating:'⭐ 4.8 · 22 reviews'},{icon:'🖼️',name:'Portrait Sessions',price:'From GH₵ 80',rating:'⭐ 4.7 · 16 reviews'},{icon:'📸',name:'Product Photography',price:'From GH₵ 60',rating:'⭐ 4.6 · 11 reviews'}]},
+  food:{title:'Food & Snacks',sub:'18 providers on campus',items:[{icon:'🍛',name:'Home-Cooked Meals',price:'GH₵ 15–30',rating:'⭐ 4.9 · 72 reviews'},{icon:'🥤',name:'Smoothies & Drinks',price:'GH₵ 8–18',rating:'⭐ 4.7 · 45 reviews'},{icon:'🍰',name:'Baked Goods',price:'GH₵ 10–25',rating:'⭐ 4.8 · 33 reviews'},{icon:'🍫',name:'Snack Packs',price:'GH₵ 5–15',rating:'⭐ 4.6 · 28 reviews'}]},
+  print:{title:'Printing Services',sub:'4 providers on campus',items:[{icon:'🖨️',name:'B&W Print',price:'GH₵ 0.50/page',rating:'⭐ 4.8 · 91 reviews'},{icon:'🌈',name:'Colour Print',price:'GH₵ 1.50/page',rating:'⭐ 4.7 · 54 reviews'},{icon:'📋',name:'Binding & Laminating',price:'GH₵ 5–20',rating:'⭐ 4.9 · 37 reviews'},{icon:'📐',name:'Large Format Print',price:'From GH₵ 30',rating:'⭐ 4.6 · 19 reviews'}]},
+  video:{title:'Video Editing',sub:'7 providers on campus',items:[{icon:'🎬',name:'Short Film Editing',price:'From GH₵ 80',rating:'⭐ 4.8 · 14 reviews'},{icon:'📱',name:'Social Media Reels',price:'From GH₵ 40',rating:'⭐ 4.7 · 22 reviews'},{icon:'🎓',name:'Academic Presentations',price:'From GH₵ 50',rating:'⭐ 4.9 · 9 reviews'},{icon:'🎞️',name:'Event Highlights',price:'From GH₵ 100',rating:'⭐ 4.6 · 11 reviews'}]},
+};
+
+const svcDrawer=document.getElementById('svcDrawer');
+function openDrawer(cat){
+  const d=drawerData[cat];if(!d)return;
+  document.getElementById('drwTitle').textContent=d.title;
+  document.getElementById('drwSub').textContent=d.sub;
+  document.getElementById('drwItems').innerHTML=d.items.map(i=>`<div class="drw-item"><span class="di-icon">${i.icon}</span><div><div class="di-name">${i.name}</div><div class="di-price">${i.price}</div><div class="di-rating">${i.rating}</div></div></div>`).join('');
+  svcDrawer.classList.add('open');document.body.style.overflow='hidden';
+}
+function closeDrawer(){svcDrawer.classList.remove('open');document.body.style.overflow='';}
+
+/* ═══════ MODAL ═══════ */
+const modal=document.getElementById('postModal');
+function openModal(){modal.classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(){modal.classList.remove('open');document.body.style.overflow='';}
+function handleModalClick(e){if(e.target===modal)closeModal();}
+
+/* ═══════ BOTTOM NAV — HIDE ON SCROLL ═══════ */
+const bnav=document.getElementById('bottomNav');
+let lastY=0,ticking=false;
+window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(()=>{const y=window.scrollY;if(y>lastY+10&&y>80){bnav.classList.add('hidden');}else if(y<lastY-10){bnav.classList.remove('hidden');}lastY=y;ticking=false;});ticking=true;}},{passive:true});
+
+function setActive(el){document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));el.classList.add('active');}
+
+/* ═══════ FAV TOGGLE ═══════ */
+document.querySelectorAll('.lc-fav').forEach(b=>{b.addEventListener('click',e=>{e.stopPropagation();b.textContent=b.textContent==='🤍'?'❤️':'🤍';});});
+
+/* ═══════ SEARCH ═══════ */
+function handleSearch(inp){
+  const v=inp.value.toLowerCase();
+  document.querySelectorAll('#allGrid .listing-card').forEach(c=>{c.style.display=c.querySelector('.lc-name').textContent.toLowerCase().includes(v)?'':'none';});
+  document.querySelectorAll('#servicesGrid .service-card').forEach(c=>{c.style.display=c.querySelector('.sc-name').textContent.toLowerCase().includes(v)?'':'none';});
+}
+function clearSearch(){const i=document.getElementById('searchInput');i.value='';handleSearch(i);}
+</script>
+</body>
+</html>
