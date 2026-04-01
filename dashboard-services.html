@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Services — PU-Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--a:#e8c96a;--a2:#5be5c5;--red:#ff6b6b;--r:16px;--nh:60px;--bh:78px;--sw:228px}
+    [data-theme="dark"]{--bg:#0d0e11;--card:#1c1f27;--t:#f0eeea;--m:#7a7e8a;--b:rgba(255,255,255,.07);--g:rgba(18,20,28,.62);--gb:rgba(255,255,255,.13);--sh:0 8px 32px rgba(0,0,0,.55);--inp:rgba(255,255,255,.06)}
+    [data-theme="light"]{--bg:#f0ede8;--card:#fff;--t:#1a1a1a;--m:#888;--b:rgba(0,0,0,.08);--g:rgba(255,255,255,.68);--gb:rgba(255,255,255,.9);--sh:0 8px 32px rgba(0,0,0,.1);--inp:rgba(0,0,0,.05)}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t);overflow-x:hidden;transition:background .3s,color .3s;padding-bottom:calc(var(--bh)+20px)}
+    img{display:block;width:100%;height:100%;object-fit:cover}
+    .tnav{position:sticky;top:0;z-index:500;height:var(--nh);display:flex;align-items:center;gap:.5rem;padding:0 1rem;background:var(--g);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border-bottom:1px solid var(--gb);box-shadow:var(--sh)}
+    .hbg{width:40px;height:40px;border-radius:10px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;cursor:pointer;border:none;background:var(--inp);flex-shrink:0}.hbg span{width:18px;height:2px;background:var(--t);border-radius:2px}
+    .tabs{display:flex;flex:1;justify-content:center;gap:.2rem}.tab{padding:.38rem .9rem;border-radius:9px;border:none;background:transparent;color:var(--m);font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:600;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap}.tab.on{background:var(--a);color:#0d0e11}.tab:hover:not(.on){color:var(--t);background:var(--inp)}
+    .thbtn{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:var(--inp);font-size:1.1rem;flex-shrink:0;transition:background .2s,transform .3s}.thbtn:hover{transform:rotate(22deg)}
+    .ov{position:fixed;inset:0;z-index:550;background:rgba(0,0,0,.45);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .3s}.ov.on{opacity:1;pointer-events:all}
+    .sb{position:fixed;top:0;left:-100%;bottom:0;width:var(--sw);z-index:600;background:var(--g);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border-right:1px solid var(--gb);transition:left .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto}.sb.on{left:0}
+    .sbh{padding:1.1rem 1.3rem .8rem;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--g);z-index:1}
+    .sbl{font-family:'Playfair Display',serif;font-weight:900;font-size:1.1rem;color:var(--a)}.sbl span{color:var(--t)}.sbx{background:none;border:none;color:var(--m);font-size:1.2rem;cursor:pointer}
+    .sbsec{font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--a2);font-weight:600;padding:.85rem 1.3rem .35rem}
+    .sbul{list-style:none;padding:0 .55rem .3rem}.sbul li a{display:flex;align-items:center;gap:.7rem;padding:.55rem .75rem;border-radius:10px;color:var(--m);font-size:.86rem;font-weight:400;text-decoration:none;transition:all .18s}.sbul li a:hover{color:var(--t);background:var(--inp)}.sbul li a.act{color:var(--a);background:rgba(232,201,106,.08)}
+    .ico{font-size:.95rem;width:18px;text-align:center;flex-shrink:0}.sbd{height:1px;background:var(--b);margin:.35rem 1.3rem}.sbft{padding:.9rem 1.3rem;margin-top:auto;font-size:.7rem;color:var(--m);line-height:1.6}
+    @media(min-width:960px){.sb{left:0;top:var(--nh);border-top:none}.ov{display:none!important}.hbg{display:none!important}.wrap{margin-left:var(--sw)}.botnav{left:calc(50% + var(--sw)/2)}}
+    .wrap{position:relative;z-index:1}.inner{max-width:960px;margin:0 auto;padding:1rem 1rem 0}
+    .srch{position:relative;margin-bottom:.9rem}.srch input{width:100%;background:var(--inp);border:1.5px solid var(--b);border-radius:13px;padding:.78rem 2.4rem;color:var(--t);font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:300;outline:none;transition:border-color .25s,box-shadow .25s}.srch input::placeholder{color:var(--m)}.srch input:focus{border-color:rgba(91,229,197,.4);box-shadow:0 0 0 3px rgba(91,229,197,.07)}
+    .sico{position:absolute;left:.88rem;top:50%;transform:translateY(-50%);font-size:.92rem;opacity:.45;pointer-events:none}.sclr{position:absolute;right:.88rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--m);cursor:pointer;font-size:.82rem;display:none}.srch input:not(:placeholder-shown)~.sclr{display:block}
+    .boost{position:relative;overflow:hidden;border-radius:var(--r);background:linear-gradient(120deg,#041210,#062420 60%,#041210);border:1px solid rgba(91,229,197,.25);padding:1.1rem 1.3rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+    [data-theme="light"] .boost{background:linear-gradient(120deg,#e0faf6,#b8f5ed,#e0faf6)}
+    .bgw{position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(91,229,197,.2) 0%,transparent 70%);right:-30px;top:-60px;pointer-events:none}
+    .bdt{position:absolute;inset:0;background-image:radial-gradient(rgba(91,229,197,.1) 1px,transparent 1px);background-size:22px 22px;pointer-events:none}
+    .btx{position:relative;z-index:1}.be{font-size:.63rem;letter-spacing:2px;text-transform:uppercase;color:var(--a2);font-weight:700;margin-bottom:.2rem}
+    .bh2{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;line-height:1.2;margin-bottom:.18rem}[data-theme="light"] .bh2{color:#04352d}
+    .bs{font-size:.73rem;color:var(--m);font-weight:300}.bac{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:.35rem;flex-shrink:0}
+    .brk{font-size:1.55rem;animation:bob 2.2s ease-in-out infinite}@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+    .bct{background:var(--a2);color:#041210;padding:.5rem 1rem;border-radius:9px;border:none;font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(91,229,197,.3);transition:transform .2s,box-shadow .2s;white-space:nowrap}.bct:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(91,229,197,.4)}
+    .slbl{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem}.slbl h2{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;letter-spacing:-.2px}.slbl a{font-size:.76rem;color:var(--a2);font-weight:500;text-decoration:none}
+    .bscroll{display:flex;gap:.8rem;overflow-x:auto;padding-bottom:.4rem;margin-bottom:1.1rem;scroll-snap-type:x mandatory;-ms-overflow-style:none;scrollbar-width:none}.bscroll::-webkit-scrollbar{display:none}
+    .bcard{min-width:188px;max-width:188px;border-radius:var(--r);overflow:hidden;cursor:pointer;flex-shrink:0;scroll-snap-align:start;position:relative;border:1px solid rgba(91,229,197,.28);background:var(--card);transition:transform .3s}.bcard:hover{transform:translateY(-4px)}
+    .bcim{width:100%;aspect-ratio:4/3;overflow:hidden}.bcim img{width:100%;height:100%;object-fit:cover;transition:transform .4s}.bcard:hover .bcim img{transform:scale(1.07)}
+    .bcbg{position:absolute;top:.4rem;right:.4rem;font-size:.56rem;background:var(--a2);color:#041210;padding:.16rem .44rem;border-radius:5px;font-weight:700}
+    .bcbd{padding:.65rem}.bcnm{font-size:.8rem;font-weight:600;margin-bottom:.18rem;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bcpr{font-size:.86rem;color:var(--a2);font-weight:700}.bcsl{font-size:.64rem;color:var(--m)}
+    .filter-bar{display:flex;gap:.45rem;overflow-x:auto;padding-bottom:.35rem;margin-bottom:.8rem;-ms-overflow-style:none;scrollbar-width:none}.filter-bar::-webkit-scrollbar{display:none}
+    .fp{display:flex;align-items:center;gap:.28rem;padding:.36rem .82rem;border-radius:99px;border:1.5px solid var(--b);background:var(--card);font-size:.74rem;font-weight:500;color:var(--m);cursor:pointer;flex-shrink:0;white-space:nowrap;transition:all .2s}.fp.on{background:var(--a2);border-color:var(--a2);color:#041210;font-weight:700}.fp:hover:not(.on){border-color:rgba(91,229,197,.35);color:var(--t)}
+    .sort-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;gap:.5rem;flex-wrap:wrap}.sort-count{font-size:.78rem;color:var(--m);font-weight:300}
+    .sort-select{background:var(--inp);border:1.5px solid var(--b);border-radius:9px;padding:.36rem .72rem;color:var(--t);font-family:'DM Sans',sans-serif;font-size:.76rem;outline:none;cursor:pointer}
+    .sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem;animation:fd .35s ease}
+    @keyframes fd{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    @media(min-width:900px){.sgrid{grid-template-columns:repeat(3,1fr)}}@media(max-width:400px){.sgrid{grid-template-columns:1fr}}
+    .sc{background:var(--card);border:1px solid var(--b);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:transform .3s,border-color .3s;position:relative}.sc:hover{transform:translateY(-4px);border-color:rgba(91,229,197,.25)}
+    .sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:linear-gradient(90deg,var(--a),var(--a2));transform:scaleX(0);transform-origin:left;transition:transform .35s}.sc:hover::before{transform:scaleX(1)}
+    .sim{width:100%;aspect-ratio:16/9;overflow:hidden;position:relative}.sim img{width:100%;height:100%;object-fit:cover;transition:transform .4s}.sc:hover .sim img{transform:scale(1.06)}
+    .sbg{position:absolute;top:.4rem;left:.4rem;font-size:.56rem;padding:.16rem .44rem;border-radius:5px;font-weight:700;backdrop-filter:blur(8px)}
+    .sbody{padding:.8rem}.snm{font-size:.88rem;font-weight:600;margin-bottom:.25rem}
+    .sdesc{font-size:.78rem;color:var(--m);font-weight:300;line-height:1.6;margin-bottom:.55rem;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+    .smeta{display:flex;align-items:center;justify-content:space-between}.spr{font-size:.82rem;color:var(--a2);font-weight:700}.srt{font-size:.72rem;color:var(--m)}
+    .sact{font-size:.7rem;color:var(--a2);font-weight:500;background:rgba(91,229,197,.1);border:1px solid rgba(91,229,197,.2);border-radius:6px;padding:.22rem .6rem;cursor:pointer;transition:background .2s;white-space:nowrap;margin-top:.5rem;display:inline-block}.sact:hover{background:rgba(91,229,197,.2)}
+    .prov-list{display:flex;flex-direction:column;gap:.7rem;margin-bottom:1.5rem}
+    .prov-item{background:var(--card);border:1px solid var(--b);border-radius:var(--r);padding:.9rem 1rem;display:flex;align-items:center;gap:1rem;cursor:pointer;transition:border-color .2s,transform .2s}.prov-item:hover{border-color:rgba(91,229,197,.25);transform:translateX(4px)}
+    .pav{width:46px;height:46px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid rgba(91,229,197,.2)}.pav img{width:100%;height:100%;object-fit:cover}
+    .pinfo{flex:1;min-width:0}.pname{font-size:.88rem;font-weight:600;margin-bottom:.15rem}.pcat{font-size:.72rem;color:var(--a2);font-weight:500}.prating{font-size:.72rem;color:var(--m)}.pprice{font-size:.86rem;color:var(--a2);font-weight:700;flex-shrink:0}
+    .dr{position:fixed;inset:0;z-index:700;display:flex;align-items:flex-end;pointer-events:none}.dr.on{pointer-events:all}
+    .dov{position:absolute;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(5px);opacity:0;transition:opacity .3s}.dr.on .dov{opacity:1}
+    .dsh{position:relative;width:100%;max-height:82vh;background:var(--g);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border-top:1px solid var(--gb);border-radius:24px 24px 0 0;transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);overflow-y:auto;padding:1.2rem 1.1rem 2rem;max-width:680px;margin:0 auto;width:100%}.dr.on .dsh{transform:translateY(0)}
+    .dhn{width:36px;height:4px;border-radius:2px;background:var(--b);margin:0 auto .85rem}
+    .dh{display:flex;align-items:center;gap:.7rem;margin-bottom:.25rem}.dtl{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700}.dsb{color:var(--m);font-size:.8rem;font-weight:300;margin-bottom:1rem}
+    .dg{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}@media(max-width:400px){.dg{grid-template-columns:1fr}}
+    .di{background:var(--card);border:1px solid var(--b);border-radius:12px;padding:.85rem;display:flex;gap:.7rem;align-items:flex-start;cursor:pointer;transition:border-color .2s}.di:hover{border-color:rgba(91,229,197,.3)}
+    .dth{width:46px;height:46px;border-radius:9px;overflow:hidden;flex-shrink:0}.dth img{width:100%;height:100%;object-fit:cover}.din{font-size:.8rem;font-weight:600;margin-bottom:.18rem}.dip{font-size:.73rem;color:var(--a2);font-weight:500}.dir{font-size:.68rem;color:var(--m)}
+    .mov{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;justify-content:center;padding:1rem}.mov.on{opacity:1;pointer-events:all}
+    .modal{background:var(--g);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid var(--gb);border-radius:22px;padding:1.6rem;width:100%;max-width:380px;transform:scale(.92) translateY(16px);transition:transform .35s cubic-bezier(.4,0,.2,1)}.mov.on .modal{transform:scale(1) translateY(0)}
+    .mtl{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;margin-bottom:.2rem}.msb{color:var(--m);font-size:.81rem;margin-bottom:1.2rem;font-weight:300}
+    .mop{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:.9rem}.mo{background:var(--card);border:1.5px solid var(--b);border-radius:13px;padding:1rem .85rem;text-align:center;cursor:pointer;transition:border-color .2s,transform .2s}.mo:hover{border-color:rgba(91,229,197,.4);transform:translateY(-2px)}
+    .moic{font-size:1.6rem;display:block;margin-bottom:.4rem}.molb{font-size:.8rem;font-weight:600}
+    .mcl{width:100%;padding:.65rem;background:var(--inp);border:1px solid var(--b);border-radius:11px;color:var(--m);font-family:'DM Sans',sans-serif;font-size:.86rem;cursor:pointer;transition:background .2s}.mcl:hover{color:var(--t);background:rgba(255,255,255,.08)}
+    .botnav{position:fixed;bottom:13px;left:50%;transform:translateX(-50%);z-index:400;display:flex;align-items:center;justify-content:space-around;width:min(500px,calc(100vw - 26px));height:var(--bh);padding:0 .7rem;background:var(--g);backdrop-filter:blur(36px) saturate(200%) brightness(1.08);-webkit-backdrop-filter:blur(36px) saturate(200%) brightness(1.08);border:1px solid var(--gb);border-radius:40px;box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.1);transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s}
+    .botnav::before{content:'';position:absolute;top:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.38),transparent);border-radius:99px}
+    .botnav.hide{transform:translateX(-50%) translateY(120px);opacity:0}
+    .ni{display:flex;flex-direction:column;align-items:center;gap:.18rem;flex:1;padding:.4rem 0;background:none;border:none;cursor:pointer;color:var(--m);font-family:'DM Sans',sans-serif;transition:color .2s;-webkit-tap-highlight-color:transparent;position:relative}.ni:hover{color:var(--t)}.ni.on{color:var(--a)}
+    .ni svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}.ni:hover svg{transform:scale(1.08)}.ni.on::after{content:'';position:absolute;bottom:.1rem;width:4px;height:4px;border-radius:50%;background:var(--a)}.nlb{font-size:.57rem;font-weight:500;letter-spacing:.3px}
+    .nadd{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--a),#f5c440);border:3px solid var(--g);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;box-shadow:0 6px 18px rgba(232,201,106,.5),inset 0 1px 0 rgba(255,255,255,.3);transition:transform .2s,box-shadow .2s;position:relative}.nadd::before{content:'';position:absolute;inset:2px;border-radius:50%;background:rgba(255,255,255,.1)}.nadd:hover{transform:scale(1.1);box-shadow:0 10px 26px rgba(232,201,106,.6)}.nadd svg{width:20px;height:20px;stroke:#0d0e11;stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  </style>
+</head>
+<body>
+<nav class="tnav">
+  <button class="hbg" id="hbg"><span></span><span></span><span></span></button>
+  <div class="tabs">
+    <button class="tab" onclick="location.href='dashboard.html'">All</button>
+    <button class="tab" onclick="location.href='dashboard-products.html'">Products</button>
+    <button class="tab on">Services</button>
+  </div>
+  <button class="thbtn" id="thbtn">&#127774;</button>
+</nav>
+<div class="ov" id="ov" onclick="closeSB()"></div>
+<aside class="sb" id="sb">
+  <div class="sbh"><div class="sbl">PU-<span>Marketplace</span></div><button class="sbx" onclick="closeSB()">X</button></div>
+  <div class="sbsec">Navigate</div>
+  <ul class="sbul">
+    <li><a href="index.html"><span class="ico">&#127968;</span>Home</a></li>
+    <li><a href="dashboard.html"><span class="ico">&#9889;</span>Dashboard</a></li>
+    <li><a href="dashboard-products.html"><span class="ico">&#128230;</span>Products</a></li>
+    <li><a href="dashboard-services.html" class="act"><span class="ico">&#128736;</span>Services</a></li>
+    <li><a href="#"><span class="ico">&#128276;</span>Notifications</a></li>
+    <li><a href="#"><span class="ico">&#128172;</span>Messages</a></li>
+    <li><a href="#"><span class="ico">&#10084;</span>Wishlist</a></li>
+    <li><a href="#"><span class="ico">&#127991;</span>My Listings</a></li>
+  </ul>
+  <div class="sbd"></div>
+  <div class="sbsec">Account</div>
+  <ul class="sbul">
+    <li><a href="auth.html"><span class="ico">&#128100;</span>Profile</a></li>
+    <li><a href="#"><span class="ico">&#9881;</span>Settings</a></li>
+    <li><a href="#"><span class="ico">&#128179;</span>Payments</a></li>
+  </ul>
+  <div class="sbd"></div>
+  <div class="sbsec">Info &amp; Legal</div>
+  <ul class="sbul">
+    <li><a href="about.html"><span class="ico">&#8505;</span>About Us</a></li>
+    <li><a href="safety.html"><span class="ico">&#128737;</span>Safety</a></li>
+    <li><a href="help.html"><span class="ico">&#10067;</span>Help Centre</a></li>
+    <li><a href="privacy.html"><span class="ico">&#128274;</span>Privacy Policy</a></li>
+    <li><a href="terms.html"><span class="ico">&#128196;</span>Terms &amp; Conditions</a></li>
+  </ul>
+  <div class="sbd"></div>
+  <ul class="sbul"><li><a href="auth.html" style="color:var(--red)"><span class="ico">&#128682;</span>Log Out</a></li></ul>
+  <div class="sbft">2026 PU-Marketplace. Built for campus, by students.</div>
+</aside>
+<div class="wrap"><div class="inner">
+  <div class="srch"><span class="sico">&#128269;</span><input type="text" id="si" placeholder="Search services, providers, categories..." oninput="doSearch(this)" autocomplete="off"/><button class="sclr" onclick="clearS()">X</button></div>
+  <div class="boost"><div class="bgw"></div><div class="bdt"></div>
+    <div class="btx"><div class="be">Boost Your Service</div><div class="bh2">Reach 10x More Students on Campus</div><div class="bs">Feature at the top of search - from GHc 5/day</div></div>
+    <div class="bac"><span class="brk">&#11088;</span><button class="bct" onclick="openMod()">Boost Now</button></div>
+  </div>
+  <div class="slbl"><h2>&#128640; Boosted Services</h2><a href="#">What is Boost?</a></div>
+  <div class="bscroll">
+    <div class="bcard"><div class="bcim"><img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&q=75&auto=format" alt="Design" loading="lazy"/></div><span class="bcbg">Boosted</span><div class="bcbd"><div class="bcnm">Professional Logo Design</div><div class="bcpr">From GHc 50</div><div class="bcsl">@ama_designs</div></div></div>
+    <div class="bcard"><div class="bcim"><img src="https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=400&q=75&auto=format" alt="Tutoring" loading="lazy"/></div><span class="bcbg">Boosted</span><div class="bcbd"><div class="bcnm">1-on-1 STEM Tutoring</div><div class="bcpr">GHc 40/hr</div><div class="bcsl">@yaw_teaches</div></div></div>
+    <div class="bcard"><div class="bcim"><img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&q=75&auto=format" alt="Coding" loading="lazy"/></div><span class="bcbg">Boosted</span><div class="bcbd"><div class="bcnm">Web Dev &amp; Coding Help</div><div class="bcpr">From GHc 80</div><div class="bcsl">@kofi_codes</div></div></div>
+    <div class="bcard"><div class="bcim"><img src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=400&q=75&auto=format" alt="Photography" loading="lazy"/></div><span class="bcbg">Boosted</span><div class="bcbd"><div class="bcnm">Graduation Photography</div><div class="bcpr">From GHc 100</div><div class="bcsl">@abena_photos</div></div></div>
+    <div class="bcard"><div class="bcim"><img src="https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400&q=75&auto=format" alt="Food" loading="lazy"/></div><span class="bcbg">Boosted</span><div class="bcbd"><div class="bcnm">Home-Cooked Meals</div><div class="bcpr">GHc 20/meal</div><div class="bcsl">@mama_cooks</div></div></div>
+  </div>
+  <div class="filter-bar">
+    <div class="fp on" onclick="setFilter(this,'all')">All</div>
+    <div class="fp" onclick="setFilter(this,'design')">Design</div>
+    <div class="fp" onclick="setFilter(this,'tutoring')">Tutoring</div>
+    <div class="fp" onclick="setFilter(this,'tech')">Tech</div>
+    <div class="fp" onclick="setFilter(this,'delivery')">Delivery</div>
+    <div class="fp" onclick="setFilter(this,'writing')">Writing</div>
+    <div class="fp" onclick="setFilter(this,'photo')">Photography</div>
+    <div class="fp" onclick="setFilter(this,'food')">Food</div>
+    <div class="fp" onclick="setFilter(this,'print')">Printing</div>
+    <div class="fp" onclick="setFilter(this,'video')">Video</div>
+  </div>
+  <div class="sort-row">
+    <span class="sort-count" id="sc">Showing 9 services</span>
+    <select class="sort-select" onchange="sortSvc(this.value)">
+      <option value="popular">Most Popular</option>
+      <option value="price-asc">Price: Low to High</option>
+      <option value="price-desc">Price: High to Low</option>
+    </select>
+  </div>
+  <div class="sgrid" id="sg">
+    <div class="sc" data-cat="design" data-name="Graphic Design logo branding" data-price="50" onclick="openDr('design')">
+      <div class="sim"><img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?w=500&q=75&auto=format" alt="Design" loading="lazy"/></div>
+      <span class="sbg" style="background:rgba(232,201,106,.2);color:var(--a)">Design</span>
+      <div class="sbody"><div class="snm">Graphic Design</div><div class="sdesc">Logos, flyers, social media graphics, and print materials by top campus designers.</div>
+      <div class="smeta"><span class="spr">From GHc 25</span><span class="srt">4.9 - 14 providers</span></div>
+      <button class="sact" onclick="event.stopPropagation();openDr('design')">Explore</button></div>
+    </div>
+    <div class="sc" data-cat="tutoring" data-name="Tutoring lessons academic help" data-price="25" onclick="openDr('tutoring')">
+      <div class="sim"><img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500&q=75&auto=format" alt="Tutoring" loading="lazy"/></div>
+      <span class="sbg" style="background:rgba(91,229,197,.2);color:#5be5c5">Tutoring</span>
+      <div class="sbody"><div class="snm">Tutoring</div><div class="sdesc">1-on-1 academic support in STEM, languages, business, and more by verified campus students.</div>
+      <div class="smeta"><span class="spr">From GHc 25/hr</span><span class="srt">4.9 - 22 providers</span></div>
+      <button class="sact" onclick="event.stopPropagation();openDr('tutoring')">Explore</button></div>
+    </div>
+    <div class="sc" data-cat="tech" data-name="Tech coding web development" data-price="60" onclick="openDr('tech')">
+      <div class="sim"><img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500&q=75&auto=format" alt="Tech" loading="lazy"/></div>
+      <span class="sbg" style="background:rgba(160,120,255,.2);color:#a78bfa">Tech</span>
+      <div class="sbody"><div class="snm">Tech &amp; Coding</div><div class="sdesc">Web development, data analysis, device repair, and automation scripting.</div>
+      <div class="smeta"><span class="spr">From GHc 40</span><span class="srt">4.8 - 9 providers</span></div>
+      <button class="sact" onclick="event.stopPropagation();openDr('tech')">Explore</button></div>
+    </div>
+    <div class="sc" data-cat="delivery" data-name="Delivery campus errand runner" data-price="5" onclick="openDr('delivery')">
+      <div class="sim"><img src="https://images.unsplash.com/photo-1526367790999-0150786686a2?w=500&q=75&auto=format" alt="Delivery" loading="lazy"/></div>
+      <span class="sbg" style="background:rgba(251,146,60,.2);color:#fb923c">Delivery</span>
+      <div class="sbody"><div class="snm">Campus Delivery</div><div class="sdesc">Fast and reliable same-campus delivery for parcels, food, and library runs.</div>
+      <div class="smeta"><span class="spr">From GHc 5</span><span class="srt">4.8 - 6 providers</span></div>
+      <button class="sact" onclick="event.stopPropagation();openDr('delivery')">Explore</button></div>
+    </div>
+    <div class="sc" data-cat="writing" data-name="Writing editing proofreading CV" data-price="20" onclick="openDr('writing')">
+      <div class="sim"><img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=500&q=75&auto=format" alt="Writing" loading="lazy"/></div>
+      <span class="sbg" style="background:rgba(232,201,106,.2);color:var(--a)">Writing</span>
+      <div class="sbody"><div class="snm">Writing &amp; Editing</div><div class="sdesc">Proofreading, CVs, cover letters, blog posts, and academic report writing.</div>
+      <div class="smeta"><span class="spr">From GHc 20</span><span class="srt">4.8 - 11 providers</span></div>
+      <button class="sact" onclick="event.stopPropagation();openDr('writing')">Explore</button></div>
+    </div>
+    <div class="sc" data-cat="photo" data-name="Photography portrait graduation event" data-price="60" onclick="openDr('photo')">
+      <div class="sim"><img src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=500&q=75&auto=format" alt="Photography" loading="lazy"/></div>
+      <span class="sbg" style="background:rgba(91,229,197,.2);color:#5be5c5">Photography</span>
+      <div class="sbody"><div class="snm">Photography</div><div class="sdesc">Graduation portraits, event coverage, and product photography by campus shooters.</div>
+      <div class="smeta"><span class="spr">From GHc 60</span><span class="srt">4.9 - 5 providers</span></div>
+      <button class="sact" onclick="event.stopPropagation();openDr('photo')">Explore</button></div>
+    </div>
+    <div class="sc" data-cat="food" data-name="Food snacks meals homemade" data-price="5" onclick="openDr('food')">
+      <div class="sim"><img src="https://images.unsplash.com/photo-1512058564366-18510be2db19?w=500&q=75&auto=format" alt="Food" loading="lazy"/></div>
+      <span class="sbg" style="background:rgba(255,107,107,.2);color:#ff6b6b">Food</span>
+      <div class="sbody"><div class="snm">Food &amp; Snacks</div><div class="sdesc">Home-cooked meals, smoothies, baked goods, and snack packs made fresh daily.</div>
+      <div class="smeta"><span class="spr">From GHc 5</span><span class="srt">4.9 - 18 providers</span></div>
+      <button class="sact" onclick="event.stopPropagation();openDr('food')">Explore</button></div>
+    </div>
+    <div class="sc" data-cat="print" data-name="Printing binding laminating documents" data-price="1" onclick="openDr('print')">
+      <div class="sim"><img src="https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=500&q=75&auto=format" alt="Printing" loading="lazy"/></div>
+      <span class="sbg" style="background:rgba(160,120,255,.2);color:#a78bfa">Printing</span>
+      <div class="sbody"><div class="snm">Printing Services</div><div class="sdesc">B&amp;W, colour printing, binding, laminating, and large format posters on campus.</div>
+      <div class="smeta"><span class="spr">From GHc 0.50/pg</span><span class="srt">4.8 - 4 providers</span></div>
+      <button class="sact" onclick="event.stopPropagation();openDr('print')">Explore</button></div>
+    </div>
+    <div class="sc" data-cat="video" data-name="Video editing reels films" data-price="40" onclick="openDr('video')">
+      <div class="sim"><img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=500&q=75&auto=format" alt="Video" loading="lazy"/></div>
+      <span class="sbg" style="background:rgba(251,146,60,.2);color:#fb923c">Video</span>
+      <div class="sbody"><div class="snm">Video Editing</div><div class="sdesc">Short films, social media reels, event highlights, and academic presentations.</div>
+      <div class="smeta"><span class="spr">From GHc 40</span><span class="srt">4.8 - 7 providers</span></div>
+      <button class="sact" onclick="event.stopPropagation();openDr('video')">Explore</button></div>
+    </div>
+  </div>
+  <div class="slbl" style="margin-top:.5rem"><h2>Top Providers</h2><a href="#">See all</a></div>
+  <div class="prov-list">
+    <div class="prov-item"><div class="pav"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=70&auto=format" alt="Provider" loading="lazy"/></div><div class="pinfo"><div class="pname">Kwame Asante</div><div class="pcat">Graphic Design - Tech</div><div class="prating">4.9 stars - 47 completed</div></div><span class="pprice">From GHc 50</span></div>
+    <div class="prov-item"><div class="pav"><img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=70&auto=format" alt="Provider" loading="lazy"/></div><div class="pinfo"><div class="pname">Abena Boateng</div><div class="pcat">Photography - Events</div><div class="prating">4.9 stars - 38 completed</div></div><span class="pprice">From GHc 80</span></div>
+    <div class="prov-item"><div class="pav"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=70&auto=format" alt="Provider" loading="lazy"/></div><div class="pinfo"><div class="pname">Yaw Mensah</div><div class="pcat">STEM Tutoring</div><div class="prating">5.0 stars - 62 completed</div></div><span class="pprice">GHc 35/hr</span></div>
+    <div class="prov-item"><div class="pav"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=70&auto=format" alt="Provider" loading="lazy"/></div><div class="pinfo"><div class="pname">Esi Owusu</div><div class="pcat">Writing - Editing</div><div class="prating">4.8 stars - 29 completed</div></div><span class="pprice">From GHc 20</span></div>
+  </div>
+</div></div>
+<div class="dr" id="dr"><div class="dov" onclick="closeDr()"></div>
+  <div class="dsh"><div class="dhn"></div>
+    <div class="dh"><span id="dico" style="font-size:1.7rem"></span><div class="dtl" id="dttl"></div></div>
+    <div class="dsb" id="dsb"></div><div class="dg" id="dg"></div>
+  </div>
+</div>
+<div class="mov" id="mv" onclick="if(event.target===this)closeMod()">
+  <div class="modal">
+    <div class="mtl">Offer a Service</div><div class="msb">List your service on PU-Marketplace in minutes.</div>
+    <div class="mop">
+      <div class="mo" onclick="location.href='auth.html'"><span class="moic">&#128736;</span><div class="molb">Offer Service</div></div>
+      <div class="mo" onclick="location.href='auth.html'"><span class="moic">&#128640;</span><div class="molb">Boost Service</div></div>
+      <div class="mo" onclick="location.href='dashboard-products.html'"><span class="moic">&#128230;</span><div class="molb">Go to Products</div></div>
+      <div class="mo" onclick="location.href='auth.html'"><span class="moic">&#128100;</span><div class="molb">My Profile</div></div>
+    </div>
+    <button class="mcl" onclick="closeMod()">Cancel</button>
+  </div>
+</div>
+<nav class="botnav" id="bn">
+  <button class="ni" onclick="setNi(this);location.href='dashboard.html'"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nlb">Home</span></button>
+  <button class="ni" onclick="setNi(this)"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="8" cy="8" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.2" fill="currentColor" stroke="none"/></svg><span class="nlb">Reels</span></button>
+  <button class="nadd" onclick="openMod()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+  <button class="ni" onclick="setNi(this)"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="nlb">Chat</span></button>
+  <button class="ni" onclick="setNi(this);location.href='auth.html'"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nlb">Profile</span></button>
+</nav>
+<script>
+const ht=document.documentElement,tb=document.getElementById('thbtn');let dk=true;
+function applyTheme(d){ht.setAttribute('data-theme',d?'dark':'light');tb.textContent=d?'🌞':'🌙';dk=d;localStorage.setItem('pu-theme',d?'dark':'light')}
+const sv=localStorage.getItem('pu-theme');if(sv)applyTheme(sv==='dark');tb.onclick=()=>applyTheme(!dk);
+const sbEl=document.getElementById('sb'),ovEl=document.getElementById('ov');
+document.getElementById('hbg').onclick=()=>{sbEl.classList.add('on');ovEl.classList.add('on');document.body.style.overflow='hidden'};
+function closeSB(){sbEl.classList.remove('on');ovEl.classList.remove('on');document.body.style.overflow=''}
+if(window.innerWidth>=960)sbEl.classList.add('on');
+window.addEventListener('resize',()=>{if(window.innerWidth>=960){sbEl.classList.add('on');ovEl.classList.remove('on')}});
+const bn=document.getElementById('bn');let ly=0,tk=false;
+window.addEventListener('scroll',()=>{if(!tk){requestAnimationFrame(()=>{const y=window.scrollY;if(y>ly+10&&y>80)bn.classList.add('hide');else if(y<ly-10)bn.classList.remove('hide');ly=y;tk=false});tk=true}},{passive:true});
+function setNi(el){document.querySelectorAll('.ni').forEach(i=>i.classList.remove('on'));el.classList.add('on')}
+const mv=document.getElementById('mv');function openMod(){mv.classList.add('on');document.body.style.overflow='hidden'}function closeMod(){mv.classList.remove('on');document.body.style.overflow=''}
+let curCat='all',curSearch='';
+function setFilter(pill,cat){document.querySelectorAll('.fp').forEach(p=>p.classList.remove('on'));pill.classList.add('on');curCat=cat;apply()}
+function apply(){let v=0;document.querySelectorAll('#sg .sc').forEach(c=>{const cm=curCat==='all'||c.dataset.cat===curCat;const sm=!curSearch||c.dataset.name.toLowerCase().includes(curSearch);const show=cm&&sm;c.style.display=show?'':'none';if(show)v++});document.getElementById('sc').textContent='Showing '+v+' service'+(v!==1?'s':'')}
+function doSearch(inp){curSearch=inp.value.toLowerCase();apply()}function clearS(){const i=document.getElementById('si');i.value='';curSearch='';apply()}
+function sortSvc(val){const g=document.getElementById('sg');const cards=[...g.querySelectorAll('.sc')];cards.sort((a,b)=>val==='price-asc'?+a.dataset.price-+b.dataset.price:val==='price-desc'?+b.dataset.price-+a.dataset.price:0);cards.forEach(c=>g.appendChild(c))}
+const DD={design:{icon:'🎨',name:'Graphic Design',sub:'14 providers',items:[{n:'Logo Design',p:'From GHc 50',r:'4.9 stars',img:'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=120&q=70&auto=format'},{n:'Social Media Graphics',p:'From GHc 30',r:'4.7 stars',img:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=120&q=70&auto=format'},{n:'Flyer Design',p:'From GHc 25',r:'4.8 stars',img:'https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=120&q=70&auto=format'},{n:'Print Design',p:'From GHc 40',r:'4.6 stars',img:'https://images.unsplash.com/photo-1572044162444-ad60f128bdea?w=120&q=70&auto=format'}]},tutoring:{icon:'📖',name:'Tutoring',sub:'22 providers',items:[{n:'STEM Subjects',p:'GHc 30-60/hr',r:'4.9 stars',img:'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=120&q=70&auto=format'},{n:'Maths and Stats',p:'GHc 25-50/hr',r:'4.8 stars',img:'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=120&q=70&auto=format'},{n:'Language Tutoring',p:'GHc 20-40/hr',r:'4.7 stars',img:'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=120&q=70&auto=format'},{n:'Business Accounting',p:'GHc 30-55/hr',r:'4.6 stars',img:'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=120&q=70&auto=format'}]},tech:{icon:'💻',name:'Tech and Coding',sub:'9 providers',items:[{n:'Web Development',p:'From GHc 150',r:'4.9 stars',img:'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=120&q=70&auto=format'},{n:'Data Analysis',p:'From GHc 80',r:'4.7 stars',img:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=120&q=70&auto=format'},{n:'Automation Scripts',p:'From GHc 60',r:'4.8 stars',img:'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=120&q=70&auto=format'},{n:'Device Repair',p:'From GHc 40',r:'4.5 stars',img:'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=120&q=70&auto=format'}]},delivery:{icon:'🏃',name:'Campus Delivery',sub:'6 providers',items:[{n:'Express Delivery',p:'GHc 5-15',r:'4.8 stars',img:'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=120&q=70&auto=format'},{n:'Parcel Pickup',p:'GHc 8-20',r:'4.6 stars',img:'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=120&q=70&auto=format'},{n:'Food Delivery',p:'GHc 5-10',r:'4.7 stars',img:'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=120&q=70&auto=format'},{n:'Library Runs',p:'GHc 5',r:'4.9 stars',img:'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=120&q=70&auto=format'}]},writing:{icon:'✍️',name:'Writing and Editing',sub:'11 providers',items:[{n:'Essay Proofreading',p:'From GHc 20',r:'4.8 stars',img:'https://images.unsplash.com/photo-1471107340929-a87cd0f5b5f3?w=120&q=70&auto=format'},{n:'CV and Cover Letter',p:'From GHc 35',r:'4.9 stars',img:'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=120&q=70&auto=format'},{n:'Blog Writing',p:'From GHc 40',r:'4.7 stars',img:'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=120&q=70&auto=format'},{n:'Report Writing',p:'From GHc 50',r:'4.6 stars',img:'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=120&q=70&auto=format'}]},photo:{icon:'📸',name:'Photography',sub:'5 providers',items:[{n:'Graduation Photos',p:'From GHc 100',r:'4.9 stars',img:'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=120&q=70&auto=format'},{n:'Event Coverage',p:'From GHc 200',r:'4.8 stars',img:'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=120&q=70&auto=format'},{n:'Portrait Sessions',p:'From GHc 80',r:'4.7 stars',img:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=120&q=70&auto=format'},{n:'Product Photography',p:'From GHc 60',r:'4.6 stars',img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=120&q=70&auto=format'}]},food:{icon:'🍱',name:'Food and Snacks',sub:'18 providers',items:[{n:'Home-Cooked Meals',p:'GHc 15-30',r:'4.9 stars',img:'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=120&q=70&auto=format'},{n:'Smoothies and Drinks',p:'GHc 8-18',r:'4.7 stars',img:'https://images.unsplash.com/photo-1502741224143-90386d7f8c82?w=120&q=70&auto=format'},{n:'Baked Goods',p:'GHc 10-25',r:'4.8 stars',img:'https://images.unsplash.com/photo-1517427677506-ade074eb1432?w=120&q=70&auto=format'},{n:'Snack Packs',p:'GHc 5-15',r:'4.6 stars',img:'https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=120&q=70&auto=format'}]},print:{icon:'🖨️',name:'Printing Services',sub:'4 providers',items:[{n:'BW Print',p:'GHc 0.50/page',r:'4.8 stars',img:'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=120&q=70&auto=format'},{n:'Colour Print',p:'GHc 1.50/page',r:'4.7 stars',img:'https://images.unsplash.com/photo-1572044162444-ad60f128bdea?w=120&q=70&auto=format'},{n:'Binding and Laminating',p:'GHc 5-20',r:'4.9 stars',img:'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=120&q=70&auto=format'},{n:'Large Format',p:'From GHc 30',r:'4.6 stars',img:'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=120&q=70&auto=format'}]},video:{icon:'🎬',name:'Video Editing',sub:'7 providers',items:[{n:'Short Film Editing',p:'From GHc 80',r:'4.8 stars',img:'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=120&q=70&auto=format'},{n:'Social Media Reels',p:'From GHc 40',r:'4.7 stars',img:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=120&q=70&auto=format'},{n:'Academic Presentations',p:'From GHc 50',r:'4.9 stars',img:'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=120&q=70&auto=format'},{n:'Event Highlights',p:'From GHc 100',r:'4.6 stars',img:'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=120&q=70&auto=format'}]}};
+const DR=document.getElementById('dr');
+function openDr(id){const d=DD[id];if(!d)return;document.getElementById('dico').textContent=d.icon;document.getElementById('dttl').textContent=d.name;document.getElementById('dsb').textContent=d.sub+' on campus';document.getElementById('dg').innerHTML=d.items.map(i=>'<div class="di"><div class="dth"><img src="'+i.img+'" alt="'+i.n+'" loading="lazy"/></div><div><div class="din">'+i.n+'</div><div class="dip">'+i.p+'</div><div class="dir">'+i.r+'</div></div></div>').join('');DR.classList.add('on');document.body.style.overflow='hidden'}
+function closeDr(){DR.classList.remove('on');document.body.style.overflow=''}
+</script>
+</body>
+</html>
