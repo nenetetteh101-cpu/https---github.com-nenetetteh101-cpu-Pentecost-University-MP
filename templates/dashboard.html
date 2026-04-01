@@ -185,14 +185,39 @@
     .ni svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
     .ni:hover svg{transform:scale(1.1)}
     .ni.on::after{content:'';position:absolute;bottom:.1rem;width:4px;height:4px;border-radius:50%;background:var(--a)}
-    .nilbl{font-size:.56rem;font-weight:500;letter-spacing:.3px}
-    .niadd{width:48px;height:48px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--a),#f0cd50);border:3px solid var(--g);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 5px 18px rgba(232,201,106,.5),inset 0 1px 0 rgba(255,255,255,.3);transition:transform .2s,box-shadow .2s;position:relative}
-    .niadd::before{content:'';position:absolute;inset:3px;border-radius:50%;background:rgba(255,255,255,.1)}
-    .niadd:hover{transform:scale(1.1);box-shadow:0 10px 28px rgba(232,201,106,.6)}
-    .niadd:active{transform:scale(.95)}
-    .niadd svg{width:20px;height:20px;stroke:#0d0e11;stroke-width:2.5;fill:none;stroke-linecap:round}
+    .nilbl,.nlbl{font-size:.56rem;font-weight:500;letter-spacing:.3px}
+    .niadd,.nadd{width:48px;height:48px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--a),#f0cd50);border:3px solid var(--g);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 5px 18px rgba(232,201,106,.5),inset 0 1px 0 rgba(255,255,255,.3);transition:transform .2s,box-shadow .2s;position:relative}
+    .niadd::before,.nadd::before{content:'';position:absolute;inset:3px;border-radius:50%;background:rgba(255,255,255,.1)}
+    .niadd:hover,.nadd:hover{transform:scale(1.1);box-shadow:0 10px 28px rgba(232,201,106,.6)}
+    .niadd:active,.nadd:active{transform:scale(.95)}
+    .niadd svg,.nadd svg{width:20px;height:20px;stroke:#0d0e11;stroke-width:2.5;fill:none;stroke-linecap:round}
     ::-webkit-scrollbar{width:3px;height:3px}
     ::-webkit-scrollbar-thumb{background:var(--b);border-radius:3px}
+    /* ── NOTIFICATION BELL ── */
+    .notibtn{position:relative;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:var(--inp);color:var(--t);flex-shrink:0;transition:background .2s}
+    .notibtn:hover{background:rgba(232,201,106,.15)}
+    .notibtn svg{width:20px;height:20px}
+    .nbadge{position:absolute;top:5px;right:5px;width:16px;height:16px;border-radius:50%;background:var(--red);color:#fff;font-size:.56rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);pointer-events:none;transition:transform .3s}
+    .nbadge.hidden{display:none}
+    /* ── NOTIFICATION PANEL ── */
+    .npanel{position:fixed;top:calc(var(--nh) + 8px);right:1rem;width:min(340px,calc(100vw - 2rem));z-index:600;background:var(--g);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid var(--gb);border-radius:18px;box-shadow:var(--sh);transform:translateY(-10px) scale(.96);opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s;overflow:hidden;max-height:80vh}
+    @media(min-width:960px){.npanel{right:calc(1rem + var(--sw) * 0)}}
+    .npanel.open{transform:translateY(0) scale(1);opacity:1;pointer-events:all}
+    .nph{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.1rem .7rem;border-bottom:1px solid var(--b)}
+    .nptitle{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700}
+    .npmrk{font-size:.72rem;color:var(--a);cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif;padding:0}
+    .npmrk:hover{text-decoration:underline}
+    .nplist{overflow-y:auto;max-height:60vh}
+    .nitem{display:flex;gap:.8rem;padding:.85rem 1.1rem;border-bottom:1px solid var(--b);cursor:pointer;transition:background .18s;position:relative}
+    .nitem:last-child{border-bottom:none}
+    .nitem:hover{background:var(--inp)}
+    .nitem.unread::before{content:'';position:absolute;left:.5rem;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;background:var(--a)}
+    .nico2{width:38px;height:38px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+    .ntxt{flex:1;min-width:0}
+    .ntitle2{font-size:.82rem;font-weight:600;margin-bottom:.18rem;line-height:1.35}
+    .ndesc{font-size:.74rem;color:var(--m);font-weight:300;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ntime{font-size:.66rem;color:var(--m);flex-shrink:0;margin-top:.15rem}
+    .npempty{padding:2rem 1rem;text-align:center;color:var(--m);font-size:.85rem}
   </style>
 </head>
 <body>
@@ -206,17 +231,16 @@
   <ul class="sbul">
     <li><a href="index.html"><span class="ico">🏠</span>Home</a></li>
     <li><a href="dashboard.html" class="act"><span class="ico">⚡</span>Dashboard</a></li>
-    <li><a href="#"><span class="ico">🔔</span>Notifications</a></li>
-    <li><a href="#"><span class="ico">❤️</span>Wishlist</a></li>
-    <li><a href="#"><span class="ico">📦</span>My Orders</a></li>
-    <li><a href="#"><span class="ico">🏷️</span>My Listings</a></li>
+    <li><a href="dashboard-products.html"><span class="ico">📦</span>Products</a></li>
+    <li><a href="dashboard-services.html"><span class="ico">🛠️</span>Services</a></li>
+    <li><a href="wishlist.html"><span class="ico">❤️</span>Wishlist</a></li>
+    <li><a href="orders.html"><span class="ico">🛒</span>My Orders</a></li>
+    <li><a href="listings.html"><span class="ico">🏷️</span>My Listings</a></li>
   </ul>
   <div class="sbd"></div>
   <div class="sbsec">Account</div>
   <ul class="sbul">
-    <li><a href="#"><span class="ico">👤</span>Profile</a></li>
-    <li><a href="#"><span class="ico">⚙️</span>Settings</a></li>
-    <li><a href="#"><span class="ico">💳</span>Payments</a></li>
+    <li><a href="auth.html"><span class="ico">👤</span>Profile</a></li>
   </ul>
   <div class="sbd"></div>
   <div class="sbsec">Info</div>
@@ -237,9 +261,13 @@
   <button class="hbg" id="hbg"><span></span><span></span><span></span></button>
   <div class="tabs">
     <button class="tab on">All</button>
-    <button class="tab">Products</button>
-    <button class="tab">Services</button>
+    <button class="tab" onclick="location.href='dashboard-products.html'">Products</button>
+    <button class="tab" onclick="location.href='dashboard-services.html'">Services</button>
   </div>
+  <button class="notibtn" id="notibtn" onclick="toggleNotif()" title="Notifications">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+    <span class="nbadge" id="nbadge">3</span>
+  </button>
   <button class="thbtn" id="thbtn">🌞</button>
 </nav>
 <div class="wrap">
@@ -258,12 +286,12 @@
     </div>
     <div class="bac">
       <span class="brk">🚀</span>
-      <button class="bct" onclick="openMod()">Boost Now</button>
+      <button class="bct" onclick="openBoost()">Boost Now</button>
     </div>
   </div>
   <div class="slbl">
     <h2>🌟 Featured <span class="btag">Boosted</span></h2>
-    <a href="#">See all</a>
+    <a href="dashboard-products.html">See all</a>
   </div>
   <div class="fw" id="fw">
     <button class="far p" onclick="fmv(-1)">‹</button>
@@ -277,22 +305,7 @@
     </div>
     <div class="fdt" id="fd"></div>
   </div>
-  <div class="svo">
-    <div class="slbl"><h2>🛠️ Explore Services</h2><a href="#">All</a></div>
-    <div class="cr" id="cr">
-      <div class="cp on" onclick="fcat(this,'all')">✨ All</div>
-      <div class="cp" onclick="fcat(this,'design')">🎨 Design</div>
-      <div class="cp" onclick="fcat(this,'tutoring')">📖 Tutoring</div>
-      <div class="cp" onclick="fcat(this,'tech')">💻 Tech</div>
-      <div class="cp" onclick="fcat(this,'delivery')">🏃 Delivery</div>
-      <div class="cp" onclick="fcat(this,'writing')">✍️ Writing</div>
-      <div class="cp" onclick="fcat(this,'photo')">📸 Photo</div>
-      <div class="cp" onclick="fcat(this,'food')">🍱 Food</div>
-    </div>
-    <div class="svw" id="sw"><div class="svt" id="st"></div></div>
-    <div class="svnv"><button class="sva" onclick="smv(-1)">‹</button><div class="sds" id="sd"></div><button class="sva" onclick="smv(1)">›</button></div>
-  </div>
-  <div class="slbl"><h2>🛒 All Listings</h2><a href="#">Filter ▾</a></div>
+  <div class="slbl"><h2>🛒 All Listings</h2><a href="dashboard-products.html">View all</a></div>
   <div class="grid" id="ag">
     <div class="lc" data-name="Data Structures Textbook"><div class="lcm"><img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=75&auto=format" alt="Book" loading="lazy"/><span class="lbg" style="background:rgba(91,229,197,.25);color:#5be5c5">Textbook</span></div><div class="lbd"><div class="lnm">Data Structures Textbook</div><div class="lpr">GH₵ 55</div><div class="lrw"><span class="lsl">@yaw_cs</span><button class="lfv">🤍</button></div></div></div>
     <div class="lc" data-name="Full HD Monitor 24"><div class="lcm"><img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&q=75&auto=format" alt="Monitor" loading="lazy"/><span class="lbg" style="background:rgba(232,201,106,.2);color:var(--a)">Electronics</span></div><div class="lbd"><div class="lnm">Full HD Monitor 24"</div><div class="lpr">GH₵ 900</div><div class="lrw"><span class="lsl">@kojo_tech</span><button class="lfv">🤍</button></div></div></div>
@@ -310,13 +323,23 @@
 </div>
 </div>
 <div class="dr" id="dr"><div class="dov" onclick="closeDr()"></div><div class="dsh"><div class="dhn"></div><div class="dh"><span class="dic" id="dico"></span><div class="dtl" id="dttl"></div></div><div class="dsb" id="dsb"></div><div class="dg" id="dg"></div></div></div>
-<div class="mov" id="mv"><div class="modal"><div class="mtl">Post Something 🎉</div><div class="msb">What would you like to list on PU-Marketplace?</div><div class="mop"><div class="mo" onclick="location.href='auth.html'"><span class="moic">📦</span><div class="molb">Sell Product</div></div><div class="mo" onclick="location.href='auth.html'"><span class="moic">🛠️</span><div class="molb">Offer Service</div></div><div class="mo" onclick="location.href='auth.html'"><span class="moic">🔍</span><div class="molb">Request Item</div></div><div class="mo" onclick="location.href='auth.html'"><span class="moic">🚀</span><div class="molb">Boost Listing</div></div></div><button class="mcl" onclick="closeMod()">Cancel</button></div></div>
+<div class="mov" id="mv"><div class="modal"><div class="mtl">Post Something 🎉</div><div class="msb">What would you like to list on PU-Marketplace?</div><div class="mop"><div class="mo" onclick="location.href='listings.html'"><span class="moic">📦</span><div class="molb">Sell Product</div></div><div class="mo" onclick="location.href='dashboard-services.html'"><span class="moic">🛠️</span><div class="molb">Offer Service</div></div><div class="mo" onclick="location.href='auth.html'"><span class="moic">🔍</span><div class="molb">Request Item</div></div><div class="mo" onclick="openBoost()"><span class="moic">🚀</span><div class="molb">Feature Listing</div></div></div><button class="mcl" onclick="closeMod()">Cancel</button></div></div>
+
+<!-- NOTIFICATION PANEL -->
+<div class="npanel" id="npanel">
+  <div class="nph">
+    <span class="nptitle">Notifications</span>
+    <button class="npmrk" onclick="markAllRead()">Mark all read</button>
+  </div>
+  <div class="nplist" id="nlist"></div>
+</div>
+
 <nav class="botnav" id="bn">
-  <button class="ni on" onclick="setNi(this)"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nilbl">Home</span></button>
-  <button class="ni" onclick="setNi(this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span class="nilbl">Reels</span></button>
-  <button class="niadd" onclick="openMod()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-  <button class="ni" onclick="setNi(this)"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="nilbl">Chat</span></button>
-  <button class="ni" onclick="setNi(this)"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nilbl">Profile</span></button>
+  <button class="ni on" onclick="setNi(this);location.href='dashboard.html'"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nlbl">Home</span></button>
+  <button class="ni" onclick="setNi(this);location.href='dashboard-services.html'"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span class="nlbl">Reels</span></button>
+  <button class="nadd" onclick="openMod()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+  <button class="ni" onclick="setNi(this);location.href='payments.html'"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="nlbl">Chat</span></button>
+  <button class="ni" onclick="setNi(this);location.href='auth.html'"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nlbl">Profile</span></button>
 </nav>
 <script>
 const H=document.documentElement,TB=document.getElementById('thbtn');
@@ -393,6 +416,31 @@ function closeDr(){DR.classList.remove('on');document.body.style.overflow=''}
 function doSearch(inp){const v=inp.value.toLowerCase();document.querySelectorAll('#ag .lc').forEach(c=>{c.style.display=c.dataset.name.toLowerCase().includes(v)?'':'none'});clearTimeout(sat);cur=v?SD.filter(s=>s.name.toLowerCase().includes(v)):[...SD];si=0;buildSvc(cur);ssa()}
 function clearS(){const i=document.getElementById('si');i.value='';doSearch(i)}
 document.querySelectorAll('.lfv').forEach(b=>{b.addEventListener('click',e=>{e.stopPropagation();b.textContent=b.textContent==='🤍'?'❤️':'🤍'})});
+/* ── NOTIFICATIONS ── */
+const NOTIFS=[
+  {id:1,icon:'🚀',bg:'rgba(232,201,106,.12)',title:'Your listing is now Boosted!',desc:'Dell XPS 13 is live in Featured. Est. 10× more views today.',time:'Just now',unread:true},
+  {id:2,icon:'💬',bg:'rgba(91,229,197,.12)',title:'New message from @kofi_tech',desc:'Hey, is the MacBook still available?',time:'5 min ago',unread:true},
+  {id:3,icon:'❤️',bg:'rgba(255,107,107,.12)',title:'@ama_bags liked your listing',desc:'North Face Backpack got a new like.',time:'12 min ago',unread:true},
+  {id:4,icon:'🏷️',bg:'rgba(160,120,255,.12)',title:'Price drop alert',desc:'Sony WH-1000XM5 you wished just dropped to GH₵ 650.',time:'1 hr ago',unread:false},
+  {id:5,icon:'⭐',bg:'rgba(232,201,106,.12)',title:'New review received',desc:'@yaw_cs left you a 5-star review on your last transaction.',time:'2 hrs ago',unread:false},
+  {id:6,icon:'📦',bg:'rgba(91,229,197,.12)',title:'Order confirmed',desc:'Mechanical Keyboard purchase confirmed by @kofi_gear.',time:'Yesterday',unread:false},
+];
+let notifs=[...NOTIFS];
+function renderNotifs(){
+  const list=document.getElementById('nlist');
+  const unread=notifs.filter(n=>n.unread).length;
+  const badge=document.getElementById('nbadge');
+  if(unread>0){badge.textContent=unread>9?'9+':unread;badge.classList.remove('hidden')}else{badge.classList.add('hidden')}
+  if(!notifs.length){list.innerHTML='<div class="npempty">🔔<br>No notifications yet</div>';return}
+  list.innerHTML=notifs.map(n=>`<div class="nitem${n.unread?' unread':''}" onclick="markRead(${n.id})"><div class="nico2" style="background:${n.bg}">${n.icon}</div><div class="ntxt"><div class="ntitle2">${n.title}</div><div class="ndesc">${n.desc}</div></div><div class="ntime">${n.time}</div></div>`).join('');
+}
+function markRead(id){const n=notifs.find(x=>x.id===id);if(n)n.unread=false;renderNotifs()}
+function markAllRead(){notifs.forEach(n=>n.unread=false);renderNotifs()}
+const NP=document.getElementById('npanel');
+function toggleNotif(){NP.classList.toggle('open')}
+document.addEventListener('click',e=>{if(!e.target.closest('#notibtn')&&!e.target.closest('#npanel'))NP.classList.remove('open')});
+renderNotifs();
+function openBoost(){alert("To boost your listing, message our support team via in-app chat. Boosted listings appear in Featured — free during campus beta.");}
 </script>
 </body>
 </html>
