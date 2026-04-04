@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
   <title>Products — PU-Marketplace</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
@@ -94,6 +95,7 @@
     .fca{font-size:.62rem;background:rgba(255,255,255,.18);color:#fff;padding:.14rem .45rem;border-radius:5px;font-weight:500}
     .far{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:var(--g);backdrop-filter:blur(10px);border:1px solid var(--gb);color:#fff;font-size:.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:5;opacity:0;transition:background .2s,opacity .2s}
     .fw:hover .far{opacity:1}
+    @media(hover:none){.far{opacity:.7}}
     .far.p{left:.6rem}.far.n{right:.6rem}
     .far:hover{background:rgba(232,201,106,.3)}
     .fdt{display:flex;gap:.38rem;justify-content:center;margin-top:.5rem}
@@ -169,6 +171,26 @@
     .ndesc{font-size:.74rem;color:var(--m);font-weight:300;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .ntime{font-size:.66rem;color:var(--m);flex-shrink:0;margin-top:.15rem}
     .npempty{padding:2rem 1rem;text-align:center;color:var(--m);font-size:.85rem}
+    @media(max-width:600px){
+      .boost{flex-direction:column;text-align:center;gap:.75rem}
+      .bac{flex-direction:row;justify-content:center}
+      .filters{flex-wrap:nowrap;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
+      .sort-row{flex-direction:column;align-items:flex-start;gap:.4rem}
+      .sort-sel{width:100%}
+      .inner{padding:.85rem .85rem 0}
+      .npanel{width:calc(100vw - 1.5rem);right:.75rem}
+      .modal{padding:1.3rem}
+      .mop{gap:.5rem}
+    }
+    @media(max-width:400px){
+      .tabs{gap:.1rem}
+      .tab{font-size:.7rem;padding:.34rem .65rem}
+      .pgrid{gap:.7rem}
+      .pcbd{padding:.6rem}
+      .pcnm{font-size:.76rem}
+      .pcpr{font-size:.82rem}
+      .fsl{aspect-ratio:4/3}
+    }
   </style>
 </head>
 <body>
@@ -299,7 +321,7 @@
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
     <span class="nlbl">Reels</span>
   </button>
-  <button class="nadd" onclick="location.href='listings.html'" title="Add listing">
+  <button class="nadd" onclick="location.href='create-listing.html'" title="Add listing">
     <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
   </button>
   <button class="ni" onclick="location.href='payments.html'" title="Chat">
@@ -314,14 +336,14 @@
 
 <script>
 const html=document.documentElement,tb=document.getElementById('thbtn');let dark=true;
-function applyTheme(d){html.setAttribute('data-theme',d?'dark':'light');tb.textContent=d?'🌞':'🌙';dark=d;localStorage.setItem('pu-theme',d?'dark':'light')}
+function applyTheme(d){html.setAttribute('data-theme',d?'dark':'light');const tm=document.getElementById('themeColorMeta');if(tm)tm.setAttribute('content',d?'#0d0e11':'#f0ede8');tb.textContent=d?'🌞':'🌙';dark=d;localStorage.setItem('pu-theme',d?'dark':'light')}
 const sv=localStorage.getItem('pu-theme');if(sv)applyTheme(sv==='dark');
 tb.addEventListener('click',()=>applyTheme(!dark));
 const sb=document.getElementById('sb'),ov=document.getElementById('ov');
 document.getElementById('hbg').onclick=()=>{sb.classList.add('on');ov.classList.add('on');document.body.style.overflow='hidden'};
 function closeSb(){sb.classList.remove('on');ov.classList.remove('on');document.body.style.overflow=''}
 if(window.innerWidth>=960)sb.classList.add('on');
-window.addEventListener('resize',()=>{if(window.innerWidth>=960){sb.classList.add('on');ov.classList.remove('on')}});
+window.addEventListener('resize',()=>{if(window.innerWidth>=960){sb.classList.add('on');ov.classList.remove('on')}else{sb.classList.remove('on');}});
 
 const PRODS=[
   {id:1,name:'Dell XPS 13 Laptop',price:2400,cat:'electronics',seller:'@kofi_tech',img:'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&q=75&auto=format',badge:'Electronics',bc:'rgba(232,201,106,.18)',bt:'var(--a)',sold:false},

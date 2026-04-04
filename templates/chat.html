@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
+  <title>Messages — PU-Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── TOKENS (match dashboard exactly) ── */
+    :root{--a:#e8c96a;--a2:#5be5c5;--red:#ff6b6b;--r:16px;--nh:60px;--bh:78px;--sw:228px}
+    [data-theme="dark"]{--bg:#0d0e11;--bg2:#15171c;--card:#1c1f27;--t:#f0eeea;--m:#7a7e8a;--b:rgba(255,255,255,.07);--g:rgba(18,20,28,.62);--gb:rgba(255,255,255,.13);--sh:0 8px 32px rgba(0,0,0,.55);--inp:rgba(255,255,255,.06);--bubble-in:#1c1f27;--bubble-out:rgba(232,201,106,.15);--bubble-out-border:rgba(232,201,106,.25)}
+    [data-theme="light"]{--bg:#f0ede8;--bg2:#e8e4de;--card:#fff;--t:#1a1a1a;--m:#888;--b:rgba(0,0,0,.08);--g:rgba(255,255,255,.68);--gb:rgba(255,255,255,.9);--sh:0 8px 32px rgba(0,0,0,.1);--inp:rgba(0,0,0,.05);--bubble-in:#fff;--bubble-out:rgba(201,160,48,.12);--bubble-out-border:rgba(201,160,48,.22)}
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;height:100%}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t);overflow:hidden;height:100vh;transition:background .3s,color .3s}
+
+    /* ── SHELL: sidebar + chat pane ── */
+    .shell{display:flex;height:100vh;overflow:hidden}
+
+    /* ══════════════════════════════════════
+       LEFT PANEL — conversation list
+    ══════════════════════════════════════ */
+    .left{width:340px;flex-shrink:0;display:flex;flex-direction:column;border-right:1px solid var(--b);background:var(--bg);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+
+    /* Left top bar */
+    .left-head{height:var(--nh);display:flex;align-items:center;justify-content:space-between;padding:0 1rem;border-bottom:1px solid var(--b);background:var(--g);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);flex-shrink:0}
+    .left-logo{font-family:'Playfair Display',serif;font-weight:900;font-size:1.05rem;color:var(--a)}
+    .left-logo span{color:var(--t)}
+    .head-actions{display:flex;align-items:center;gap:.5rem}
+    .icon-btn{width:36px;height:36px;border-radius:9px;background:var(--inp);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t);font-size:1rem;transition:background .2s}
+    .icon-btn:hover{background:rgba(232,201,106,.15)}
+    .icon-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+    /* Search */
+    .left-search{padding:.65rem .9rem;border-bottom:1px solid var(--b);flex-shrink:0}
+    .srch{position:relative}
+    .srch input{width:100%;background:var(--inp);border:1.5px solid var(--b);border-radius:11px;padding:.6rem .85rem .6rem 2.4rem;color:var(--t);font-family:'DM Sans',sans-serif;font-size:.83rem;outline:none;transition:border-color .25s}
+    .srch input::placeholder{color:var(--m)}
+    .srch input:focus{border-color:rgba(232,201,106,.4)}
+    .srch-ico{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);font-size:.9rem;opacity:.5;pointer-events:none}
+
+    /* Tabs */
+    .left-tabs{display:flex;padding:.5rem .9rem;gap:.4rem;border-bottom:1px solid var(--b);flex-shrink:0}
+    .ltab{padding:.35rem .9rem;border-radius:99px;border:1.5px solid var(--b);background:transparent;font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:500;color:var(--m);cursor:pointer;transition:all .2s;white-space:nowrap}
+    .ltab.on{background:var(--a);border-color:var(--a);color:#0d0e11;font-weight:700}
+    .ltab:hover:not(.on){color:var(--t);border-color:rgba(232,201,106,.3)}
+
+    /* Conversation list */
+    .conv-list{flex:1;overflow-y:auto;padding:.4rem 0}
+    .conv-list::-webkit-scrollbar{width:3px}
+    .conv-list::-webkit-scrollbar-thumb{background:var(--b);border-radius:3px}
+
+    .conv{display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;cursor:pointer;transition:background .2s;border-radius:0;position:relative;border-left:3px solid transparent}
+    .conv:hover{background:var(--inp)}
+    .conv.active{background:rgba(232,201,106,.07);border-left-color:var(--a)}
+    .conv-av{width:46px;height:46px;border-radius:50%;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;font-family:'Playfair Display',serif;background:linear-gradient(135deg,var(--a),#f5c842)}
+    .conv-av.teal{background:linear-gradient(135deg,var(--a2),#2dd4bf)}
+    .conv-av.purple{background:linear-gradient(135deg,#a78bfa,#7c3aed)}
+    .conv-av.orange{background:linear-gradient(135deg,#fb923c,#ea580c)}
+    .conv-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    .conv-av-txt{color:#0d0e11;font-size:.95rem}
+    .online-dot{position:absolute;bottom:1px;right:1px;width:11px;height:11px;border-radius:50%;background:#22c55e;border:2px solid var(--bg)}
+    .conv-body{flex:1;min-width:0}
+    .conv-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.18rem}
+    .conv-name{font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .conv-time{font-size:.68rem;color:var(--m);flex-shrink:0;margin-left:.5rem}
+    .conv-bottom{display:flex;justify-content:space-between;align-items:center}
+    .conv-preview{font-size:.78rem;color:var(--m);font-weight:300;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+    .conv-preview.unread{color:var(--t);font-weight:500}
+    .conv-badge{min-width:18px;height:18px;border-radius:99px;background:var(--a);color:#0d0e11;font-size:.62rem;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 5px;margin-left:.5rem;flex-shrink:0}
+    .conv-listing-tag{display:flex;align-items:center;gap:.3rem;font-size:.67rem;color:var(--m);background:var(--inp);border-radius:5px;padding:.12rem .45rem;margin-top:.25rem;width:fit-content;max-width:180px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+
+    /* Empty state */
+    .empty-convs{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;gap:.6rem}
+    .empty-ico{font-size:3rem;opacity:.4}
+    .empty-t{font-size:.9rem;color:var(--m);font-weight:300}
+
+    /* ══════════════════════════════════════
+       RIGHT PANEL — active chat window
+    ══════════════════════════════════════ */
+    .right{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
+
+    /* Chat top bar */
+    .chat-head{height:var(--nh);display:flex;align-items:center;gap:.75rem;padding:0 1rem;border-bottom:1px solid var(--b);background:var(--g);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);flex-shrink:0}
+    .back-btn{display:none;width:34px;height:34px;border-radius:9px;background:var(--inp);border:none;cursor:pointer;align-items:center;justify-content:center;color:var(--t);flex-shrink:0}
+    .back-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .chat-av{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;font-family:'Playfair Display',serif;background:linear-gradient(135deg,var(--a),#f5c842);color:#0d0e11}
+    .chat-info{flex:1;min-width:0}
+    .chat-name{font-size:.9rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .chat-status{font-size:.72rem;color:#22c55e;font-weight:400}
+    .chat-status.away{color:var(--m)}
+    .chat-actions{display:flex;gap:.4rem;flex-shrink:0}
+
+    /* Listing context banner */
+    .listing-banner{background:var(--card);border-bottom:1px solid var(--b);padding:.6rem 1rem;display:flex;align-items:center;gap:.75rem;flex-shrink:0;cursor:pointer;transition:background .2s}
+    .listing-banner:hover{background:rgba(232,201,106,.04)}
+    .lb-img{width:40px;height:40px;border-radius:8px;background:var(--inp);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+    .lb-img img{width:100%;height:100%;object-fit:cover}
+    .lb-info{flex:1;min-width:0}
+    .lb-name{font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .lb-price{font-size:.78rem;color:var(--a);font-weight:700}
+    .lb-arrow{font-size:.8rem;color:var(--m)}
+
+    /* Message area */
+    .msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.6rem;scroll-behavior:smooth}
+    .msgs::-webkit-scrollbar{width:3px}
+    .msgs::-webkit-scrollbar-thumb{background:var(--b);border-radius:3px}
+
+    /* Date separator */
+    .date-sep{display:flex;align-items:center;gap:.75rem;margin:.4rem 0}
+    .date-sep::before,.date-sep::after{content:'';flex:1;height:1px;background:var(--b)}
+    .date-sep span{font-size:.65rem;color:var(--m);font-weight:500;white-space:nowrap;letter-spacing:.5px;text-transform:uppercase}
+
+    /* Bubbles */
+    .msg{display:flex;flex-direction:column;max-width:72%;gap:.18rem}
+    .msg.in{align-self:flex-start}
+    .msg.out{align-self:flex-end;align-items:flex-end}
+    .bubble{padding:.6rem .9rem;border-radius:16px;font-size:.86rem;line-height:1.55;word-break:break-word;position:relative}
+    .msg.in .bubble{background:var(--bubble-in);border:1px solid var(--b);border-bottom-left-radius:4px}
+    .msg.out .bubble{background:var(--bubble-out);border:1px solid var(--bubble-out-border);border-bottom-right-radius:4px;color:var(--t)}
+    .bubble img{max-width:220px;border-radius:10px;margin-top:.3rem}
+    .msg-meta{display:flex;align-items:center;gap:.35rem;padding:0 .25rem}
+    .msg-time{font-size:.65rem;color:var(--m)}
+    .msg-tick{font-size:.7rem;color:var(--a2)}
+
+    /* Offer card bubble */
+    .offer-card{background:var(--card);border:1px solid var(--b);border-radius:14px;padding:.85rem 1rem;margin-top:.3rem;min-width:200px}
+    .offer-label{font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--a);font-weight:600;margin-bottom:.3rem}
+    .offer-amount{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:900;color:var(--a);letter-spacing:-.5px}
+    .offer-item{font-size:.77rem;color:var(--m);margin-top:.15rem}
+    .offer-btns{display:flex;gap:.5rem;margin-top:.75rem}
+    .offer-btn{flex:1;padding:.45rem;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:opacity .2s}
+    .offer-btn.accept{background:var(--a2);color:#0d0e11}
+    .offer-btn.decline{background:var(--inp);color:var(--m);border:1px solid var(--b)}
+    .offer-btn:hover{opacity:.85}
+    .offer-accepted{font-size:.75rem;color:var(--a2);font-weight:600;margin-top:.4rem;display:flex;align-items:center;gap:.3rem}
+
+    /* Meetup card bubble */
+    .meetup-card{background:rgba(91,229,197,.07);border:1px solid rgba(91,229,197,.2);border-radius:14px;padding:.85rem 1rem;margin-top:.3rem;min-width:200px}
+    .meetup-label{font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--a2);font-weight:600;margin-bottom:.5rem}
+    .meetup-row{display:flex;align-items:center;gap:.5rem;font-size:.82rem;margin-bottom:.3rem}
+    .meetup-row:last-child{margin-bottom:0}
+    .meetup-ico{font-size:1rem;flex-shrink:0}
+
+    /* System message */
+    .sys-msg{text-align:center;font-size:.73rem;color:var(--m);font-weight:400;padding:.3rem 1rem;background:var(--inp);border-radius:99px;align-self:center;border:1px solid var(--b)}
+
+    /* Typing indicator */
+    .typing{display:flex;align-items:center;gap:.35rem;padding:.55rem .85rem;background:var(--bubble-in);border:1px solid var(--b);border-radius:14px;border-bottom-left-radius:4px;width:fit-content}
+    .typing span{width:6px;height:6px;border-radius:50%;background:var(--m);animation:dot 1.4s ease-in-out infinite}
+    .typing span:nth-child(2){animation-delay:.2s}
+    .typing span:nth-child(3){animation-delay:.4s}
+    @keyframes dot{0%,80%,100%{transform:scale(.8);opacity:.5}40%{transform:scale(1.1);opacity:1}}
+
+    /* ── INPUT BAR ── */
+    .input-bar{padding:.7rem .9rem;border-top:1px solid var(--b);background:var(--g);backdrop-filter:blur(20px);flex-shrink:0}
+    .input-row{display:flex;align-items:flex-end;gap:.5rem}
+    .input-actions{display:flex;gap:.3rem;flex-shrink:0}
+    .inp-btn{width:36px;height:36px;border-radius:10px;background:var(--inp);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--m);font-size:1rem;transition:all .2s;flex-shrink:0}
+    .inp-btn:hover{background:rgba(232,201,106,.12);color:var(--a)}
+    .inp-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .msg-input{flex:1;background:var(--inp);border:1.5px solid var(--b);border-radius:22px;padding:.6rem 1rem;color:var(--t);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;resize:none;line-height:1.45;max-height:120px;overflow-y:auto;transition:border-color .25s}
+    .msg-input::placeholder{color:var(--m)}
+    .msg-input:focus{border-color:rgba(232,201,106,.4)}
+    .send-btn{width:38px;height:38px;border-radius:50%;background:var(--a);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .2s,box-shadow .2s,opacity .2s;box-shadow:0 4px 14px rgba(232,201,106,.35)}
+    .send-btn:hover{transform:scale(1.08);box-shadow:0 6px 18px rgba(232,201,106,.5)}
+    .send-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .send-btn svg{width:17px;height:17px;stroke:#0d0e11;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+    /* Quick reply chips */
+    .quick-chips{display:flex;gap:.45rem;overflow-x:auto;padding-bottom:.4rem;-ms-overflow-style:none;scrollbar-width:none}
+    .quick-chips::-webkit-scrollbar{display:none}
+    .chip{padding:.32rem .85rem;border-radius:99px;border:1.5px solid var(--b);background:var(--inp);font-size:.76rem;font-weight:500;color:var(--m);cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0}
+    .chip:hover{border-color:rgba(232,201,106,.35);color:var(--t)}
+
+    /* ══════════════════════════════════════
+       NO CHAT SELECTED (placeholder)
+    ══════════════════════════════════════ */
+    .no-chat{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center}
+    .no-chat-ico{width:80px;height:80px;border-radius:50%;background:rgba(232,201,106,.1);border:1px solid rgba(232,201,106,.2);display:flex;align-items:center;justify-content:center;font-size:2.2rem;animation:pulse 3s ease-in-out infinite}
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,201,106,.2)}50%{box-shadow:0 0 0 14px rgba(232,201,106,0)}}
+    .no-chat-t{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;letter-spacing:-.3px}
+    .no-chat-s{font-size:.85rem;color:var(--m);font-weight:300;max-width:280px;line-height:1.7}
+    .no-chat-btn{margin-top:.5rem;padding:.7rem 1.6rem;border-radius:10px;background:var(--a);color:#0d0e11;border:none;font-family:'DM Sans',sans-serif;font-size:.86rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+    .no-chat-btn:hover{opacity:.88}
+
+    /* ══════════════════════════════════════
+       BOTTOM NAV (mobile)
+    ══════════════════════════════════════ */
+    .botnav{position:fixed;bottom:13px;left:50%;transform:translateX(-50%);z-index:400;display:flex;align-items:center;justify-content:space-around;width:min(500px,calc(100vw - 26px));height:var(--bh);padding:0 .7rem;background:var(--g);backdrop-filter:blur(36px) saturate(200%) brightness(1.08);-webkit-backdrop-filter:blur(36px) saturate(200%) brightness(1.08);border:1px solid var(--gb);border-radius:40px;box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.1);transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s}
+    .botnav::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);border-radius:99px}
+    .botnav.hide{transform:translateX(-50%) translateY(120px);opacity:0}
+    .ni{display:flex;flex-direction:column;align-items:center;gap:.2rem;cursor:pointer;position:relative;flex:1;padding:.5rem 0;background:none;border:none;color:var(--m);font-family:'DM Sans',sans-serif;transition:color .2s;-webkit-tap-highlight-color:transparent}
+    .ni:hover{color:var(--t)}
+    .ni.on{color:var(--a)}
+    .ni svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .ni.on svg{stroke:var(--a)}
+    .ni.on::after{content:'';position:absolute;bottom:.12rem;width:4px;height:4px;border-radius:50%;background:var(--a)}
+    .nlbl{font-size:.58rem;font-weight:500}
+    .nadd{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--a),#f5c842);border:3px solid var(--g);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;box-shadow:0 6px 20px rgba(232,201,106,.5),inset 0 1px 0 rgba(255,255,255,.3);transition:transform .2s,box-shadow .2s;position:relative}
+    .nadd::before{content:'';position:absolute;inset:2px;border-radius:50%;background:rgba(255,255,255,.12)}
+    .nadd:hover{transform:scale(1.1);box-shadow:0 10px 28px rgba(232,201,106,.6)}
+    .nadd svg{width:21px;height:21px;stroke:#0d0e11;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+    /* ══════════════════════════════════════
+       RESPONSIVE — MOBILE (<768px)
+    ══════════════════════════════════════ */
+    @media(max-width:767px){
+      body{overflow:hidden;height:100dvh}
+      .shell{position:relative;overflow:hidden}
+      .left{position:absolute;inset:0;width:100%;z-index:10;transform:translateX(0);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+      .left.hidden{transform:translateX(-100%)}
+      .right{position:absolute;inset:0;width:100%;z-index:20;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+      .right.visible{transform:translateX(0)}
+      .back-btn{display:flex}
+      .botnav{display:flex}
+      /* Push chat area above bottom nav */
+      .right{padding-bottom:calc(var(--bh) + 26px)}
+    }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE — DESKTOP (≥768px)
+    ══════════════════════════════════════ */
+    @media(min-width:768px){
+      .botnav{display:none}
+      .left{min-width:300px;max-width:340px}
+      /* Push body down from nowhere — no bottom nav on desktop */
+      body{padding-bottom:0}
+    }
+
+    /* ══════════════════════════════════════
+       SIDEBAR PUSH LAYOUT (desktop ≥960)
+    ══════════════════════════════════════ */
+    @media(min-width:960px){
+      /* No global sidebar on chat page — it IS a full-page layout */
+    }
+
+    /* ── MISC ── */
+    ::-webkit-scrollbar{width:3px;height:3px}
+    ::-webkit-scrollbar-thumb{background:var(--b);border-radius:3px}
+    .dn{display:none!important}
+
+    /* Toast */
+    .toast{position:fixed;bottom:calc(var(--bh) + 30px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--card);border:1px solid var(--b);border-radius:11px;padding:.6rem 1.2rem;font-size:.82rem;font-weight:500;box-shadow:var(--sh);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;z-index:999;white-space:nowrap}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    @media(min-width:768px){.toast{bottom:24px}}
+  </style>
+</head>
+<body>
+
+<div class="shell" id="shell">
+
+  <!-- ════════════════════════════════
+       LEFT — Conversation list
+  ════════════════════════════════ -->
+  <div class="left" id="leftPanel">
+
+    <div class="left-head">
+      <div class="left-logo">PU-<span>Chat</span></div>
+      <div class="head-actions">
+        <button class="icon-btn" id="thbtn" title="Toggle theme">🌞</button>
+        <button class="icon-btn" title="New message" onclick="showToast('New conversation — coming soon')">
+          <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="left-search">
+      <div class="srch">
+        <span class="srch-ico">🔍</span>
+        <input type="text" id="srchInput" placeholder="Search conversations…" oninput="filterConvs(this.value)" autocomplete="off"/>
+      </div>
+    </div>
+
+    <div class="left-tabs">
+      <button class="ltab on" onclick="switchTab(this,'all')">All</button>
+      <button class="ltab" onclick="switchTab(this,'buying')">Buying</button>
+      <button class="ltab" onclick="switchTab(this,'selling')">Selling</button>
+      <button class="ltab" onclick="switchTab(this,'unread')">Unread</button>
+    </div>
+
+    <div class="conv-list" id="convList"></div>
+
+  </div>
+
+  <!-- ════════════════════════════════
+       RIGHT — Active chat
+  ════════════════════════════════ -->
+  <div class="right" id="rightPanel">
+
+    <!-- No chat selected (desktop default) -->
+    <div class="no-chat" id="noChatView">
+      <div class="no-chat-ico">💬</div>
+      <div class="no-chat-t">Your Messages</div>
+      <div class="no-chat-s">Select a conversation from the list to start chatting with buyers and sellers on campus.</div>
+      <button class="no-chat-btn" onclick="showToast('New conversation — coming soon')">Start a New Chat</button>
+    </div>
+
+    <!-- Active chat window (hidden until a conv is selected) -->
+    <div id="chatView" class="dn" style="display:none;flex-direction:column;height:100%">
+
+      <div class="chat-head">
+        <button class="back-btn" id="backBtn" onclick="showLeft()">
+          <svg viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 5l-7 7 7 7"/></svg>
+        </button>
+        <div class="chat-av" id="chatAv">KA</div>
+        <div class="chat-info">
+          <div class="chat-name" id="chatName">Kwame Asante</div>
+          <div class="chat-status" id="chatStatus">Online</div>
+        </div>
+        <div class="chat-actions">
+          <button class="icon-btn" title="View profile" onclick="showToast('Profile view — coming soon')">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </button>
+          <button class="icon-btn" title="More options" onclick="showToast('More options — coming soon')">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Listing context banner -->
+      <div class="listing-banner" id="listingBanner" onclick="showToast('Opening listing…')">
+        <div class="lb-img" id="lbImg">📦</div>
+        <div class="lb-info">
+          <div class="lb-name" id="lbName">HP Laptop 15.6" Core i7</div>
+          <div class="lb-price" id="lbPrice">GH₵ 1,800</div>
+        </div>
+        <span class="lb-arrow">›</span>
+      </div>
+
+      <!-- Messages -->
+      <div class="msgs" id="msgArea"></div>
+
+      <!-- Quick reply chips -->
+      <div style="padding:.4rem .9rem 0;flex-shrink:0" id="quickChipsWrap">
+        <div class="quick-chips" id="quickChips"></div>
+      </div>
+
+      <!-- Input bar -->
+      <div class="input-bar">
+        <div class="input-row">
+          <div class="input-actions">
+            <button class="inp-btn" title="Attach image" onclick="showToast('Photo sharing — coming soon')">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </button>
+            <button class="inp-btn" title="Make an offer" onclick="insertOffer()">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+            </button>
+            <button class="inp-btn" title="Schedule meetup" onclick="insertMeetup()">
+              <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </button>
+          </div>
+          <textarea class="msg-input" id="msgInput" placeholder="Type a message…" rows="1"
+            oninput="autoResize(this);toggleSend()"
+            onkeydown="handleKey(event)"></textarea>
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- Bottom nav (mobile) -->
+<nav class="botnav" id="bn">
+  <button class="ni" onclick="setNi(this);location.href='dashboard.html'">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span class="nlbl">Home</span>
+  </button>
+  <button class="ni" onclick="setNi(this);location.href='dashboard-services.html'">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+    <span class="nlbl">Reels</span>
+  </button>
+  <button class="nadd" onclick="location.href='create-listing.html'">
+    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </button>
+  <button class="ni on">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    <span class="nlbl">Chat</span>
+  </button>
+  <button class="ni" onclick="setNi(this);location.href='auth.html'">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span class="nlbl">Profile</span>
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── THEME ── */
+const H=document.documentElement,TB=document.getElementById('thbtn');
+let dark=localStorage.getItem('pu-th')!=='light';
+function apTh(d){H.setAttribute('data-theme',d?'dark':'light');TB.textContent=d?'🌞':'🌙';dark=d;localStorage.setItem('pu-th',d?'dark':'light');const m=document.getElementById('themeColorMeta');if(m)m.setAttribute('content',d?'#0d0e11':'#f0ede8');}
+apTh(dark);
+TB.addEventListener('click',()=>apTh(!dark));
+
+/* ── CONVERSATION DATA ── */
+const CONVS=[
+  {id:1,name:'Kwame Asante',initials:'KA',avCls:'',role:'seller',listing:'HP Laptop 15.6" Core i7',listingEmoji:'💻',price:'GH₵ 1,800',time:'Just now',badge:2,type:'buying',status:'online',
+   messages:[
+    {from:'in',text:'Hey! Is the laptop still available?',time:'10:02 AM'},
+    {from:'out',text:'Yes it is! Still in great condition. When would you like to see it?',time:'10:04 AM'},
+    {from:'in',text:'Great! Can you do GH₵ 1,600? I can meet you today at the library.',time:'10:06 AM',offer:{amount:'GH₵ 1,600',item:'HP Laptop 15.6" Core i7',status:'pending'}},
+    {from:'out',text:'Let me think about it. The lowest I can go is GH₵ 1,700.',time:'10:10 AM'},
+    {from:'in',text:'Deal! Let\'s meet at the Main Library Foyer at 3pm?',time:'10:12 AM'},
+   ]},
+  {id:2,name:'Abena Boateng',initials:'AB',avCls:'teal',role:'buyer',listing:'Organic Chemistry Vol. 2',listingEmoji:'📚',price:'GH₵ 45',time:'2 hr ago',badge:0,type:'selling',status:'away',
+   messages:[
+    {from:'in',text:'Hi! I saw your Organic Chemistry textbook. Is it the 8th edition?',time:'08:15 AM'},
+    {from:'out',text:'Yes, 8th edition. Very clean, only used it for one semester.',time:'08:18 AM'},
+    {from:'in',text:'Perfect. Could we meet tomorrow morning near the Science Faculty?',time:'08:20 AM'},
+    {from:'out',text:null,meetup:{spot:'Science Faculty Entrance',date:'Tomorrow, 9:00 AM',note:'I\'ll be wearing a red hoodie'},time:'08:22 AM'},
+    {from:'in',text:'👍 Perfect! See you then.',time:'08:24 AM'},
+   ]},
+  {id:3,name:'Esi Owusu',initials:'EO',avCls:'purple',role:'seller',listing:'Graphic Design Services',listingEmoji:'🎨',price:'From GH₵ 50',time:'Yesterday',badge:0,type:'buying',status:'away',
+   messages:[
+    {from:'out',text:'Hello! I need a logo designed for my campus business. Can you help?',time:'Yesterday 3:20 PM'},
+    {from:'in',text:'Absolutely! What kind of business is it? And do you have a colour preference?',time:'Yesterday 3:25 PM'},
+    {from:'out',text:'It\'s a food delivery service. I\'m thinking green and gold.',time:'Yesterday 3:30 PM'},
+    {from:'in',text:'Love that combo! I\'ll prepare 3 concepts for you. My rate is GH₵ 80 for a full logo pack — includes PNG, SVG and brand guidelines.',time:'Yesterday 3:35 PM'},
+    {from:'out',text:'That works for me! When can you start?',time:'Yesterday 3:38 PM'},
+    {from:'in',text:'I can start today and deliver the first draft within 48 hours.',time:'Yesterday 3:40 PM'},
+   ]},
+  {id:4,name:'Kofi Mensah',initials:'KM',avCls:'orange',role:'buyer',listing:'Mechanical Keyboard',listingEmoji:'⌨️',price:'GH₵ 280',time:'Mon',badge:1,type:'selling',status:'online',
+   messages:[
+    {from:'in',text:'Is the keyboard still available? I\'ve been looking for a good mechanical one.',time:'Mon 5:10 PM'},
+    {from:'out',text:'Yes! It\'s a Keychron K2 with brown switches. Barely used, bought it 3 months ago.',time:'Mon 5:14 PM'},
+    {from:'in',text:'Any chance you\'ll take GH₵ 250?',time:'Mon 5:16 PM',offer:{amount:'GH₵ 250',item:'Mechanical Keyboard (Keychron K2)',status:'declined'}},
+    {from:'out',text:'Sorry, GH₵ 280 is my final price. It\'s a fair deal for what you\'re getting.',time:'Mon 5:18 PM'},
+    {from:'in',text:'Fair enough. I\'ll take it. When are you free to meet?',time:'Mon 5:22 PM'},
+   ]},
+  {id:5,name:'Adwoa Asante',initials:'AA',avCls:'',role:'seller',listing:'Ankara Dress (Size M)',listingEmoji:'👗',price:'GH₵ 45',time:'Sun',badge:0,type:'buying',status:'away',
+   messages:[
+    {from:'out',text:'Hello! Is the dress still available?',time:'Sun 12:00 PM'},
+    {from:'in',text:'Yes it is! It was only worn once for a party.',time:'Sun 12:05 PM'},
+    {from:'out',text:'Great! Can I see more photos?',time:'Sun 12:06 PM'},
+    {from:'in',text:'Sure! Let me send them shortly.',time:'Sun 12:08 PM'},
+   ]},
+];
+
+const QUICK_REPLIES=[
+  'Is this still available?','Can we meet today?','I\'ll take it!','What\'s your lowest price?','Can you deliver?','Send more photos',
+];
+
+let activeConv=null,activeTab='all',msgs={};
+
+/* ── INIT ── */
+function init(){
+  CONVS.forEach(c=>msgs[c.id]=[...c.messages]);
+  renderConvList();
+  // On desktop, auto-open first conv
+  if(window.innerWidth>=768)openConv(CONVS[0]);
+}
+
+/* ── CONVERSATION LIST ── */
+function renderConvList(filter='',tab=activeTab){
+  const list=document.getElementById('convList');
+  let data=CONVS.filter(c=>{
+    const matchSearch=!filter||c.name.toLowerCase().includes(filter.toLowerCase())||c.listing.toLowerCase().includes(filter.toLowerCase());
+    const matchTab=tab==='all'||(tab==='unread'&&c.badge>0)||c.type===tab;
+    return matchSearch&&matchTab;
+  });
+  if(!data.length){
+    list.innerHTML=`<div class="empty-convs"><div class="empty-ico">💬</div><div class="empty-t">No conversations found</div></div>`;
+    return;
+  }
+  list.innerHTML=data.map(c=>{
+    const lastMsg=msgs[c.id]?.[msgs[c.id].length-1];
+    const preview=lastMsg?(lastMsg.text||(lastMsg.offer?`💰 Offer: ${lastMsg.offer.amount}`:`📅 Meetup at ${lastMsg.meetup?.spot}`))||'':'';
+    const isUnread=c.badge>0;
+    return `<div class="conv${activeConv?.id===c.id?' active':''}" onclick="openConv(CONVS.find(x=>x.id===${c.id}))" id="cv${c.id}">
+      <div class="conv-av ${c.avCls}">
+        <span class="conv-av-txt">${c.initials}</span>
+        ${c.status==='online'?'<div class="online-dot"></div>':''}
+      </div>
+      <div class="conv-body">
+        <div class="conv-top">
+          <div class="conv-name">${c.name}</div>
+          <div class="conv-time">${c.time}</div>
+        </div>
+        <div class="conv-bottom">
+          <div class="conv-preview${isUnread?' unread':''}">${preview}</div>
+          ${c.badge?`<div class="conv-badge">${c.badge}</div>`:''}
+        </div>
+        <div class="conv-listing-tag">${c.listingEmoji} ${c.listing}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterConvs(v){renderConvList(v,activeTab);}
+function switchTab(el,tab){
+  activeTab=tab;
+  document.querySelectorAll('.ltab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  renderConvList(document.getElementById('srchInput').value,tab);
+}
+
+/* ── OPEN CONVERSATION ── */
+function openConv(c){
+  if(!c)return;
+  activeConv=c;
+  // Clear badge
+  const ci=CONVS.find(x=>x.id===c.id);if(ci)ci.badge=0;
+  renderConvList(document.getElementById('srchInput').value);
+
+  // Update header
+  document.getElementById('chatAv').textContent=c.initials;
+  document.getElementById('chatAv').className='chat-av '+c.avCls;
+  document.getElementById('chatName').textContent=c.name;
+  const statusEl=document.getElementById('chatStatus');
+  statusEl.textContent=c.status==='online'?'Online · Active now':'Last seen recently';
+  statusEl.className='chat-status'+(c.status==='online'?'':' away');
+
+  // Listing banner
+  document.getElementById('lbImg').textContent=c.listingEmoji;
+  document.getElementById('lbName').textContent=c.listing;
+  document.getElementById('lbPrice').textContent=c.price;
+
+  // Render messages
+  renderMsgs(c.id);
+
+  // Quick chips
+  renderChips();
+
+  // Show chat view
+  document.getElementById('noChatView').style.display='none';
+  const cv=document.getElementById('chatView');
+  cv.style.display='flex';
+  cv.classList.remove('dn');
+
+  // Mobile: slide right panel in
+  if(window.innerWidth<768){
+    document.getElementById('leftPanel').classList.add('hidden');
+    document.getElementById('rightPanel').classList.add('visible');
+  }
+
+  // Scroll to bottom
+  setTimeout(()=>{const m=document.getElementById('msgArea');m.scrollTop=m.scrollHeight;},60);
+
+  // Simulate typing after 2.5s
+  setTimeout(()=>showTyping(),2500);
+}
+
+function showLeft(){
+  document.getElementById('leftPanel').classList.remove('hidden');
+  document.getElementById('rightPanel').classList.remove('visible');
+}
+
+/* ── RENDER MESSAGES ── */
+function renderMsgs(cid){
+  const area=document.getElementById('msgArea');
+  const list=msgs[cid]||[];
+  let lastDate='';
+  area.innerHTML='';
+
+  // System message at top
+  const sys=document.createElement('div');
+  sys.className='sys-msg';
+  sys.textContent='🔒 All messages are end-to-end encrypted on campus';
+  area.appendChild(sys);
+
+  list.forEach(m=>{
+    // Date separator
+    const timeStr=m.time||'';
+    const datePart=timeStr.includes('Yesterday')?'Yesterday':timeStr.includes('Mon')?'Monday':timeStr.includes('Sun')?'Sunday':'Today';
+    if(datePart!==lastDate){
+      lastDate=datePart;
+      const sep=document.createElement('div');sep.className='date-sep';
+      sep.innerHTML=`<span>${datePart}</span>`;area.appendChild(sep);
+    }
+
+    const wrap=document.createElement('div');
+    wrap.className=`msg ${m.from}`;
+
+    let inner='';
+    if(m.offer){
+      const isPending=m.offer.status==='pending';
+      const isDeclined=m.offer.status==='declined';
+      const isAccepted=m.offer.status==='accepted';
+      inner=`<div class="bubble">
+        ${m.text?`<div>${m.text}</div>`:''}
+        <div class="offer-card">
+          <div class="offer-label">💰 Price Offer</div>
+          <div class="offer-amount">${m.offer.amount}</div>
+          <div class="offer-item">${m.offer.item}</div>
+          ${isPending&&m.from==='in'?`<div class="offer-btns"><button class="offer-btn accept" onclick="acceptOffer(this,'${cid}')">✓ Accept</button><button class="offer-btn decline" onclick="declineOffer(this)">✕ Decline</button></div>`:''}
+          ${isAccepted?'<div class="offer-accepted">✅ Offer accepted</div>':''}
+          ${isDeclined?'<div style="font-size:.74rem;color:var(--red);margin-top:.4rem">✕ Offer declined</div>':''}
+        </div>
+      </div>`;
+    } else if(m.meetup){
+      inner=`<div class="bubble">
+        ${m.text?`<div>${m.text}</div>`:''}
+        <div class="meetup-card">
+          <div class="meetup-label">📅 Meetup Arranged</div>
+          <div class="meetup-row"><span class="meetup-ico">📍</span><span>${m.meetup.spot}</span></div>
+          <div class="meetup-row"><span class="meetup-ico">🕐</span><span>${m.meetup.date}</span></div>
+          ${m.meetup.note?`<div class="meetup-row"><span class="meetup-ico">💬</span><span style="color:var(--m);font-size:.78rem">${m.meetup.note}</span></div>`:''}
+        </div>
+      </div>`;
+    } else {
+      inner=`<div class="bubble">${escHtml(m.text||'')}</div>`;
+    }
+
+    inner+=`<div class="msg-meta"><span class="msg-time">${m.time}</span>${m.from==='out'?'<span class="msg-tick">✓✓</span>':''}</div>`;
+    wrap.innerHTML=inner;
+    area.appendChild(wrap);
+  });
+
+  area.scrollTop=area.scrollHeight;
+}
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ── TYPING INDICATOR ── */
+let typingTimeout=null;
+function showTyping(){
+  if(!activeConv)return;
+  const area=document.getElementById('msgArea');
+  const t=document.createElement('div');
+  t.className='msg in';t.id='typingIndicator';
+  t.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';
+  area.appendChild(t);
+  area.scrollTop=area.scrollHeight;
+  typingTimeout=setTimeout(removeTyping,2800);
+}
+function removeTyping(){
+  const t=document.getElementById('typingIndicator');
+  if(t)t.remove();
+}
+
+/* ── QUICK CHIPS ── */
+function renderChips(){
+  const wrap=document.getElementById('quickChips');
+  wrap.innerHTML=QUICK_REPLIES.map(r=>`<div class="chip" onclick="useChip('${r}')">${r}</div>`).join('');
+}
+function useChip(text){
+  document.getElementById('msgInput').value=text;
+  autoResize(document.getElementById('msgInput'));
+  toggleSend();
+  document.getElementById('msgInput').focus();
+}
+
+/* ── SEND MESSAGE ── */
+function sendMessage(){
+  const inp=document.getElementById('msgInput');
+  const text=inp.value.trim();
+  if(!text||!activeConv)return;
+  const now=new Date();
+  const time=now.toLocaleTimeString('en-GH',{hour:'numeric',minute:'2-digit',hour12:true});
+  msgs[activeConv.id].push({from:'out',text,time});
+  // Update conversation preview & time
+  const ci=CONVS.find(x=>x.id===activeConv.id);
+  if(ci)ci.time='Just now';
+  renderMsgs(activeConv.id);
+  renderConvList(document.getElementById('srchInput').value);
+  inp.value='';inp.style.height='';
+  toggleSend();
+  // Show typing response
+  clearTimeout(typingTimeout);
+  setTimeout(showTyping,800);
+}
+
+function handleKey(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}
+}
+
+function autoResize(el){
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,120)+'px';
+}
+
+function toggleSend(){
+  const v=document.getElementById('msgInput').value.trim();
+  document.getElementById('sendBtn').disabled=!v;
+}
+
+/* ── OFFER / MEETUP SHORTCUTS ── */
+function insertOffer(){
+  document.getElementById('msgInput').value='I\'d like to offer you ';
+  autoResize(document.getElementById('msgInput'));
+  toggleSend();
+  document.getElementById('msgInput').focus();
+}
+function insertMeetup(){
+  document.getElementById('msgInput').value='Can we meet at ';
+  autoResize(document.getElementById('msgInput'));
+  toggleSend();
+  document.getElementById('msgInput').focus();
+}
+
+/* ── OFFER ACTIONS ── */
+function acceptOffer(btn,cid){
+  const card=btn.closest('.offer-card');
+  card.querySelector('.offer-btns').innerHTML='<div class="offer-accepted">✅ Offer accepted</div>';
+  // Add system message
+  const area=document.getElementById('msgArea');
+  const s=document.createElement('div');s.className='sys-msg';
+  s.textContent='✅ You accepted the offer. Arrange a meetup to complete the trade.';
+  area.appendChild(s);area.scrollTop=area.scrollHeight;
+  showToast('Offer accepted! Arrange a meetup to complete the trade.');
+}
+function declineOffer(btn){
+  const card=btn.closest('.offer-card');
+  card.querySelector('.offer-btns').remove();
+  const d=document.createElement('div');d.style.cssText='font-size:.74rem;color:var(--red);margin-top:.4rem';d.textContent='✕ Offer declined';
+  card.appendChild(d);
+  showToast('Offer declined.');
+}
+
+/* ── BOTTOM NAV ── */
+function setNi(el){document.querySelectorAll('.ni').forEach(i=>i.classList.remove('on'));el.classList.add('on');}
+let lastY=0,tick=false;
+window.addEventListener('scroll',()=>{
+  if(!tick){requestAnimationFrame(()=>{
+    const y=window.scrollY;const bn=document.getElementById('bn');
+    if(y>lastY+10&&y>80)bn.classList.add('hide');else if(y<lastY-10)bn.classList.remove('hide');
+    lastY=y;tick=false;
+  });tick=true;}
+},{passive:true});
+
+/* ── TOAST ── */
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+/* ── RESIZE HANDLER ── */
+window.addEventListener('resize',()=>{
+  if(window.innerWidth>=768){
+    document.getElementById('leftPanel').classList.remove('hidden');
+    document.getElementById('rightPanel').classList.remove('visible');
+    if(!activeConv)openConv(CONVS[0]);
+  }
+});
+
+/* ── START ── */
+init();
+</script>
+</body>
+</html>

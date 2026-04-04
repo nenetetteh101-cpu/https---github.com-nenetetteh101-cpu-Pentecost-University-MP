@@ -2,6 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
   <title>My Listings — PU-Marketplace</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
@@ -46,7 +47,9 @@
     .new-btn:hover{opacity:.88;transform:translateY(-1px)}
     /* STATS */
     .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.1rem}
-    @media(max-width:540px){.stats{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.stat-num{font-size:1.3rem}}
+    @media(max-width:480px){.inner{padding:1rem .85rem 0}.litem{flex-wrap:wrap}.lactions{width:100%;justify-content:flex-end}.ph{flex-direction:column;align-items:flex-start}.ltabs{flex-wrap:nowrap;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}.ltab{flex-shrink:0;font-size:.72rem;padding:.35rem .65rem}}
+    @media(max-width:380px){.stats{grid-template-columns:repeat(2,1fr)}}
     .stat{background:var(--card);border:1px solid var(--b);border-radius:13px;padding:.85rem 1rem;text-align:center}
     .stat-num{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--a);display:block;letter-spacing:-1px}
     .stat-lbl{font-size:.68rem;color:var(--m);font-weight:300;margin-top:.15rem}
@@ -143,7 +146,7 @@
       <div class="ph-eye">Seller Dashboard</div>
       <div class="ph-title">My Listings</div>
     </div>
-    <button class="new-btn" onclick="location.href='auth.html'">+ New Listing</button>
+    <button class="new-btn" onclick="location.href='create-listing.html'">+ New Listing</button>
   </div>
   <div class="stats">
     <div class="stat"><span class="stat-num">7</span><div class="stat-lbl">Active</div></div>
@@ -176,14 +179,14 @@
 </nav>
 <script>
 const html=document.documentElement,tb=document.getElementById('thbtn');let dark=true;
-function applyTheme(d){html.setAttribute('data-theme',d?'dark':'light');tb.textContent=d?'🌞':'🌙';dark=d;localStorage.setItem('pu-theme',d?'dark':'light')}
+function applyTheme(d){html.setAttribute('data-theme',d?'dark':'light');const tm=document.getElementById('themeColorMeta');if(tm)tm.setAttribute('content',d?'#0d0e11':'#f0ede8');tb.textContent=d?'🌞':'🌙';dark=d;localStorage.setItem('pu-theme',d?'dark':'light')}
 const sv=localStorage.getItem('pu-theme');if(sv)applyTheme(sv==='dark');
 tb.addEventListener('click',()=>applyTheme(!dark));
 const sb=document.getElementById('sb'),ov=document.getElementById('ov');
 document.getElementById('hbg').onclick=()=>{sb.classList.add('on');ov.classList.add('on');document.body.style.overflow='hidden'};
 function closeSb(){sb.classList.remove('on');ov.classList.remove('on');document.body.style.overflow=''}
 if(window.innerWidth>=960)sb.classList.add('on');
-window.addEventListener('resize',()=>{if(window.innerWidth>=960){sb.classList.add('on');ov.classList.remove('on')}});
+window.addEventListener('resize',()=>{if(window.innerWidth>=960){sb.classList.add('on');ov.classList.remove('on')}else{sb.classList.remove('on');}});
 const BN=document.getElementById('bn');let ly=0,tk=false;
 window.addEventListener('scroll',()=>{if(!tk){requestAnimationFrame(()=>{const y=window.scrollY;if(y>ly+10&&y>80)BN.classList.add('hide');else if(y<ly-10)BN.classList.remove('hide');ly=y;tk=false});tk=true}},{passive:true});
 
@@ -206,7 +209,7 @@ function renderListings(){
   const vis=LISTINGS.filter(l=>activeLt==='all'||l.status===activeLt);
   const c=document.getElementById('ll');
   if(!vis.length){c.innerHTML='<div style="text-align:center;padding:3rem;color:var(--m)">No listings in this category.</div>';return}
-  c.innerHTML=vis.map(l=>`<div class="litem"><div class="lth"><img src="${l.img}" alt="${l.name}" loading="lazy"/></div><div class="linfo"><div class="lname">${l.name}</div><div class="lmeta">${l.cat} · ${l.date}</div><div class="lrow"><span class="lprice">GH₵ ${l.price}</span><span class="lstatus ${SMAP[l.status]}">${SLABEL[l.status]}</span><span class="views">👁 ${l.views} views</span></div></div><div class="lactions"><button class="la" title="Edit" onclick="location.href='auth.html'">✏️</button><button class="la" title="Feature" onclick="openBoost()">🚀</button><button class="la" title="Delete" onclick="confirmDelete('${l.name}')">🗑️</button></div></div>`).join('');
+  c.innerHTML=vis.map(l=>`<div class="litem"><div class="lth"><img src="${l.img}" alt="${l.name}" loading="lazy"/></div><div class="linfo"><div class="lname">${l.name}</div><div class="lmeta">${l.cat} · ${l.date}</div><div class="lrow"><span class="lprice">GH₵ ${l.price}</span><span class="lstatus ${SMAP[l.status]}">${SLABEL[l.status]}</span><span class="views">👁 ${l.views} views</span></div></div><div class="lactions"><button class="la" title="Edit" onclick="location.href='create-listing.html'">✏️</button><button class="la" title="Feature" onclick="openBoost()">🚀</button><button class="la" title="Delete" onclick="confirmDelete('${l.name}')">🗑️</button></div></div>`).join('');
 }
 function filterL(tab,st){document.querySelectorAll('.ltab').forEach(t=>t.classList.remove('on'));tab.classList.add('on');activeLt=st;renderListings()}
 renderListings();
