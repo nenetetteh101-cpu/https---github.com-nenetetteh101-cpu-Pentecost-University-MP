@@ -254,7 +254,7 @@
     <li><a href="index.html"><span class="ico">🏠</span>Home</a></li>
     <li><a href="dashboard.html" class="act"><span class="ico">⚡</span>Dashboard</a></li>
     <li><a href="dashboard-products.html"><span class="ico">📦</span>Products</a></li>
-    <li><a href="dashboard-services.html"><span class="ico">🛠️</span>Services</a></li>
+    <li><a href="reels.html"><span class="ico">🛠️</span>Services</a></li>
     <li><a href="wishlist.html"><span class="ico">❤️</span>Wishlist</a></li>
     <li><a href="orders.html"><span class="ico">🛒</span>My Orders</a></li>
     <li><a href="listings.html"><span class="ico">🏷️</span>My Listings</a></li>
@@ -262,7 +262,7 @@
   <div class="sbd"></div>
   <div class="sbsec">Account</div>
   <ul class="sbul">
-    <li><a href="auth.html"><span class="ico">👤</span>Profile</a></li>
+    <li><a href="profile.html"><span class="ico">👤</span>Profile</a></li>
   </ul>
   <div class="sbd"></div>
   <div class="sbsec">Info</div>
@@ -284,7 +284,7 @@
   <div class="tabs">
     <button class="tab on">All</button>
     <button class="tab" onclick="location.href='dashboard-products.html'">Products</button>
-    <button class="tab" onclick="location.href='dashboard-services.html'">Services</button>
+    <button class="tab" onclick="location.href='reels.html'">Services</button>
   </div>
   <button class="notibtn" id="notibtn" title="Notifications">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
@@ -345,7 +345,7 @@
 </div>
 </div>
 <div class="dr" id="dr"><div class="dov" onclick="closeDr()"></div><div class="dsh"><div class="dhn"></div><div class="dh"><span class="dic" id="dico"></span><div class="dtl" id="dttl"></div></div><div class="dsb" id="dsb"></div><div class="dg" id="dg"></div></div></div>
-<div class="mov" id="mv"><div class="modal"><div class="mtl">Post Something 🎉</div><div class="msb">What would you like to list on PU-Marketplace?</div><div class="mop"><div class="mo" onclick="location.href='create-listing.html'"><span class="moic">📦</span><div class="molb">Sell Product</div></div><div class="mo" onclick="location.href='create-listing.html?type=service'"><span class="moic">🛠️</span><div class="molb">Offer Service</div></div><div class="mo" onclick="location.href='auth.html'"><span class="moic">🔍</span><div class="molb">Request Item</div></div><div class="mo" onclick="openBoost()"><span class="moic">🚀</span><div class="molb">Feature Listing</div></div></div><button class="mcl" onclick="closeMod()">Cancel</button></div></div>
+<div class="mov" id="mv"><div class="modal"><div class="mtl">Post Something 🎉</div><div class="msb">What would you like to list on PU-Marketplace?</div><div class="mop"><div class="mo" onclick="location.href='create-listing.html'"><span class="moic">📦</span><div class="molb">Sell Product</div></div><div class="mo" onclick="location.href='create-listing.html?type=service'"><span class="moic">🛠️</span><div class="molb">Offer Service</div></div><div class="mo" onclick="location.href='profile.html'"><span class="moic">🔍</span><div class="molb">Request Item</div></div><div class="mo" onclick="openBoost()"><span class="moic">🚀</span><div class="molb">Feature Listing</div></div></div><button class="mcl" onclick="closeMod()">Cancel</button></div></div>
 
 <!-- NOTIFICATION PANEL -->
 <div class="npanel" id="npanel">
@@ -358,10 +358,10 @@
 
 <nav class="botnav" id="bn">
   <button class="ni on" onclick="setNi(this);location.href='dashboard.html'"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nlbl">Home</span></button>
-  <button class="ni" onclick="setNi(this);location.href='dashboard-services.html'"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span class="nlbl">Reels</span></button>
+  <button class="ni" onclick="setNi(this);location.href='reels.html'"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span class="nlbl">Reels</span></button>
   <button class="nadd" onclick="openMod()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
   <button class="ni" onclick="setNi(this);location.href='chat.html'"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="nlbl">Chat</span></button>
-  <button class="ni" onclick="setNi(this);location.href='auth.html'"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nlbl">Profile</span></button>
+  <button class="ni" onclick="setNi(this);location.href='profile.html'"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nlbl">Profile</span></button>
 </nav>
 <script>
 const H=document.documentElement,TB=document.getElementById('thbtn');
@@ -444,15 +444,32 @@ const NOTIFS=[
   {id:2,icon:'💬',bg:'rgba(91,229,197,.12)',title:'New message from @kofi_tech',desc:'Hey, is the MacBook still available?',time:'5 min ago',unread:true},
   {id:3,icon:'❤️',bg:'rgba(255,107,107,.12)',title:'@ama_bags liked your listing',desc:'North Face Backpack got a new like.',time:'12 min ago',unread:true},
   {id:4,icon:'🏷️',bg:'rgba(160,120,255,.12)',title:'Price drop alert',desc:'Sony WH-1000XM5 you wished just dropped to GH₵ 650.',time:'1 hr ago',unread:false},
-  {id:5,icon:'⭐',bg:'rgba(232,201,106,.12)',title:'New review received',desc:'@yaw_cs left you a 5-star review.',time:'2 hrs ago',unread:false},
+  {id:5,icon:'⭐',bg:'rgba(232,201,106,.12)',title:'New review received',desc:'@yaw_cs left you a 5-star review on your last transaction.',time:'2 hrs ago',unread:false},
+  {id:6,icon:'📦',bg:'rgba(91,229,197,.12)',title:'Order confirmed',desc:'Mechanical Keyboard purchase confirmed by @kofi_gear.',time:'Yesterday',unread:false},
 ];
 let notifs=[...NOTIFS];
-function renderNotifs(){const list=document.getElementById('nlist');const unread=notifs.filter(n=>n.unread).length;const badge=document.getElementById('nbadge');if(unread>0){badge.textContent=unread>9?'9+':unread;badge.classList.remove('hidden')}else{badge.classList.add('hidden')}list.innerHTML=notifs.map(n=>`<div class="nitem${n.unread?' unread':''}" onclick="markRead(${n.id})"><div class="nico2" style="background:${n.bg}">${n.icon}</div><div class="ntxt"><div class="ntitle2">${n.title}</div><div class="ndesc">${n.desc}</div></div><div class="ntime">${n.time}</div></div>`).join('')}
-function markRead(id){const n=notifs.find(x=>x.id===id);if(n)n.unread=false;renderNotifs()}
-function markAllRead(){notifs.forEach(n=>n.unread=false);renderNotifs()}
+function renderNotifs(){
+  const list=document.getElementById('nlist');
+  const unread=notifs.filter(n=>n.unread).length;
+  const badge=document.getElementById('nbadge');
+  if(unread>0){badge.textContent=unread>9?'9+':unread;badge.classList.remove('hidden')}else{badge.classList.add('hidden')}
+  if(!notifs.length){list.innerHTML='<div class="npempty">🔔<br>No notifications yet</div>';return}
+  list.innerHTML=notifs.map(n=>`<div class="nitem${n.unread?' unread':''}" onclick="markRead(${n.id})"><div class="nico2" style="background:${n.bg}">${n.icon}</div><div class="ntxt"><div class="ntitle2">${n.title}</div><div class="ndesc">${n.desc}</div></div><div class="ntime">${n.time}</div></div>`).join('');
+}
+function markRead(id){const n=notifs.find(x=>x.id===id);if(n){n.unread=false;renderNotifs();}}
+function markAllRead(){notifs.forEach(n=>n.unread=false);renderNotifs();}
+document.getElementById('markAllBtn').onclick=function(e){e.stopPropagation();markAllRead();};
 const NP=document.getElementById('npanel');
-function toggleNotif(){NP.classList.toggle('open')}
-document.addEventListener('click',e=>{if(!e.target.closest('#notibtn')&&!e.target.closest('#npanel'))NP.classList.remove('open')});
+const NOTIBTN=document.getElementById('notibtn');
+let _notifJustOpened=false;
+NOTIBTN.onclick=function(){
+  NP.classList.toggle('open');
+  _notifJustOpened=true;
+};
+document.addEventListener('click',function(){
+  if(_notifJustOpened){_notifJustOpened=false;return;}
+  NP.classList.remove('open');
+});
 renderNotifs();
 function openBoost(){alert("To boost your listing, message our support team via in-app chat. Boosted listings appear in Featured — free during campus beta.");}
 </script>
