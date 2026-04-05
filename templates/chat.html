@@ -329,7 +329,42 @@
     ::-webkit-scrollbar-thumb{background:var(--b);border-radius:3px}
     .dn{display:none!important}
 
-    /* ── REPORT MODAL ── */
+    /* ── USER PROFILE SHEET ── */
+    .up-cover{height:90px;background:linear-gradient(135deg,#1a1508,#2a200a,#1c1f27);border-radius:24px 24px 0 0;position:relative;overflow:hidden;flex-shrink:0;margin:-1.2rem -1.4rem 0}
+    [data-theme="light"] .up-cover{background:linear-gradient(135deg,#fdf3d0,#f9e8a0,#f0ede8)}
+    .up-cover-pattern{position:absolute;inset:0;background-image:radial-gradient(rgba(232,201,106,.15) 1px,transparent 1px);background-size:20px 20px}
+    .up-cover-glow{position:absolute;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(232,201,106,.2) 0%,transparent 65%);top:-80px;right:-40px}
+    .up-avatar-row{display:flex;align-items:flex-end;justify-content:space-between;padding:0 .4rem;margin-top:-40px;margin-bottom:.75rem;position:relative;z-index:2}
+    .up-avatar{width:78px;height:78px;border-radius:50%;border:4px solid var(--card);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:1.8rem;color:#0d0e11;flex-shrink:0;overflow:hidden;position:relative}
+    .up-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    .up-online-dot{position:absolute;bottom:4px;right:4px;width:14px;height:14px;border-radius:50%;background:#22c55e;border:3px solid var(--card)}
+    .up-online-dot.offline{background:var(--m)}
+    .up-name{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:900;letter-spacing:-.3px;margin-bottom:.1rem}
+    .up-username{font-size:.78rem;color:var(--m);margin-bottom:.5rem}
+    .up-bio{font-size:.84rem;color:var(--m);font-weight:300;line-height:1.6;margin-bottom:.85rem}
+    .up-tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.9rem}
+    .up-tag{font-size:.7rem;color:var(--m);background:var(--inp);border:1px solid var(--b);border-radius:5px;padding:.18rem .5rem;display:inline-flex;align-items:center;gap:.25rem}
+    .up-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1rem}
+    .up-stat{background:var(--inp);border:1px solid var(--b);border-radius:12px;padding:.7rem .5rem;text-align:center}
+    .up-stat-num{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:900;color:var(--a);display:block;letter-spacing:-.3px}
+    .up-stat-lbl{font-size:.64rem;color:var(--m);margin-top:.1rem;display:block}
+    .up-badges{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
+    .up-badge{font-size:.72rem;padding:.25rem .65rem;border-radius:99px;font-weight:600;display:flex;align-items:center;gap:.3rem}
+    .up-badge.gold{background:rgba(232,201,106,.12);color:var(--a);border:1px solid rgba(232,201,106,.25)}
+    .up-badge.teal{background:rgba(91,229,197,.1);color:var(--a2);border:1px solid rgba(91,229,197,.2)}
+    .up-listings-title{font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--a2);font-weight:600;margin-bottom:.6rem}
+    .up-listings-scroll{display:flex;gap:.6rem;overflow-x:auto;padding-bottom:.5rem;-ms-overflow-style:none;scrollbar-width:none;margin-bottom:1rem}
+    .up-listings-scroll::-webkit-scrollbar{display:none}
+    .up-lcard{flex-shrink:0;width:110px;background:var(--inp);border:1px solid var(--b);border-radius:12px;overflow:hidden;cursor:pointer}
+    .up-lcard-img{height:72px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;background:var(--bg)}
+    .up-lcard-body{padding:.45rem .55rem}
+    .up-lcard-name{font-size:.74rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .up-lcard-price{font-size:.72rem;color:var(--a);font-weight:700;margin-top:.1rem}
+    .up-actions{display:flex;gap:.6rem;margin-top:.25rem}
+    .up-btn-msg{flex:1;padding:.75rem;border-radius:12px;background:var(--a);color:#0d0e11;border:none;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+    .up-btn-msg:hover{opacity:.88}
+    .up-btn-ghost{padding:.72rem 1rem;border-radius:12px;background:var(--inp);color:var(--m);border:1.5px solid var(--b);font-family:'DM Sans',sans-serif;font-size:.84rem;font-weight:500;cursor:pointer;transition:background .2s;white-space:nowrap}
+    .up-btn-ghost:hover{background:rgba(255,255,255,.08);color:var(--t)}
     .report-modal-header{display:flex;align-items:flex-start;gap:.75rem;margin-bottom:1.1rem}
     .report-modal-icon{font-size:1.8rem;line-height:1;flex-shrink:0;margin-top:.1rem}
     .report-sect-lbl{font-size:.72rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--a2);font-weight:600;margin-bottom:.55rem}
@@ -497,8 +532,8 @@
         <button class="back-btn" id="backBtn" onclick="showLeft()">
           <svg viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 5l-7 7 7 7"/></svg>
         </button>
-        <div class="chat-av" id="chatAv">KA</div>
-        <div class="chat-info">
+        <div class="chat-av" id="chatAv" onclick="viewProfile()" style="cursor:pointer" title="View profile">KA</div>
+        <div class="chat-info" onclick="viewProfile()" style="cursor:pointer;flex:1;min-width:0" title="View profile">
           <div class="chat-name" id="chatName">Kwame Asante</div>
           <div class="chat-status" id="chatStatus">Online</div>
         </div>
@@ -720,6 +755,70 @@
 </div>
 
 <!-- ══════════════════════════════════════
+     USER PROFILE SHEET
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="userProfileModal" onclick="closeUserProfile(event)">
+  <div class="modal-sheet" style="padding:0;overflow:hidden" onclick="event.stopPropagation()">
+
+    <!-- Cover -->
+    <div class="up-cover">
+      <div class="up-cover-pattern"></div>
+      <div class="up-cover-glow"></div>
+    </div>
+
+    <div style="padding:0 1.3rem 2rem">
+      <!-- Avatar row -->
+      <div class="up-avatar-row">
+        <div class="up-avatar" id="upAvatar">
+          <span id="upAvatarInitials">KA</span>
+          <img id="upAvatarImg" src="" alt="" style="display:none"/>
+          <div class="up-online-dot offline" id="upOnlineDot"></div>
+        </div>
+        <button class="up-btn-ghost" onclick="closeUserProfile();openScheduler()">📅 Schedule Meetup</button>
+      </div>
+
+      <!-- Name & username -->
+      <div class="up-name" id="upName">Kwame Asante</div>
+      <div class="up-username" id="upUsername">@kwame_sell</div>
+      <div class="up-bio" id="upBio">Campus seller. Fast responses, honest listings. 34 successful trades. Meetups only 📍</div>
+
+      <!-- Tags -->
+      <div class="up-tags" id="upTags">
+        <span class="up-tag">📍 Greater Accra</span>
+        <span class="up-tag">🎓 Engineering</span>
+        <span class="up-tag">⚡ Replies in &lt;1hr</span>
+      </div>
+
+      <!-- Stats -->
+      <div class="up-stats">
+        <div class="up-stat"><span class="up-stat-num" id="upListings">12</span><span class="up-stat-lbl">Listings</span></div>
+        <div class="up-stat"><span class="up-stat-num" id="upSold">34</span><span class="up-stat-lbl">Sold</span></div>
+        <div class="up-stat"><span class="up-stat-num" id="upRating">4.9⭐</span><span class="up-stat-lbl">Rating</span></div>
+      </div>
+
+      <!-- Trust badges -->
+      <div class="up-badges" id="upBadges">
+        <span class="up-badge gold">✅ Verified Student</span>
+        <span class="up-badge teal">🔒 ID Verified</span>
+        <span class="up-badge gold">🏆 Top Seller</span>
+        <span class="up-badge teal">⚡ Fast Responder</span>
+      </div>
+
+      <!-- Active listings mini-scroll -->
+      <div class="up-listings-title">Active Listings</div>
+      <div class="up-listings-scroll" id="upListingsScroll"></div>
+
+      <!-- Actions -->
+      <div class="up-actions">
+        <button class="up-btn-msg" onclick="closeUserProfile()">💬 Message</button>
+        <button class="up-btn-ghost" onclick="closeUserProfile();openListing()">View Listing</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
      REPORT USER MODAL
 ══════════════════════════════════════ -->
 <div class="modal-overlay" id="reportModal" onclick="closeReportModal(event)">
@@ -814,7 +913,7 @@
     <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
     <span class="nlbl">Chat</span>
   </button>
-  <button class="ni" onclick="setNi(this);location.href='auth.html'">
+  <button class="ni" onclick="setNi(this);location.href='profile.html'">
     <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     <span class="nlbl">Profile</span>
   </button>
@@ -945,8 +1044,13 @@ function openConv(c){
   document.getElementById('chatAv').className='chat-av '+c.avCls;
   document.getElementById('chatName').textContent=c.name;
   const statusEl=document.getElementById('chatStatus');
-  statusEl.textContent=c.status==='online'?'Online · Active now':'Last seen recently';
-  statusEl.className='chat-status'+(c.status==='online'?'':' away');
+  // Use the conv's own status, but if user turned off their own online status
+  // and this is them (role=seller/buyer — they set the status in profile), respect it
+  const myOnline=localStorage.getItem('pu-online-status')!=='offline';
+  const theirOnline=c.status==='online';
+  const showOnline=theirOnline&&myOnline;
+  statusEl.textContent=showOnline?'Online · Active now':'Last seen recently';
+  statusEl.className='chat-status'+(showOnline?'':' away');
 
   // Listing banner
   document.getElementById('lbImg').textContent=c.listingEmoji;
@@ -1386,10 +1490,70 @@ function closeMoreMenu(){
   document.getElementById('moreOverlay').classList.remove('open');
 }
 
+/* ── USER PROFILE SHEET ── */
+const UP_DATA={
+  1:{username:'kwame_sell',bio:'Final year CS Engineering student. 34 successful trades. Fast responses, honest listings. Campus meetups only 📍',faculty:'Engineering',location:'Greater Accra',listings:12,sold:34,rating:'4.9⭐',badges:[{cls:'gold',t:'✅ Verified Student'},{cls:'teal',t:'🔒 ID Verified'},{cls:'gold',t:'🏆 Top Seller'},{cls:'teal',t:'⚡ Fast Responder'}],items:[{e:'💻',n:'HP Laptop 15.6"',p:'GH₵ 1,800'},{e:'⌨️',n:'Mechanical Keyboard',p:'GH₵ 280'},{e:'📚',n:'Organic Chem Vol.2',p:'GH₵ 45'}]},
+  2:{username:'abena_b',bio:'Selling used textbooks in great condition. Honest and friendly seller. All campus meetups.',faculty:'Natural Sciences',location:'Ashanti',listings:5,sold:11,rating:'4.8⭐',badges:[{cls:'gold',t:'✅ Verified Student'},{cls:'teal',t:'⚡ Fast Responder'}],items:[{e:'📚',n:'Organic Chem Vol.2',p:'GH₵ 45'},{e:'📖',n:'Biology Textbook',p:'GH₵ 30'}]},
+  3:{username:'esi_design',bio:'Graphic designer for campus businesses. Logos, flyers, social media. Fast turnaround. DM to order.',faculty:'Arts & Humanities',location:'Greater Accra',listings:8,sold:22,rating:'5.0⭐',badges:[{cls:'gold',t:'✅ Verified Student'},{cls:'gold',t:'🏆 Top Seller'},{cls:'teal',t:'⭐ 5-Star Seller'}],items:[{e:'🎨',n:'Logo Design',p:'From GH₵ 80'},{e:'📄',n:'Flyer Design',p:'From GH₵ 50'}]},
+  4:{username:'kofi_gear',bio:'Tech enthusiast selling quality electronics and peripherals. All items tested before listing.',faculty:'Computer Science',location:'Greater Accra',listings:9,sold:18,rating:'4.7⭐',badges:[{cls:'gold',t:'✅ Verified Student'},{cls:'teal',t:'🔒 ID Verified'}],items:[{e:'⌨️',n:'Keychron K2',p:'GH₵ 280'},{e:'🖱️',n:'Logitech MX Master',p:'GH₵ 180'}]},
+  5:{username:'adwoa_fashion',bio:'Fashion lover selling gently used clothing and accessories. Great deals for campus style.',faculty:'Business Administration',location:'Greater Accra',listings:14,sold:27,rating:'4.9⭐',badges:[{cls:'gold',t:'✅ Verified Student'},{cls:'teal',t:'⚡ Fast Responder'}],items:[{e:'👗',n:'Ankara Dress (M)',p:'GH₵ 45'},{e:'👜',n:'Leather Tote Bag',p:'GH₵ 60'}]},
+};
+
 function viewProfile(){
   closeMoreMenu();
   if(!activeConv)return;
-  showToast(`Viewing @${activeConv.name.toLowerCase().replace(' ','_')}'s profile`);
+  const c=activeConv;
+  const d=UP_DATA[c.id]||{username:c.name.toLowerCase().replace(' ','_'),bio:'Campus marketplace member.',faculty:'—',location:'—',listings:0,sold:0,rating:'—',badges:[{cls:'gold',t:'✅ Verified Student'}],items:[]};
+
+  // Avatar
+  const avEl=document.getElementById('upAvatar');
+  avEl.className='up-avatar '+c.avCls;
+  document.getElementById('upAvatarInitials').textContent=c.initials;
+  document.getElementById('upAvatarInitials').style.display='';
+  document.getElementById('upAvatarImg').style.display='none';
+
+  // Online dot
+  const myOnline=localStorage.getItem('pu-online-status')!=='offline';
+  const theirOnline=c.status==='online'&&myOnline;
+  const dot=document.getElementById('upOnlineDot');
+  dot.className='up-online-dot'+(theirOnline?'':' offline');
+
+  // Text fields
+  document.getElementById('upName').textContent=c.name;
+  document.getElementById('upUsername').textContent='@'+d.username;
+  document.getElementById('upBio').textContent=d.bio;
+
+  // Tags
+  document.getElementById('upTags').innerHTML=
+    `<span class="up-tag">📍 ${d.location}</span>`+
+    `<span class="up-tag">🎓 ${d.faculty}</span>`+
+    (theirOnline?'<span class="up-tag" style="color:#22c55e">🟢 Online now</span>':'<span class="up-tag">Last seen recently</span>');
+
+  // Stats
+  document.getElementById('upListings').textContent=d.listings;
+  document.getElementById('upSold').textContent=d.sold;
+  document.getElementById('upRating').textContent=d.rating;
+
+  // Badges
+  document.getElementById('upBadges').innerHTML=d.badges.map(b=>`<span class="up-badge ${b.cls}">${b.t}</span>`).join('');
+
+  // Mini listing cards
+  document.getElementById('upListingsScroll').innerHTML=d.items.map(item=>
+    `<div class="up-lcard">
+      <div class="up-lcard-img">${item.e}</div>
+      <div class="up-lcard-body">
+        <div class="up-lcard-name">${item.n}</div>
+        <div class="up-lcard-price">${item.p}</div>
+      </div>
+    </div>`
+  ).join('');
+
+  document.getElementById('userProfileModal').classList.add('open');
+}
+
+function closeUserProfile(e){
+  if(!e||e.target===document.getElementById('userProfileModal'))
+    document.getElementById('userProfileModal').classList.remove('open');
 }
 
 function clearChat(){
@@ -2079,6 +2243,50 @@ window.addEventListener('resize',()=>{
 
 /* ── START ── */
 init();
+
+/* ── SYNC PROFILE FROM localStorage (name, avatar, online status) ── */
+function applyProfileToChat(){
+  try{
+    const p=JSON.parse(localStorage.getItem('pu-profile'))||{};
+    const online=localStorage.getItem('pu-online-status')!=='offline';
+
+    // Update left panel header logo subtitle with user's own online indicator
+    const logo=document.querySelector('.left-logo');
+    if(logo){
+      // Remove any existing status dot from logo
+      const existing=logo.querySelector('.self-online-dot');
+      if(existing)existing.remove();
+      if(online){
+        const dot=document.createElement('span');
+        dot.className='self-online-dot';
+        dot.style.cssText='display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-left:.4rem;vertical-align:middle;flex-shrink:0';
+        logo.appendChild(dot);
+      }
+    }
+
+    // If active conv is open, re-apply the header status (in case user just toggled online)
+    if(activeConv){
+      const statusEl=document.getElementById('chatStatus');
+      if(statusEl){
+        const theirOnline=activeConv.status==='online';
+        const showOnline=theirOnline&&online;
+        statusEl.textContent=showOnline?'Online · Active now':'Last seen recently';
+        statusEl.className='chat-status'+(showOnline?'':' away');
+      }
+    }
+
+    // Re-render conv list so online dots on other users stay correct
+    renderConvList(document.getElementById('srchInput')?.value||'');
+
+  }catch(e){}
+}
+
+applyProfileToChat();
+
+// Live-sync when profile.html changes the status (same browser, different tab)
+window.addEventListener('storage',e=>{
+  if(e.key==='pu-profile-updated'||e.key==='pu-online-status')applyProfileToChat();
+});
 </script>
 </body>
 </html>
