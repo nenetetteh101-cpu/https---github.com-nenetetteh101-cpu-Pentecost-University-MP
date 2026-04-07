@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#000000" id="themeColorMeta"/>
+  <title>Reels — PU-Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── TOKENS ── */
+    :root{--a:#e8c96a;--a2:#5be5c5;--red:#ff6b6b;--r:16px;--nh:60px;--bh:78px;--sw:228px}
+    [data-theme="dark"]{--bg:#000;--card:#1c1f27;--t:#f0eeea;--m:#7a7e8a;--b:rgba(255,255,255,.07);--g:rgba(18,20,28,.62);--gb:rgba(255,255,255,.13);--sh:0 8px 32px rgba(0,0,0,.55);--inp:rgba(255,255,255,.09)}
+    [data-theme="light"]{--bg:#111;--card:#1c1f27;--t:#f0eeea;--m:#9a9ea8;--b:rgba(255,255,255,.07);--g:rgba(18,20,28,.62);--gb:rgba(255,255,255,.13);--sh:0 8px 32px rgba(0,0,0,.55);--inp:rgba(255,255,255,.09)}
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;height:100dvh;overflow:hidden;background:#000;font-family:'DM Sans',sans-serif;color:#fff;overscroll-behavior:none}
+    img{display:block;width:100%;height:100%;object-fit:cover}
+
+    /* ══════════════════════════════════════
+       REEL FEED — full-screen snap scroll
+    ══════════════════════════════════════ */
+    .feed{
+      position:fixed;inset:0;
+      overflow-y:scroll;
+      scroll-snap-type:y mandatory;
+      scroll-behavior:smooth;
+      -webkit-overflow-scrolling:touch;
+    }
+    .feed::-webkit-scrollbar{display:none}
+    .feed{-ms-overflow-style:none;scrollbar-width:none}
+
+    /* Each reel slide */
+    .reel{
+      position:relative;
+      width:100%;
+      height:100dvh;
+      scroll-snap-align:start;
+      scroll-snap-stop:always;
+      overflow:hidden;
+      background:#000;
+      flex-shrink:0;
+    }
+
+    /* ── VIDEO / PLACEHOLDER ── */
+    .reel-video{
+      position:absolute;inset:0;
+      width:100%;height:100%;
+      object-fit:cover;
+      background:#000;
+      cursor:pointer;
+    }
+    /* Colour placeholder when no video src */
+    .reel-bg{
+      position:absolute;inset:0;
+      display:flex;align-items:center;justify-content:center;
+      font-size:4rem;
+      cursor:pointer;
+    }
+
+    /* Dark gradient overlay — bottom for text, subtle top */
+    .reel-overlay{
+      position:absolute;inset:0;
+      background:
+        linear-gradient(to bottom,rgba(0,0,0,.35) 0%,transparent 22%),
+        linear-gradient(to top,rgba(0,0,0,.82) 0%,rgba(0,0,0,.4) 35%,transparent 60%);
+      pointer-events:none;
+    }
+
+    /* ── TOP BAR (per reel) ── */
+    .reel-topbar{
+      position:absolute;top:0;left:0;right:0;
+      height:var(--nh);
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 1rem;
+      z-index:20;
+    }
+    .reel-logo{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;color:var(--a);letter-spacing:-.2px}
+    .reel-logo span{color:#fff}
+    .reel-topbar-right{display:flex;gap:.5rem;align-items:center}
+    .top-icon-btn{width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.35);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;backdrop-filter:blur(8px);transition:background .2s}
+    .top-icon-btn:hover{background:rgba(255,255,255,.15)}
+    .top-icon-btn svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+    /* ── PROGRESS BAR ── */
+    .progress-bar{
+      position:absolute;top:0;left:0;right:0;height:3px;z-index:25;
+      background:rgba(255,255,255,.2);
+    }
+    .progress-fill{
+      height:100%;background:var(--a);width:0%;
+      transition:width .1s linear;
+    }
+
+    /* ── PLAY/PAUSE INDICATOR (centre flash) ── */
+    .play-flash{
+      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      width:72px;height:72px;border-radius:50%;
+      background:rgba(0,0,0,.5);
+      display:flex;align-items:center;justify-content:center;
+      opacity:0;pointer-events:none;
+      transition:opacity .25s;
+      z-index:30;
+    }
+    .play-flash svg{width:32px;height:32px;stroke:#fff;fill:#fff;stroke-width:0}
+    .play-flash.show{opacity:1}
+
+    /* ── BOTTOM INFO ── */
+    .reel-bottom{
+      position:absolute;bottom:0;left:0;right:72px;
+      padding:1rem 1rem calc(var(--bh) + 24px);
+      z-index:20;
+    }
+    .reel-seller-row{display:flex;align-items:center;gap:.65rem;margin-bottom:.6rem;cursor:pointer}
+    .reel-av{
+      width:38px;height:38px;border-radius:50%;
+      border:2px solid #fff;
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Playfair Display',serif;font-weight:900;font-size:.9rem;
+      color:#0d0e11;flex-shrink:0;overflow:hidden;
+    }
+    .reel-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    .reel-seller-info{flex:1}
+    .reel-seller-name{font-size:.9rem;font-weight:700;text-shadow:0 1px 4px rgba(0,0,0,.8)}
+    .reel-seller-handle{font-size:.73rem;color:rgba(255,255,255,.7)}
+    .follow-btn{padding:.32rem .85rem;border-radius:99px;background:transparent;border:1.5px solid #fff;color:#fff;font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;transition:all .2s;flex-shrink:0}
+    .follow-btn.following{background:rgba(255,255,255,.18);border-color:transparent}
+    .reel-caption{font-size:.86rem;line-height:1.55;text-shadow:0 1px 6px rgba(0,0,0,.9);margin-bottom:.5rem;max-width:calc(100vw - 90px)}
+    .reel-caption .tag{color:var(--a);font-weight:600}
+    .reel-product-pill{
+      display:inline-flex;align-items:center;gap:.45rem;
+      background:rgba(232,201,106,.18);border:1px solid rgba(232,201,106,.3);
+      backdrop-filter:blur(12px);
+      border-radius:99px;padding:.35rem .85rem;
+      font-size:.8rem;font-weight:600;color:var(--a);
+      cursor:pointer;transition:background .2s;margin-bottom:.5rem;
+    }
+    .reel-product-pill:hover{background:rgba(232,201,106,.28)}
+    .reel-product-pill svg{width:13px;height:13px;stroke:var(--a);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .reel-music{display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:rgba(255,255,255,.8);margin-top:.2rem}
+    .music-disc{width:20px;height:20px;border-radius:50%;background:var(--a);display:flex;align-items:center;justify-content:center;font-size:.6rem;animation:spin 3s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ── RIGHT ACTION RAIL ── */
+    .reel-actions{
+      position:absolute;right:0;bottom:0;
+      width:64px;
+      padding-bottom:calc(var(--bh) + 24px);
+      display:flex;flex-direction:column;align-items:center;gap:1.4rem;
+      z-index:20;padding-right:.5rem;
+      padding-top:2rem;
+    }
+    .ract{display:flex;flex-direction:column;align-items:center;gap:.3rem;cursor:pointer}
+    .ract-ico{
+      width:44px;height:44px;border-radius:50%;
+      background:rgba(0,0,0,.35);backdrop-filter:blur(10px);
+      display:flex;align-items:center;justify-content:center;
+      transition:transform .2s,background .2s;
+    }
+    .ract:hover .ract-ico{transform:scale(1.12)}
+    .ract-ico svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .ract-ico.liked svg{stroke:var(--red);fill:var(--red)}
+    .ract-ico.saved svg{stroke:var(--a);fill:var(--a)}
+    .ract-lbl{font-size:.65rem;font-weight:600;color:rgba(255,255,255,.9);text-align:center;text-shadow:0 1px 4px rgba(0,0,0,.8)}
+
+    /* Upload FAB removed — use + in bottom nav */
+
+    /* ── BOTTOM NAV ── */
+    .botnav{position:fixed;bottom:13px;left:50%;transform:translateX(-50%);z-index:400;display:flex;align-items:center;justify-content:space-around;width:min(500px,calc(100vw - 26px));height:var(--bh);padding:0 .7rem;background:rgba(10,10,14,.75);backdrop-filter:blur(36px) saturate(200%) brightness(1.08);-webkit-backdrop-filter:blur(36px) saturate(200%) brightness(1.08);border:1px solid rgba(255,255,255,.12);border-radius:40px;box-shadow:0 8px 32px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.14),inset 0 -1px 0 rgba(0,0,0,.2);transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s}
+    .botnav::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);border-radius:99px}
+    .botnav.hide{transform:translateX(-50%) translateY(120px);opacity:0}
+    .ni{display:flex;flex-direction:column;align-items:center;gap:.2rem;cursor:pointer;position:relative;flex:1;padding:.5rem 0;background:none;border:none;color:rgba(255,255,255,.5);font-family:'DM Sans',sans-serif;transition:color .2s;-webkit-tap-highlight-color:transparent}
+    .ni:hover{color:rgba(255,255,255,.8)}
+    .ni.on{color:var(--a)}
+    .ni svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .ni.on svg{stroke:var(--a)}
+    .ni.on::after{content:'';position:absolute;bottom:.12rem;width:4px;height:4px;border-radius:50%;background:var(--a)}
+    .nlbl{font-size:.58rem;font-weight:500}
+    .nadd{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--a),#f5c842);border:3px solid rgba(10,10,14,.8);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;box-shadow:0 6px 20px rgba(232,201,106,.5),inset 0 1px 0 rgba(255,255,255,.3);transition:transform .2s,box-shadow .2s;position:relative}
+    .nadd::before{content:'';position:absolute;inset:2px;border-radius:50%;background:rgba(255,255,255,.12)}
+    .nadd:hover{transform:scale(1.1);box-shadow:0 10px 28px rgba(232,201,106,.6)}
+    .nadd svg{width:21px;height:21px;stroke:#0d0e11;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+    /* ══════════════════════════════════════
+       UPLOAD MODAL
+    ══════════════════════════════════════ */
+    .upload-overlay{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+    .upload-overlay.open{opacity:1;pointer-events:all}
+    .upload-sheet{width:100%;max-width:540px;background:#1c1f27;border-radius:24px 24px 0 0;border-top:1px solid rgba(255,255,255,.1);padding:1.2rem 1.4rem 2.5rem;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);max-height:90dvh;overflow-y:auto}
+    .upload-overlay.open .upload-sheet{transform:translateY(0)}
+    .sheet-handle{width:40px;height:4px;border-radius:2px;background:rgba(255,255,255,.2);margin:0 auto .9rem}
+    .sheet-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin-bottom:.25rem;color:#f0eeea}
+    .sheet-sub{font-size:.79rem;color:#7a7e8a;margin-bottom:1.2rem}
+
+    /* Drop zone */
+    .drop-zone{
+      border:2px dashed rgba(232,201,106,.35);border-radius:16px;
+      padding:2rem 1rem;text-align:center;
+      background:rgba(232,201,106,.04);
+      cursor:pointer;transition:border-color .2s,background .2s;
+      margin-bottom:1rem;position:relative;
+    }
+    .drop-zone:hover,.drop-zone.drag-over{border-color:var(--a);background:rgba(232,201,106,.08)}
+    .drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .dz-icon{font-size:2.5rem;margin-bottom:.6rem}
+    .dz-title{font-size:.92rem;font-weight:600;color:#f0eeea;margin-bottom:.3rem}
+    .dz-sub{font-size:.76rem;color:#7a7e8a}
+
+    /* Video preview in modal */
+    .vid-preview{width:100%;border-radius:12px;max-height:280px;object-fit:cover;margin-bottom:1rem;display:none;background:#000}
+    .vid-preview.show{display:block}
+    .vid-preview-wrap{position:relative;margin-bottom:1rem}
+    .vid-remove{position:absolute;top:.5rem;right:.5rem;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.6);border:none;color:#fff;font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+    /* Form fields */
+    .ufield{margin-bottom:.85rem}
+    .ufield label{display:block;font-size:.76rem;font-weight:600;color:rgba(232,201,106,.9);letter-spacing:.5px;text-transform:uppercase;margin-bottom:.4rem}
+    .ufield input,.ufield textarea,.ufield select{
+      width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);
+      border-radius:11px;padding:.65rem .9rem;color:#f0eeea;
+      font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;
+      transition:border-color .25s;
+    }
+    .ufield input::placeholder,.ufield textarea::placeholder{color:#7a7e8a}
+    .ufield input:focus,.ufield textarea:focus,.ufield select:focus{border-color:rgba(232,201,106,.5);box-shadow:0 0 0 3px rgba(232,201,106,.08)}
+    .ufield textarea{resize:none;line-height:1.55;min-height:70px}
+    .ufield select{-webkit-appearance:none;cursor:pointer;color-scheme:dark}
+
+    /* Char count */
+    .char-count{text-align:right;font-size:.68rem;color:#7a7e8a;margin-top:.25rem}
+
+    /* Upload button */
+    .upload-btn{width:100%;padding:.85rem;border-radius:12px;background:var(--a);color:#0d0e11;border:none;font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;margin-top:.5rem;transition:opacity .2s,transform .2s;display:flex;align-items:center;justify-content:center;gap:.5rem}
+    .upload-btn:hover{opacity:.88;transform:translateY(-1px)}
+    .upload-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .cancel-btn{width:100%;padding:.72rem;border-radius:12px;background:rgba(255,255,255,.07);color:#7a7e8a;border:1.5px solid rgba(255,255,255,.1);font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;margin-top:.45rem}
+
+    /* Progress bar during upload */
+    .upload-progress{display:none;margin-top:.75rem}
+    .upload-progress.show{display:block}
+    .up-prog-label{font-size:.78rem;color:#7a7e8a;margin-bottom:.35rem}
+    .up-prog-track{height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
+    .up-prog-fill{height:100%;background:var(--a);border-radius:3px;width:0%;transition:width .2s}
+
+    /* ══════════════════════════════════════
+       PRODUCT SHEET (tap pill)
+    ══════════════════════════════════════ */
+    .product-overlay{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+    .product-overlay.open{opacity:1;pointer-events:all}
+    .product-sheet{width:100%;max-width:540px;background:#1c1f27;border-radius:24px 24px 0 0;padding:1.2rem 1.4rem 2.5rem;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+    .product-overlay.open .product-sheet{transform:translateY(0)}
+    .ps-img{height:160px;background:#111;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:4rem;margin-bottom:.9rem}
+    .ps-badge{display:inline-block;font-size:.68rem;font-weight:700;padding:.2rem .6rem;border-radius:5px;background:rgba(91,229,197,.15);color:#5be5c5;margin-bottom:.4rem}
+    .ps-name{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:#f0eeea;margin-bottom:.2rem}
+    .ps-price{font-size:1.3rem;font-weight:900;color:var(--a);font-family:'Playfair Display',serif;margin-bottom:.25rem}
+    .ps-seller{font-size:.78rem;color:#7a7e8a;margin-bottom:.8rem}
+    .ps-divider{height:1px;background:rgba(255,255,255,.07);margin-bottom:.8rem}
+    .ps-desc{font-size:.86rem;color:#9a9ea8;line-height:1.7;margin-bottom:1.1rem}
+    .ps-actions{display:flex;flex-direction:column;gap:.5rem}
+    .ps-btn-primary{padding:.82rem;border-radius:12px;background:var(--a);color:#0d0e11;border:none;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+    .ps-btn-primary:hover{opacity:.88}
+    .ps-btn-ghost{padding:.72rem;border-radius:12px;background:rgba(255,255,255,.07);color:#9a9ea8;border:1.5px solid rgba(255,255,255,.1);font-family:'DM Sans',sans-serif;font-size:.86rem;font-weight:500;cursor:pointer}
+
+    /* ══════════════════════════════════════
+       COMMENTS SHEET
+    ══════════════════════════════════════ */
+    .comments-overlay{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:flex-end;justify-content:center}
+    .comments-overlay.open{opacity:1;pointer-events:all}
+    .comments-sheet{width:100%;max-width:540px;background:#1c1f27;border-radius:24px 24px 0 0;max-height:75dvh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+    .comments-overlay.open .comments-sheet{transform:translateY(0)}
+    .cs-head{padding:.85rem 1.2rem;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    .cs-title{font-size:.92rem;font-weight:700;color:#f0eeea}
+    .cs-close{background:none;border:none;color:#7a7e8a;font-size:1.1rem;cursor:pointer}
+    .cs-list{flex:1;overflow-y:auto;padding:.7rem 1.2rem;display:flex;flex-direction:column;gap:.85rem}
+    .cs-list::-webkit-scrollbar{width:3px}
+    .cs-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+    .comment-item{display:flex;gap:.65rem;align-items:flex-start}
+    .c-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:.75rem;color:#0d0e11;flex-shrink:0}
+    .c-body{flex:1}
+    .c-name{font-size:.8rem;font-weight:700;color:#f0eeea;margin-bottom:.15rem}
+    .c-text{font-size:.83rem;color:#c0c4cc;line-height:1.5}
+    .c-meta{display:flex;align-items:center;gap.8rem;margin-top:.25rem;gap:.7rem}
+    .c-time{font-size:.68rem;color:#7a7e8a}
+    .c-like{font-size:.68rem;color:#7a7e8a;cursor:pointer;transition:color .2s}
+    .c-like:hover{color:var(--red)}
+    .c-likes{font-size:.68rem;color:#7a7e8a}
+    .cs-input-row{padding:.75rem 1.2rem;border-top:1px solid rgba(255,255,255,.07);display:flex;gap:.55rem;align-items:flex-end;flex-shrink:0;background:#1c1f27}
+    .cs-my-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--a),#f5c842);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:.78rem;color:#0d0e11;flex-shrink:0}
+    .cs-inp{flex:1;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.1);border-radius:20px;padding:.55rem .9rem;color:#f0eeea;font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;resize:none;max-height:80px;transition:border-color .25s}
+    .cs-inp:focus{border-color:rgba(232,201,106,.4)}
+    .cs-inp::placeholder{color:#7a7e8a}
+    .cs-send{width:36px;height:36px;border-radius:50%;background:var(--a);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .2s}
+    .cs-send:disabled{opacity:.35;cursor:not-allowed}
+    .cs-send svg{width:15px;height:15px;stroke:#0d0e11;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+    /* ══════════════════════════════════════
+       SHARE SHEET
+    ══════════════════════════════════════ */
+    .share-overlay{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:flex-end;justify-content:center}
+    .share-overlay.open{opacity:1;pointer-events:all}
+    .share-sheet{width:100%;max-width:540px;background:#1c1f27;border-radius:24px 24px 0 0;padding:1rem 1.2rem 2.5rem;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+    .share-overlay.open .share-sheet{transform:translateY(0)}
+    .share-title{font-size:.9rem;font-weight:700;color:#f0eeea;text-align:center;margin-bottom:1rem}
+    .share-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.2rem}
+    .share-item{display:flex;flex-direction:column;align-items:center;gap:.4rem;cursor:pointer;padding:.5rem;border-radius:12px;transition:background .2s}
+    .share-item:hover{background:rgba(255,255,255,.07)}
+    .share-ico{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+    .share-lbl{font-size:.68rem;color:#9a9ea8;font-weight:500;text-align:center}
+    .share-link-row{display:flex;gap:.5rem;align-items:center;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem .9rem;margin-bottom:.5rem}
+    .share-link-text{flex:1;font-size:.78rem;color:#9a9ea8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .share-copy-btn{background:var(--a);color:#0d0e11;border:none;border-radius:7px;padding:.35rem .75rem;font-size:.76rem;font-weight:700;cursor:pointer;flex-shrink:0;font-family:'DM Sans',sans-serif}
+
+    /* ══════════════════════════════════════
+       TOAST
+    ══════════════════════════════════════ */
+    .toast{position:fixed;bottom:calc(var(--bh) + 20px);left:50%;transform:translateX(-50%) translateY(20px);background:#1c1f27;border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:.6rem 1.2rem;font-size:.82rem;font-weight:500;color:#f0eeea;box-shadow:0 8px 32px rgba(0,0,0,.6);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;z-index:999;white-space:nowrap}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     REEL FEED
+══════════════════════════════════════ -->
+<div class="feed" id="feed"></div>
+
+<!-- Bottom Nav -->
+<nav class="botnav" id="bn">
+  <button class="ni" onclick="location.href='dashboard.html'">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span class="nlbl">Home</span>
+  </button>
+  <button class="ni on">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+    <span class="nlbl">Reels</span>
+  </button>
+  <button class="nadd" onclick="openUpload()">
+    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </button>
+  <button class="ni" onclick="location.href='chat.html'">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    <span class="nlbl">Chat</span>
+  </button>
+  <button class="ni" onclick="location.href='profile.html'">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span class="nlbl">Profile</span>
+  </button>
+</nav>
+
+<!-- ══════════════════════════════════════
+     UPLOAD MODAL
+══════════════════════════════════════ -->
+<div class="upload-overlay" id="uploadOverlay" onclick="closeUploadOverlay(event)">
+  <div class="upload-sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">📹 New Reel</div>
+    <div class="sheet-sub">Share a short video of your item, service or campus life</div>
+
+    <!-- Drop zone -->
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="videoFileInput" accept="video/*" onchange="handleVideoSelect(this.files[0])"/>
+      <div class="dz-icon">🎬</div>
+      <div class="dz-title">Tap to select a video</div>
+      <div class="dz-sub">MP4, MOV, WebM · Max 100MB · Up to 3 min</div>
+    </div>
+
+    <!-- Video preview -->
+    <div class="vid-preview-wrap" id="vidPreviewWrap" style="display:none">
+      <video class="vid-preview show" id="vidPreview" controls playsinline muted></video>
+      <button class="vid-remove" onclick="removeVideo()">✕</button>
+    </div>
+
+    <!-- Form fields -->
+    <div class="ufield">
+      <label>Caption</label>
+      <textarea id="captionInput" placeholder="Describe your item or service… use #hashtags" maxlength="200" oninput="document.getElementById('captionCount').textContent=this.value.length+' / 200'"></textarea>
+      <div class="char-count" id="captionCount">0 / 200</div>
+    </div>
+    <div class="ufield">
+      <label>Linked Listing <span style="font-weight:300;color:#7a7e8a;text-transform:none;letter-spacing:0">(optional)</span></label>
+      <select id="listingSelect">
+        <option value="">— Link to a listing —</option>
+        <option value="1" data-emoji="💻" data-price="GH₵ 1,800">HP Laptop 15.6" Core i7 — GH₵ 1,800</option>
+        <option value="2" data-emoji="⌨️" data-price="GH₵ 280">Mechanical Keyboard — GH₵ 280</option>
+        <option value="3" data-emoji="📚" data-price="GH₵ 45">Organic Chemistry Vol.2 — GH₵ 45</option>
+        <option value="4" data-emoji="🎨" data-price="From GH₵ 50">Graphic Design Services — From GH₵ 50</option>
+        <option value="5" data-emoji="👗" data-price="GH₵ 45">Ankara Dress (Size M) — GH₵ 45</option>
+      </select>
+    </div>
+
+    <!-- Progress -->
+    <div class="upload-progress" id="uploadProgress">
+      <div class="up-prog-label" id="uploadLabel">Uploading…</div>
+      <div class="up-prog-track"><div class="up-prog-fill" id="uploadFill"></div></div>
+    </div>
+
+    <button class="upload-btn" id="uploadBtn" onclick="publishReel()" disabled>
+      <svg viewBox="0 0 24 24" width="18" height="18"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+      Upload Reel
+    </button>
+    <button class="cancel-btn" onclick="closeUpload()">Cancel</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PRODUCT SHEET
+══════════════════════════════════════ -->
+<div class="product-overlay" id="productOverlay" onclick="closeProduct(event)">
+  <div class="product-sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="ps-img" id="psImg">💻</div>
+    <div class="ps-badge">Available</div>
+    <div class="ps-name" id="psName">HP Laptop 15.6" Core i7</div>
+    <div class="ps-price" id="psPrice">GH₵ 1,800</div>
+    <div class="ps-seller" id="psSeller">Listed by @kwame_sell</div>
+    <div class="ps-divider"></div>
+    <div class="ps-desc" id="psDesc">Barely used HP laptop. Intel Core i7, 16GB RAM, 512GB SSD. Battery 6+ hrs. Comes with original charger and bag.</div>
+    <div class="ps-actions">
+      <button class="ps-btn-primary" onclick="location.href='chat.html'">💬 Message Seller</button>
+      <button class="ps-btn-ghost" onclick="closeProduct()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     COMMENTS SHEET
+══════════════════════════════════════ -->
+<div class="comments-overlay" id="commentsOverlay" onclick="closeComments(event)">
+  <div class="comments-sheet" onclick="event.stopPropagation()">
+    <div class="cs-head">
+      <div class="cs-title" id="commentsTitle">Comments</div>
+      <button class="cs-close" onclick="closeComments()">✕</button>
+    </div>
+    <div class="cs-list" id="commentsList"></div>
+    <div class="cs-input-row">
+      <div class="cs-my-av" id="myAvatar">KA</div>
+      <textarea class="cs-inp" id="commentInput" placeholder="Add a comment…" rows="1"
+        oninput="autoResizeCs(this);document.getElementById('csSend').disabled=!this.value.trim()"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();postComment()}"></textarea>
+      <button class="cs-send" id="csSend" onclick="postComment()" disabled>
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SHARE SHEET
+══════════════════════════════════════ -->
+<div class="share-overlay" id="shareOverlay" onclick="closeShare(event)">
+  <div class="share-sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="share-title">Share Reel</div>
+    <div class="share-grid">
+      <div class="share-item" onclick="shareAction('chat')"><div class="share-ico" style="background:rgba(232,201,106,.15)">💬</div><div class="share-lbl">Send in Chat</div></div>
+      <div class="share-item" onclick="shareAction('whatsapp')"><div class="share-ico" style="background:rgba(37,211,102,.15)">📱</div><div class="share-lbl">WhatsApp</div></div>
+      <div class="share-item" onclick="shareAction('twitter')"><div class="share-ico" style="background:rgba(29,161,242,.15)">🐦</div><div class="share-lbl">Twitter / X</div></div>
+      <div class="share-item" onclick="shareAction('copy')"><div class="share-ico" style="background:rgba(255,255,255,.07)">🔗</div><div class="share-lbl">Copy Link</div></div>
+    </div>
+    <div class="share-link-row">
+      <span class="share-link-text" id="shareLink">pu-marketplace.edu.gh/reels/r001</span>
+      <button class="share-copy-btn" onclick="copyLink()">Copy</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════
+   REEL DATA
+══════════════════════════════════════ */
+const REELS=[
+  {
+    id:'r001',
+    src:'',// no video src — shows placeholder bg
+    bg:'linear-gradient(135deg,#1a1508 0%,#2a200a 40%,#0d1117 100%)',
+    bgEmoji:'💻',
+    seller:{name:'Kwame Asante',handle:'@kwame_sell',initials:'KA',avGrad:'linear-gradient(135deg,#e8c96a,#f5c842)'},
+    caption:'This HP laptop is in perfect condition 🔥 Intel Core i7, 16GB RAM. Perfect for engineering students. DM to negotiate! #Laptop #CampusDeal',
+    product:{name:'HP Laptop 15.6" Core i7',price:'GH₵ 1,800',emoji:'💻',desc:'Barely used. Core i7, 16GB RAM, 512GB SSD. Battery lasts 6+ hrs. Original charger included.'},
+    likes:284,comments:34,shares:18,saves:61,liked:false,saved:false,following:false,
+    music:'Campus Vibes Mix • PU-Marketplace',
+    tags:['#Laptop','#CampusDeal','#Engineering'],
+  },
+  {
+    id:'r002',
+    src:'',
+    bg:'linear-gradient(135deg,#0a1628 0%,#1a2a4a 50%,#0d1117 100%)',
+    bgEmoji:'🎨',
+    seller:{name:'Esi Owusu',handle:'@esi_design',initials:'EO',avGrad:'linear-gradient(135deg,#a78bfa,#7c3aed)'},
+    caption:'Logo design for your campus business 🎨✨ 3 concepts, unlimited revisions, full brand pack. DM me now! #GraphicDesign #CampusBusiness',
+    product:{name:'Graphic Design Services',price:'From GH₵ 80',emoji:'🎨',desc:'Logos, flyers, social media graphics & brand guides. Fast turnaround. Portfolio available on request.'},
+    likes:512,comments:87,shares:43,saves:129,liked:false,saved:false,following:false,
+    music:'Creative Beats • Esi Designs',
+    tags:['#Design','#Logo','#CampusBusiness'],
+  },
+  {
+    id:'r003',
+    src:'',
+    bg:'linear-gradient(135deg,#0d2010 0%,#1a3a1a 50%,#0d1117 100%)',
+    bgEmoji:'📚',
+    seller:{name:'Abena Boateng',handle:'@abena_b',initials:'AB',avGrad:'linear-gradient(135deg,#5be5c5,#2dd4bf)'},
+    caption:'Organic Chemistry 8th edition — barely used, no markings 📚 Science students grab this before it\'s gone! #TextBook #Chemistry #ScienceFaculty',
+    product:{name:'Organic Chemistry Vol. 2',price:'GH₵ 45',emoji:'📚',desc:'8th edition by McMurry. Excellent condition. Only used for one semester. Perfect for Year 1 & 2 students.'},
+    likes:178,comments:29,shares:12,saves:44,liked:false,saved:false,following:false,
+    music:'Study Mode • Campus Playlist',
+    tags:['#TextBook','#Chemistry'],
+  },
+  {
+    id:'r004',
+    src:'',
+    bg:'linear-gradient(135deg,#1a0a00 0%,#3a1800 50%,#0d1117 100%)',
+    bgEmoji:'⌨️',
+    seller:{name:'Kofi Mensah',handle:'@kofi_gear',initials:'KM',avGrad:'linear-gradient(135deg,#fb923c,#ea580c)'},
+    caption:'Keychron K2 mechanical keyboard — barely touched ⌨️🔥 Brown switches, RGB, wireless. Perfect for CS students! #MechKeyboard #TechDeal',
+    product:{name:'Mechanical Keyboard (Keychron K2)',price:'GH₵ 280',emoji:'⌨️',desc:'Brown switches, 84 keys, RGB backlight, Bluetooth + USB. Works with Mac & Windows. Barely used — 3 months old.'},
+    likes:341,comments:52,shares:27,saves:88,liked:false,saved:false,following:false,
+    music:'Tech Vibes • Kofi Gear',
+    tags:['#Keyboard','#Tech','#CSStudent'],
+  },
+  {
+    id:'r005',
+    src:'',
+    bg:'linear-gradient(135deg,#1a0a1a 0%,#2a0a3a 50%,#0d1117 100%)',
+    bgEmoji:'👗',
+    seller:{name:'Adwoa Asante',handle:'@adwoa_fashion',initials:'AA',avGrad:'linear-gradient(135deg,#e8c96a,#f5c842)'},
+    caption:'Ankara dress only worn once 👗🌟 Size M, vibrant colours, perfect for events and celebrations! Grab it before it\'s gone! #Fashion #Ankara #CampusStyle',
+    product:{name:'Ankara Dress (Size M)',price:'GH₵ 45',emoji:'👗',desc:'Beautiful Ankara print dress. Worn once to a party. Excellent condition. Perfect for cultural events.'},
+    likes:623,comments:91,shares:56,saves:147,liked:false,saved:false,following:false,
+    music:'Afrobeats Mix • Adwoa Fashion',
+    tags:['#Fashion','#Ankara','#Style'],
+  },
+];
+
+/* ── STATE ── */
+let currentReelIdx=0;
+let activeVideoEl=null;
+let activeCommentsIdx=null;
+let pendingVideoFile=null;
+let pendingVideoURL=null;
+let uploadedReels=JSON.parse(localStorage.getItem('pu-reels')||'[]');
+
+// Prepend user-uploaded reels
+const ALL_REELS=[...uploadedReels,...REELS];
+
+/* ══════════════════════════════════════
+   BUILD FEED
+══════════════════════════════════════ */
+function buildFeed(){
+  const feed=document.getElementById('feed');
+  feed.innerHTML='';
+  ALL_REELS.forEach((r,i)=>{
+    const el=document.createElement('div');
+    el.className='reel';
+    el.id='reel-'+i;
+    el.dataset.idx=i;
+    el.innerHTML=reelHTML(r,i);
+    feed.appendChild(el);
+  });
+  attachFeedObserver();
+  attachTapHandlers();
+
+  // Assign video src via JS (blob URLs must be set programmatically, not as HTML attributes)
+  document.querySelectorAll('.reel-video[data-src]').forEach(vid=>{
+    const src=vid.dataset.src;
+    if(src){
+      vid.src=src;
+      vid.load();
+    }
+  });
+}
+
+function reelHTML(r,i){
+  const hasVideo=r.src&&r.src.length>0;
+  return `
+    <!-- Progress bar -->
+    <div class="progress-bar"><div class="progress-fill" id="prog-${i}"></div></div>
+
+    <!-- Video or colour placeholder -->
+    ${hasVideo
+      ?`<video class="reel-video" id="vid-${i}" data-src="${r.src}" loop playsinline preload="auto"
+           onclick="togglePlay(${i})" onplay="onVideoPlay(${i})" onpause="onVideoPause(${i})" ontimeupdate="onTimeUpdate(${i})"></video>`
+      :`<div class="reel-bg" style="background:${r.bg}" onclick="togglePlay(${i})" id="vid-${i}">
+          <span style="font-size:6rem;filter:drop-shadow(0 4px 20px rgba(0,0,0,.5))">${r.bgEmoji}</span>
+        </div>`
+    }
+
+    <!-- Gradient overlay -->
+    <div class="reel-overlay"></div>
+
+    <!-- Play/pause flash -->
+    <div class="play-flash" id="flash-${i}">
+      <svg viewBox="0 0 24 24" width="32" height="32"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    </div>
+
+    <!-- Top bar -->
+    <div class="reel-topbar">
+      <div class="reel-logo">PU-<span>Reels</span></div>
+      <div class="reel-topbar-right">
+        <button class="top-icon-btn" onclick="location.href='dashboard.html'" title="Home">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </button>
+        <button class="top-icon-btn" onclick="openUpload()" title="Upload">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom info -->
+    <div class="reel-bottom">
+      <div class="reel-seller-row" onclick="showToast('Viewing @'+${JSON.stringify(r.seller.handle)})">
+        <div class="reel-av" style="background:${r.seller.avGrad}">${r.seller.initials}</div>
+        <div class="reel-seller-info">
+          <div class="reel-seller-name">${r.seller.name}</div>
+          <div class="reel-seller-handle">${r.seller.handle}</div>
+        </div>
+        <button class="follow-btn${r.following?' following':''}" id="follow-${i}" onclick="event.stopPropagation();toggleFollow(${i})">${r.following?'Following':'Follow'}</button>
+      </div>
+      <div class="reel-caption">
+        ${escHtml(r.caption.replace(/#\w+/g,''))}
+        ${r.tags.map(t=>`<span class="tag">${t}</span>`).join(' ')}
+      </div>
+      ${r.product?`
+      <div class="reel-product-pill" onclick="openProduct(${i})">
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+        ${r.product.name} · ${r.product.price}
+      </div>`:''}
+      <div class="reel-music">
+        <div class="music-disc">🎵</div>
+        <span>${r.music||'Original Audio'}</span>
+      </div>
+    </div>
+
+    <!-- Right action rail -->
+    <div class="reel-actions">
+      <div class="ract" onclick="toggleLike(${i})">
+        <div class="ract-ico${r.liked?' liked':''}" id="like-ico-${i}">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        </div>
+        <div class="ract-lbl" id="like-count-${i}">${fmtNum(r.likes)}</div>
+      </div>
+      <div class="ract" onclick="openComments(${i})">
+        <div class="ract-ico">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </div>
+        <div class="ract-lbl" id="comment-count-${i}">${fmtNum(r.comments)}</div>
+      </div>
+      <div class="ract" onclick="openShare(${i})">
+        <div class="ract-ico">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </div>
+        <div class="ract-lbl">${fmtNum(r.shares)}</div>
+      </div>
+      <div class="ract" onclick="toggleSave(${i})">
+        <div class="ract-ico${r.saved?' saved':''}" id="save-ico-${i}">
+          <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        </div>
+        <div class="ract-lbl" id="save-count-${i}">${fmtNum(r.saves)}</div>
+      </div>
+    </div>
+  `;
+}
+
+/* ══════════════════════════════════════
+   INTERSECTION OBSERVER — auto play/pause
+══════════════════════════════════════ */
+let reelObserver=null;
+function attachFeedObserver(){
+  if(reelObserver)reelObserver.disconnect();
+  reelObserver=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.intersectionRatio>=0.7){
+        const idx=parseInt(e.target.dataset.idx);
+        if(currentReelIdx!==idx){
+          pauseReel(currentReelIdx);
+          currentReelIdx=idx;
+        }
+        playReel(idx);
+      }
+    });
+  },{threshold:0.7});
+  document.querySelectorAll('.reel').forEach(r=>reelObserver.observe(r));
+}
+
+function playReel(idx){
+  const r=ALL_REELS[idx];
+  if(!r)return;
+  const el=document.getElementById('vid-'+idx);
+  if(!el||el.tagName!=='VIDEO')return;
+  // If src not yet assigned (can happen on first call), assign it
+  if(!el.src&&el.dataset.src){
+    el.src=el.dataset.src;
+    el.load();
+  }
+  // Play — handle the promise (some browsers return a Promise)
+  const promise=el.play();
+  if(promise!==undefined){
+    promise.catch(err=>{
+      // Autoplay blocked — require a user tap first; this is fine
+      if(err.name!=='AbortError')console.warn('Reel play error:',err.message);
+    });
+  }
+  activeVideoEl=el;
+}
+
+function pauseReel(idx){
+  const el=document.getElementById('vid-'+idx);
+  if(el&&el.tagName==='VIDEO')el.pause();
+}
+
+function togglePlay(idx){
+  const el=document.getElementById('vid-'+idx);
+  if(!el||el.tagName!=='VIDEO'){
+    flashIcon(idx,'play');return;
+  }
+  if(el.paused){el.play();flashIcon(idx,'play');}
+  else{el.pause();flashIcon(idx,'pause');}
+}
+
+function flashIcon(idx,type){
+  const f=document.getElementById('flash-'+idx);
+  if(!f)return;
+  f.innerHTML=type==='play'
+    ?'<svg viewBox="0 0 24 24" width="32" height="32" style="fill:#fff;stroke:none"><polygon points="5 3 19 12 5 21 5 3"/></svg>'
+    :'<svg viewBox="0 0 24 24" width="32" height="32" style="fill:none;stroke:#fff;stroke-width:2.5"><line x1="6" y1="4" x2="6" y2="20"/><line x1="18" y1="4" x2="18" y2="20"/></svg>';
+  f.classList.add('show');
+  setTimeout(()=>f.classList.remove('show'),700);
+}
+
+function onVideoPlay(idx){document.getElementById('prog-'+idx).parentElement.style.opacity='1';}
+function onVideoPause(idx){}
+function onTimeUpdate(idx){
+  const el=document.getElementById('vid-'+idx);
+  const prog=document.getElementById('prog-'+idx);
+  if(!el||!prog||!el.duration)return;
+  prog.style.width=(el.currentTime/el.duration*100)+'%';
+}
+
+/* ══════════════════════════════════════
+   TAP TO PLAY / GESTURE HANDLERS
+══════════════════════════════════════ */
+function attachTapHandlers(){
+  // Double-tap to like
+  let lastTap=0;
+  document.getElementById('feed').addEventListener('touchend',e=>{
+    const now=Date.now();
+    if(now-lastTap<300){
+      const reel=e.target.closest('.reel');
+      if(reel){toggleLike(parseInt(reel.dataset.idx));}
+    }
+    lastTap=now;
+  },{passive:true});
+}
+
+/* ══════════════════════════════════════
+   LIKE / SAVE / FOLLOW
+══════════════════════════════════════ */
+function toggleLike(idx){
+  const r=ALL_REELS[idx];if(!r)return;
+  r.liked=!r.liked;
+  r.likes+=r.liked?1:-1;
+  const ico=document.getElementById('like-ico-'+idx);
+  const cnt=document.getElementById('like-count-'+idx);
+  if(ico)ico.className='ract-ico'+(r.liked?' liked':'');
+  if(cnt)cnt.textContent=fmtNum(r.likes);
+  if(r.liked)showToast('❤️ Liked');
+}
+
+function toggleSave(idx){
+  const r=ALL_REELS[idx];if(!r)return;
+  r.saved=!r.saved;
+  r.saves+=r.saved?1:-1;
+  const ico=document.getElementById('save-ico-'+idx);
+  const cnt=document.getElementById('save-count-'+idx);
+  if(ico)ico.className='ract-ico'+(r.saved?' saved':'');
+  if(cnt)cnt.textContent=fmtNum(r.saves);
+  showToast(r.saved?'🔖 Saved to Wishlist':'Removed from saved');
+}
+
+function toggleFollow(idx){
+  const r=ALL_REELS[idx];if(!r)return;
+  r.following=!r.following;
+  const btn=document.getElementById('follow-'+idx);
+  if(btn){btn.textContent=r.following?'Following':'Follow';btn.className='follow-btn'+(r.following?' following':'');}
+  showToast(r.following?`Following ${r.seller.name}`:`Unfollowed ${r.seller.name}`);
+}
+
+/* ══════════════════════════════════════
+   PRODUCT SHEET
+══════════════════════════════════════ */
+function openProduct(idx){
+  const r=ALL_REELS[idx];if(!r?.product)return;
+  document.getElementById('psImg').textContent=r.product.emoji;
+  document.getElementById('psName').textContent=r.product.name;
+  document.getElementById('psPrice').textContent=r.product.price;
+  document.getElementById('psSeller').textContent='Listed by '+r.seller.handle;
+  document.getElementById('psDesc').textContent=r.product.desc;
+  document.getElementById('productOverlay').classList.add('open');
+  pauseReel(idx);
+}
+function closeProduct(e){
+  if(!e||e.target===document.getElementById('productOverlay')){
+    document.getElementById('productOverlay').classList.remove('open');
+    playReel(currentReelIdx);
+  }
+}
+
+/* ══════════════════════════════════════
+   COMMENTS
+══════════════════════════════════════ */
+const COMMENTS_DATA={
+  r001:[
+    {initials:'AB',avClr:'#5be5c5',name:'Abena Boateng',text:'Is this still available? 😍',time:'2h',likes:12},
+    {initials:'EO',avClr:'#a78bfa',name:'Esi Owusu',text:'What processor generation is it?',time:'1h',likes:5},
+    {initials:'KM',avClr:'#fb923c',name:'Kofi Mensah',text:'Price is fair for a Core i7! I bought mine for GH₵ 2,500 😅',time:'45m',likes:23},
+  ],
+  r002:[
+    {initials:'KA',avClr:'#e8c96a',name:'Kwame Asante',text:'Your designs are 🔥🔥 Do you do event posters too?',time:'5h',likes:34},
+    {initials:'AB',avClr:'#5be5c5',name:'Abena Boateng',text:'DM sent! Need a flyer for my club event 🙏',time:'3h',likes:8},
+  ],
+  r003:[
+    {initials:'KM',avClr:'#fb923c',name:'Kofi Mensah',text:'Is this the McMurry edition? Does it have the solutions manual?',time:'1d',likes:3},
+    {initials:'EO',avClr:'#a78bfa',name:'Esi Owusu',text:'I need this so badly 😭 Still available?',time:'18h',likes:7},
+  ],
+  r004:[
+    {initials:'AB',avClr:'#5be5c5',name:'Abena Boateng',text:'What switches? Linear or tactile?',time:'3h',likes:4},
+    {initials:'EO',avClr:'#a78bfa',name:'Esi Owusu',text:'I have the same keyboard! Great choice for programmers 👏',time:'2h',likes:18},
+    {initials:'KA',avClr:'#e8c96a',name:'Kwame Asante',text:'Would you take GH₵ 250?',time:'30m',likes:1},
+  ],
+  r005:[
+    {initials:'KM',avClr:'#fb923c',name:'Kofi Mensah',text:'The colours are so vibrant! 😍',time:'6h',likes:29},
+    {initials:'AB',avClr:'#5be5c5',name:'Abena Boateng',text:'I love the pattern! Any size S available?',time:'4h',likes:11},
+    {initials:'KA',avClr:'#e8c96a',name:'Kwame Asante',text:'Getting this for my sister 🎁',time:'2h',likes:6},
+  ],
+};
+
+function openComments(idx){
+  activeCommentsIdx=idx;
+  const r=ALL_REELS[idx];if(!r)return;
+  const key=r.id;
+  const list=COMMENTS_DATA[key]||[];
+  document.getElementById('commentsTitle').textContent=`${fmtNum(r.comments)} Comments`;
+  const cl=document.getElementById('commentsList');
+  cl.innerHTML=list.length?list.map(c=>`
+    <div class="comment-item">
+      <div class="c-av" style="background:${c.avClr};color:#0d0e11">${c.initials}</div>
+      <div class="c-body">
+        <div class="c-name">${c.name}</div>
+        <div class="c-text">${escHtml(c.text)}</div>
+        <div class="c-meta">
+          <span class="c-time">${c.time}</span>
+          <span class="c-like" onclick="likeComment(this)">❤️ Like</span>
+          <span class="c-likes">${c.likes}</span>
+        </div>
+      </div>
+    </div>`).join('')
+    :'<div style="text-align:center;padding:2rem;color:#7a7e8a;font-size:.85rem">No comments yet — be the first!</div>';
+  document.getElementById('commentsOverlay').classList.add('open');
+  pauseReel(idx);
+}
+
+function closeComments(e){
+  if(!e||e.target===document.getElementById('commentsOverlay')){
+    document.getElementById('commentsOverlay').classList.remove('open');
+    document.getElementById('commentInput').value='';
+    document.getElementById('csSend').disabled=true;
+    playReel(currentReelIdx);
+  }
+}
+
+function postComment(){
+  const inp=document.getElementById('commentInput');
+  const text=inp.value.trim();if(!text)return;
+  const p=JSON.parse(localStorage.getItem('pu-profile')||'{}');
+  const name=p.name||'Kwame Asante';
+  const ini=(name.split(' ').map(w=>w[0]||'').join('').slice(0,2))||'KA';
+  const item=document.createElement('div');
+  item.className='comment-item';
+  item.innerHTML=`
+    <div class="c-av" style="background:linear-gradient(135deg,#e8c96a,#f5c842);color:#0d0e11">${ini}</div>
+    <div class="c-body">
+      <div class="c-name">${escHtml(name)}</div>
+      <div class="c-text">${escHtml(text)}</div>
+      <div class="c-meta"><span class="c-time">Just now</span><span class="c-like" onclick="likeComment(this)">❤️ Like</span><span class="c-likes">0</span></div>
+    </div>`;
+  const cl=document.getElementById('commentsList');
+  cl.appendChild(item);
+  cl.scrollTop=cl.scrollHeight;
+  inp.value='';inp.style.height='';
+  document.getElementById('csSend').disabled=true;
+  if(activeCommentsIdx!==null){
+    const r=ALL_REELS[activeCommentsIdx];
+    if(r){r.comments++;const cc=document.getElementById('comment-count-'+activeCommentsIdx);if(cc)cc.textContent=fmtNum(r.comments);}
+  }
+}
+
+function likeComment(el){
+  const meta=el.parentElement;
+  const cnt=meta.querySelector('.c-likes');
+  if(!cnt)return;
+  const n=parseInt(cnt.textContent)||0;
+  cnt.textContent=el.dataset.liked?n-1:n+1;
+  el.dataset.liked=el.dataset.liked?'':'1';
+  el.textContent=el.dataset.liked?'❤️ Liked':'❤️ Like';
+  el.style.color=el.dataset.liked?'var(--red)':'#7a7e8a';
+}
+
+function autoResizeCs(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,80)+'px';}
+
+/* ══════════════════════════════════════
+   SHARE
+══════════════════════════════════════ */
+let shareReelIdx=null;
+function openShare(idx){
+  shareReelIdx=idx;
+  const r=ALL_REELS[idx];
+  document.getElementById('shareLink').textContent=`pu-marketplace.edu.gh/reels/${r.id}`;
+  document.getElementById('shareOverlay').classList.add('open');
+  pauseReel(idx);
+}
+function closeShare(e){
+  if(!e||e.target===document.getElementById('shareOverlay')){
+    document.getElementById('shareOverlay').classList.remove('open');
+    playReel(currentReelIdx);
+  }
+}
+function shareAction(type){
+  closeShare();
+  if(type==='chat'){showToast('Opening chat to share…');setTimeout(()=>location.href='chat.html',600);}
+  else if(type==='copy'){copyLink();}
+  else{showToast('Opening '+type+'…');}
+}
+function copyLink(){
+  const link=document.getElementById('shareLink').textContent;
+  navigator.clipboard.writeText(link).then(()=>showToast('🔗 Link copied!'))
+    .catch(()=>showToast('Link copied!'));
+}
+
+/* ══════════════════════════════════════
+   UPLOAD MODAL
+══════════════════════════════════════ */
+function openUpload(){
+  document.getElementById('uploadOverlay').classList.add('open');
+  pauseReel(currentReelIdx);
+}
+function closeUpload(){
+  document.getElementById('uploadOverlay').classList.remove('open');
+  removeVideo();
+  document.getElementById('captionInput').value='';
+  document.getElementById('captionCount').textContent='0 / 200';
+  document.getElementById('listingSelect').value='';
+  document.getElementById('uploadProgress').classList.remove('show');
+  playReel(currentReelIdx);
+}
+function closeUploadOverlay(e){
+  if(e.target===document.getElementById('uploadOverlay'))closeUpload();
+}
+
+function handleVideoSelect(file){
+  if(!file)return;
+  if(file.size>100*1024*1024){showToast('Video too large — max 100MB');return;}
+  pendingVideoFile=file;
+  // Revoke previous blob URL only if it's not being used by a feed video
+  if(pendingVideoURL&&!document.querySelector(`video[src="${pendingVideoURL}"]`)){
+    URL.revokeObjectURL(pendingVideoURL);
+  }
+  pendingVideoURL=URL.createObjectURL(file);
+  const vid=document.getElementById('vidPreview');
+  vid.src=pendingVideoURL;
+  vid.load(); // required to trigger canplay and allow playback
+  // Check duration once metadata loads
+  vid.onloadedmetadata=()=>{
+    if(vid.duration>180){
+      showToast('Video too long — max 3 minutes');
+      removeVideo();
+      return;
+    }
+  };
+  document.getElementById('vidPreviewWrap').style.display='block';
+  document.getElementById('dropZone').style.display='none';
+  document.getElementById('uploadBtn').disabled=false;
+}
+
+function removeVideo(){
+  pendingVideoFile=null;
+  if(pendingVideoURL){
+    // Only revoke if no feed video is currently using this URL
+    if(!document.querySelector(`video[src="${pendingVideoURL}"]`)){
+      URL.revokeObjectURL(pendingVideoURL);
+    }
+    pendingVideoURL=null;
+  }
+  const vid=document.getElementById('vidPreview');
+  vid.pause();
+  vid.src='';
+  vid.load();
+  document.getElementById('vidPreviewWrap').style.display='none';
+  document.getElementById('dropZone').style.display='block';
+  document.getElementById('uploadBtn').disabled=true;
+  document.getElementById('videoFileInput').value='';
+}
+
+function publishReel(){
+  const caption=document.getElementById('captionInput').value.trim();
+  if(!pendingVideoURL){showToast('Please select a video first');return;}
+  if(!caption){showToast('Please add a caption');return;}
+
+  const btn=document.getElementById('uploadBtn');
+  btn.disabled=true;btn.textContent='Uploading…';
+
+  // Show progress
+  const prog=document.getElementById('uploadProgress');
+  const fill=document.getElementById('uploadFill');
+  const lbl=document.getElementById('uploadLabel');
+  prog.classList.add('show');
+
+  // Simulate upload progress
+  let pct=0;
+  const steps=['Preparing video…','Uploading…','Processing…','Almost done…'];
+  const interval=setInterval(()=>{
+    pct+=Math.random()*18+4;
+    if(pct>=100){pct=100;clearInterval(interval);finishUpload(caption);}
+    fill.style.width=pct+'%';
+    lbl.textContent=steps[Math.min(Math.floor(pct/25),3)];
+  },200);
+}
+
+function finishUpload(caption){
+  const p=JSON.parse(localStorage.getItem('pu-profile')||'{}');
+  const name=p.name||'Kwame Asante';
+  const username=p.username||'kwame_sell';
+  const ini=(name.split(' ').map(w=>w[0]||'').join('').slice(0,2))||'KA';
+  const avSrc=p.avatarSrc||'';
+
+  // Pick linked listing if any
+  const sel=document.getElementById('listingSelect');
+  const opt=sel.options[sel.selectedIndex];
+  const product=opt.value?{
+    name:opt.text.split(' — ')[0],
+    price:opt.dataset.price||'',
+    emoji:opt.dataset.emoji||'📦',
+    desc:'Campus listing — tap to view details.',
+  }:null;
+
+  const tags=(caption.match(/#\w+/g)||[]);
+  const newReel={
+    id:'r-'+Date.now(),
+    src:pendingVideoURL,
+    bg:'linear-gradient(135deg,#0d1117 0%,#1c1f27 100%)',
+    bgEmoji:'🎬',
+    seller:{name,handle:'@'+username,initials:ini,avGrad:'linear-gradient(135deg,#e8c96a,#f5c842)',avSrc},
+    caption,product,
+    likes:0,comments:0,shares:0,saves:0,liked:false,saved:false,following:false,
+    music:'Original Audio · '+name,
+    tags,
+    uploadedAt:Date.now(),
+  };
+
+  // Persist to localStorage (small reels only — store URL reference)
+  try{
+    const stored=JSON.parse(localStorage.getItem('pu-reels')||'[]');
+    // Store without the blob URL (which won't survive refresh) — just metadata
+    const toStore={...newReel,src:'',bgEmoji:'🎬',bg:'linear-gradient(135deg,#0d1117,#1c1f27)'};
+    stored.unshift(toStore);
+    if(stored.length>20)stored.pop();
+    localStorage.setItem('pu-reels',JSON.stringify(stored));
+  }catch(e){}
+
+  // Insert into feed in-memory (with real blob URL for this session)
+  ALL_REELS.unshift(newReel);
+
+  closeUpload();
+  buildFeed();
+
+  // Scroll to top
+  document.getElementById('feed').scrollTo({top:0,behavior:'smooth'});
+  currentReelIdx=0;
+  setTimeout(()=>playReel(0),400);
+
+  showToast('🎉 Reel published!');
+}
+
+/* ══════════════════════════════════════
+   DRAG & DROP
+══════════════════════════════════════ */
+const dz=document.getElementById('dropZone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+dz.addEventListener('drop',e=>{
+  e.preventDefault();dz.classList.remove('drag-over');
+  const f=e.dataTransfer.files[0];
+  if(f&&f.type.startsWith('video/'))handleVideoSelect(f);
+  else showToast('Please drop a video file');
+});
+
+/* ══════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════ */
+function fmtNum(n){
+  if(n>=1000)return(n/1000).toFixed(1).replace(/\.0$/,'')+'k';
+  return String(n);
+}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+buildFeed();
+// Auto-play first reel after a short delay
+setTimeout(()=>playReel(0),300);
+</script>
+</body>
+</html>
