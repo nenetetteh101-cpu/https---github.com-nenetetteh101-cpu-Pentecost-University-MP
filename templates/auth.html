@@ -106,7 +106,7 @@
     <!-- ══════════════════════════════════════════
          LOGIN FORM  →  POST to /auth/login/
     ══════════════════════════════════════════ -->
-    <form method="POST" action="{% url 'login_view' %}" novalidate> 
+    <form method="POST" action="." novalidate> 
     {% csrf_token %}
     <div class="form-panel {% if active_tab == 'login' or not active_tab %}active{% endif %}" id="panel-login">
       <div class="form-title">Welcome back 👋</div>
@@ -149,6 +149,7 @@
               placeholder="Enter your password"
               autocomplete="current-password"
             />
+            {% csrf_token %}
             <button class="pw-toggle" type="button" onclick="togglePw('login-password', this)">👁️</button>
           </div>
           {% if login_errors.password %}
@@ -208,7 +209,7 @@
       <div class="form-title">Join the Campus 🎉</div>
       <p class="form-sub">Already a member? <a href="#" onclick="switchTab('login')">Log in</a></p>
 
-      <form method="POST" action="{% url 'signup_view' %}" novalidate>
+      <form method="POST" action="." novalidate>
         {% csrf_token %}
         <input type="hidden" name="form_type" value="signup">
 
@@ -396,3 +397,7 @@
 
 </body>
 </html>
+
+
+
+
