@@ -1,0 +1,505 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
+<title>Post a Listing — PU-Marketplace</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="{% static 'css/create-listing.css' %}" rel="stylesheet"/>
+
+</head>
+<body>
+
+<nav class="tnav">
+  <button class="nbk" onclick="handleBack()">
+    <svg viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 5l-7 7 7 7"/></svg>
+    <span id="blbl">Cancel</span>
+  </button>
+  <span class="nav-ttl" id="nttl">Post a Listing</span>
+  <button class="thbtn" id="thbtn">🌞</button>
+</nav>
+
+<div class="pb" id="progBar">
+  <div class="pst">
+    <div class="ps act" id="ps1"><div class="pn">1</div><div class="pl">Category</div></div>
+    <div class="ps" id="ps2"><div class="pn">2</div><div class="pl">Details</div></div>
+    <div class="ps" id="ps3"><div class="pn">3</div><div class="pl">Photos</div></div>
+    <div class="ps" id="ps4"><div class="pn">4</div><div class="pl">Contact</div></div>
+    <div class="ps" id="ps5"><div class="pn">5</div><div class="pl">Review</div></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- STEP 1: CATEGORY -->
+<div id="s1">
+  <div class="sh">
+    <div class="se">Step 1 of 5 · Category</div>
+    <div class="st">What are you posting?</div>
+    <div class="ss">Choose a category group — exactly as listed on Bisame</div>
+  </div>
+
+  <div class="f">
+    <label class="fl">Category Group <span class="req">*</span></label>
+    <div class="cgg" id="cgGrid">
+      <div class="cg sel" data-cg="Services" onclick="selCG(this)"><span class="cg-i">🛠️</span><div class="cg-n">Services</div></div>
+      <div class="cg" data-cg="Products" onclick="selCG(this)"><span class="cg-i">📦</span><div class="cg-n">Products</div></div>
+    </div>
+    <div class="em" id="cg-em">Please select a category group</div>
+  </div>
+
+  <div class="f">
+    <label class="fl" for="cat">Category <span class="req">*</span></label>
+    <select id="cat" onchange="onCatCh()"><option value="">— Select a category —</option></select>
+    <div class="em" id="cat-em">Please select a category</div>
+  </div>
+
+  <div class="f" id="sf" style="display:none">
+    <label class="fl" for="subcat">Sub-category <span class="opt">(optional)</span></label>
+    <select id="subcat"><option value="">— Select sub-category —</option></select>
+  </div>
+</div>
+
+<!-- STEP 2: DETAILS -->
+<div id="s2" style="display:none">
+  <div class="sh">
+    <div class="se">Step 2 of 5 · Details</div>
+    <div class="st">Listing Details</div>
+    <div class="ss">More detail = faster responses from serious buyers</div>
+  </div>
+
+  <div class="f">
+    <label class="fl" for="title">Listing Title <span class="req">*</span></label>
+    <input type="text" id="title" maxlength="80" placeholder='e.g. HP Laptop 15.6" Core i7 — Barely Used' oninput="countChars('title','tcc',80)"/>
+    <div style="display:flex;justify-content:space-between;margin-top:.26rem">
+      <span class="em" id="title-em" style="display:none;position:static">Title required (min 5 chars)</span>
+      <span id="tcc" style="font-size:.65rem;color:var(--m);margin-left:auto">0 / 80</span>
+    </div>
+    <div class="fh">Use searchable keywords — brand, model, colour, size</div>
+  </div>
+
+  <div class="f">
+    <label class="fl" for="brand">Brand <span class="opt">(optional)</span></label>
+    <input type="text" id="brand" placeholder="e.g. Samsung, HP, Apple — leave blank if unknown" maxlength="60"/>
+  </div>
+
+  <div class="f" id="cond-f">
+    <label class="fl">Condition <span class="req">*</span></label>
+    <div class="cpills">
+      <div class="cp sel" data-cv="Brand New" onclick="selCond(this)">🟢 Brand New</div>
+      <div class="cp" data-cv="Like New" onclick="selCond(this)">✨ Like New</div>
+      <div class="cp" data-cv="Good" onclick="selCond(this)">👍 Good</div>
+      <div class="cp" data-cv="Fair" onclick="selCond(this)">🔄 Fair</div>
+      <div class="cp" data-cv="For Parts" onclick="selCond(this)">🔧 For Parts</div>
+    </div>
+    <input type="hidden" id="cond" value="Brand New"/>
+    <div class="em" id="cond-em">Please select a condition</div>
+  </div>
+
+  <div class="f">
+    <label class="fl">Availability <span class="req">*</span></label>
+    <div class="av-row">
+      <div class="av sel" id="av-avail" onclick="selAvail('Available')">✅ Available</div>
+      <div class="av sv" id="av-sold" onclick="selAvail('Sold Out')">🚫 Sold Out</div>
+    </div>
+    <input type="hidden" id="avail" value="Available"/>
+  </div>
+
+  <div class="f">
+    <label class="fl">Price <span class="req">*</span></label>
+    <div class="pw">
+      <div class="pi">
+        <span class="pfx">GH₵</span>
+        <input type="number" id="price" min="0" step="0.01" placeholder="0.00" oninput="chkPrice()"/>
+      </div>
+      <div class="neg" id="negBtn" onclick="togNeg()"><div class="nd"></div>Negotiable</div>
+    </div>
+    <label class="ctap" id="ctaLbl">
+      <input type="checkbox" id="ctaCk" onchange="togCTA()"/> Contact for Price
+    </label>
+    <div class="em" id="price-em">Enter a price or tick "Contact for Price"</div>
+    <div class="fh" id="price-fh">For services: enter your starting rate (hourly or per project)</div>
+  </div>
+
+  <div class="f">
+    <label class="fl" for="desc">Description <span class="req">*</span></label>
+    <div class="cw">
+      <textarea id="desc" maxlength="1000" rows="5" placeholder="Describe the item in detail — specs, what's included, condition notes, reason for selling…" oninput="countChars('desc','dcc',1000)"></textarea>
+      <span class="ccc" id="dcc">0 / 1000</span>
+    </div>
+    <div class="em" id="desc-em">Description required (min 20 chars)</div>
+  </div>
+
+  <!-- Key Services — exactly as Bisame labels it -->
+  <div class="f">
+    <label class="fl">Key Services / Tags <span class="opt">(optional)</span></label>
+    <div class="tw" id="tagsBox" onclick="document.getElementById('ti').focus()">
+      <input type="text" id="ti" class="ti" placeholder="Type keyword + press Enter or comma…" onkeydown="tkd(event)" oninput="toi(this)"/>
+    </div>
+    <div class="fh">e.g. iPhone, Delivery, Repair · up to 10 · press Enter or , to add each</div>
+  </div>
+</div>
+
+<!-- STEP 3: PHOTOS -->
+<div id="s3" style="display:none">
+  <div class="sh">
+    <div class="se">Step 3 of 5 · Photos</div>
+    <div class="st">Add Photos <span class="req" style="font-family:'DM Sans',sans-serif;font-size:1rem">*</span></div>
+    <div class="ss">At least 1 photo is required · listings with photos get 5× more responses</div>
+  </div>
+
+  <div class="id" id="dz">
+    <input type="file" id="fi" accept="image/*" multiple onchange="addFiles(this.files)"/>
+    <div class="id-i">📷</div>
+    <div class="id-t">Tap to upload photos</div>
+    <div class="id-h">Up to 5 photos · JPEG / PNG / WEBP · Max 5MB each<br>The first photo becomes your main listing image</div>
+  </div>
+  <div class="ig" id="ig"></div>
+  <div class="em" id="photos-em" style="display:none;margin-top:.6rem">Please add at least 1 photo before continuing</div>
+  <div class="fh" style="margin-top:.65rem">💡 Good lighting + all angles = more buyer interest</div>
+</div>
+
+<!-- STEP 4: CONTACT & LOCATION -->
+<div id="s4" style="display:none">
+  <div class="sh">
+    <div class="se">Step 4 of 5 · Contact</div>
+    <div class="st">Contact Details</div>
+    <div class="ss">All buyer conversations happen through the PU-Marketplace in-app chat</div>
+  </div>
+
+  <div class="f">
+    <label class="fl" for="sname">Your Name <span class="req">*</span></label>
+    <input type="text" id="sname" placeholder="e.g. Kwame Asante" maxlength="50"/>
+    <div class="em" id="sname-em">Name is required</div>
+  </div>
+
+  <div class="f">
+    <label class="fl" for="phone">Phone Number <span class="req">*</span></label>
+    <input type="tel" id="phone" placeholder="e.g. 0241234567" maxlength="12" oninput="fmtPh(this)"/>
+    <div class="em" id="phone-em">Enter a valid Ghana number (min 9 digits)</div>
+    <div class="fh">Stays private until you agree to meet a buyer</div>
+  </div>
+
+  <div class="div"></div>
+
+  <div class="f">
+    <label class="fl" for="meetup">Preferred Meetup Spot <span class="opt">(optional)</span></label>
+    <input type="text" id="meetup" placeholder="e.g. Main Library Foyer, Student Union Building" maxlength="80"/>
+    <div class="fh">A specific campus spot makes it easier for buyers to plan</div>
+  </div>
+</div>
+
+<!-- STEP 5: REVIEW -->
+<div id="s5" style="display:none">
+  <div class="sh">
+    <div class="se">Step 5 of 5 · Review</div>
+    <div class="st">Almost Live!</div>
+    <div class="ss">Check everything looks right before publishing</div>
+  </div>
+  <div class="rvs"><div class="rvt">Listing Info</div><div id="rv-info"></div></div>
+  <div class="rvs" id="rv-ps" style="display:none"><div class="rvt">Photos</div><div class="rvi" id="rv-imgs"></div></div>
+  <div class="rvs"><div class="rvt">Contact</div><div id="rv-contact"></div></div>
+</div>
+
+<!-- SUCCESS -->
+<div class="suc" id="suc">
+  <div class="suc-i">🎉</div>
+  <div class="suc-t">Listing Published!</div>
+  <div class="suc-s">Your listing is now live on PU-Marketplace. Buyers will reach you through in-app chat.</div>
+  <a href="listings.html" class="sb">View My Listings</a>
+  <button class="sb tl" onclick="resetForm()">Post Another Listing</button>
+  <a href="dashboard.html" class="sb g">Back to Dashboard</a>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- STICKY BUTTONS -->
+<div class="bwrap" id="bwrap">
+  <button class="bb" id="bkBtn" onclick="goBack()" style="display:none">Back</button>
+  <button class="bn" id="nxBtn" onclick="goNext()">Continue <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
+</div>
+
+<script>
+/* THEME */
+const H=document.documentElement,TB=document.getElementById('thbtn');
+let dk=localStorage.getItem('pu-theme')!=='light';
+function apTh(d){H.setAttribute('data-theme',d?'dark':'light');TB.textContent=d?'🌞':'🌙';dk=d;localStorage.setItem('pu-theme',d?'dark':'light');const m=document.getElementById('themeColorMeta');if(m)m.setAttribute('content',d?'#0d0e11':'#f0ede8');}
+apTh(dk);TB.onclick=()=>apTh(!dk);
+
+/* STATE */
+let cur=1,cgV='Services',catV='',subV='',condV='Brand New',availV='Available',negV=false,ctaV=false,tags=[],imgs=[];
+
+/* ─── CATEGORY TAXONOMY ─── */
+const CATS={
+  'Services':{
+    'Building Skills':['Painting','Plumbing','Electrical Work','Carpentry','Security Systems','Masonry','Welding','Tiling','Roofing','Other'],
+    'Beauty and Personal Care':['Barbing & Haircut','Braiding & Weaves','Makeup Artist','Nail Art','Facials & Skincare','Lash Extensions','Other'],
+    'Catering':['Home Chef','Event Catering','Pastries & Cakes','Drinks & Juices','Meal Delivery','Other'],
+    'Cleaning Services':['Room / House Cleaning','Laundry & Ironing','Office Cleaning','Carpet & Upholstery','Other'],
+    'Creative Arts':['Photography','Videography','Graphic Design','Illustration','Animation','Music Production','Other'],
+    'Digital Services':['Web Design & Dev','App Development','Data Analysis','Automation Scripts','Cybersecurity','SEO & Marketing','Other'],
+    'Education':['Mathematics','Sciences (Physics/Chem/Bio)','English & Literature','ICT & Computing','Business Studies','Language Lessons','University Entrance Prep','Other'],
+    'Events':['DJ Services','Event MC / Host','Live Band','Event Decoration','Event Photography & Video','Event Planning','Other'],
+    'Fashion & Sewing':['Tailoring & Sewing','Clothing Alterations','Custom Outfits','Embroidery','Other'],
+    'Repairs & Maintenance':['Phone Repair','Laptop & PC Repair','Home Appliance Repair','Furniture Repair','Car Service & Repair','Other'],
+    'Transport & Delivery':['Campus Delivery','Dispatch Rider','Moving Service','Errand Running','Ride-Hailing','Other'],
+    'Writing & Editing':['Essay Proofreading','CV & Cover Letter','Academic Reports','Blog & Content Writing','Translation Services','Other'],
+    'Other Services':['Other'],
+  },
+  'Products':{
+    'Electronics':['Laptops','Desktop Computers','Monitors & Displays','Keyboards & Mice','Headphones & Earphones','Cables & Chargers','Cameras & CCTV','Gaming Consoles & Accessories','Other Electronics'],
+    'Phones & Accessories':['Smartphones','Feature Phones','Phone Cases & Covers','Chargers & Cables','Screen Protectors','Power Banks','Earphones & Earbuds','Other Phone Accessories'],
+    'Computers & Networking':['Laptops','Desktop PCs','Printers & Scanners','Routers & Modems','External Storage','Computer Parts & Components','Other'],
+    'Books & Notes':['Engineering & Technology','Computer Science & IT','Business & Accounting','Medicine & Nursing','Law','Natural Sciences','Social Sciences','Arts & Humanities','Novels & Fiction','Religious Books','Self-Help & Development','Magazines & Journals','Other'],
+    'Food & Drinks':['Ghanaian Dishes','Baked Goods','Fresh Juices & Smoothies','Sobolo & Local Drinks','Snacks & Street Food','Packaged Foods','Catering & Meal Plans','Other Food & Drinks'],
+    'Home & Living':['Sofas & Chairs','Tables & Desks','Beds & Mattresses','Kitchen Appliances','Bedding & Pillows','Lighting & Fans','Generators','Other'],
+    'Fashion & Clothing':["Men's Wear","Women's Wear","Children's Wear","Traditional & Kente Wear",'Sportswear','Accessories (Belts, Caps, etc.)','Other'],
+    'Shoes & Footwear':['Sneakers','Sandals & Slippers','Heels & Wedges','Boots','School Shoes',"Children's Shoes",'Other'],
+    'Bags & Luggage':['Backpacks','Handbags & Purses','Briefcases','Travel Bags & Suitcases','School Bags','Other'],
+    'Sports & Fitness':['Football & Rugby Equipment','Gym & Fitness Equipment','Running & Cycling Gear','Swimming','Basketball','Other'],
+    'Beauty & Personal Care':['Skincare Products','Hair Products','Makeup & Cosmetics','Fragrances & Perfumes','Grooming & Hygiene','Other'],
+    'Vehicles & Spare Parts':['Cars','Motorcycles & Scooters','Spare Parts','Tyres & Rims','Car Accessories','Other'],
+    'Tools & Equipment':['Hand Tools','Power Tools','Safety Equipment','Measuring & Testing Tools','Other'],
+    'Other Products':['Miscellaneous','Other'],
+  },
+};
+
+/* CATEGORY GROUP SELECT */
+function selCG(el){
+  document.querySelectorAll('.cg').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  cgV=el.dataset.cg;catV='';subV='';
+  const cs=document.getElementById('cat');
+  cs.innerHTML='<option value="">— Select a category —</option>';
+  Object.keys(CATS[cgV]||{}).forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;cs.appendChild(o);});
+  document.getElementById('sf').style.display='none';
+  showCondF();
+  clrE('cg-em');
+}
+
+function onCatCh(){
+  catV=document.getElementById('cat').value;subV='';
+  const sf=document.getElementById('sf'),ss=document.getElementById('subcat');
+  if(catV&&CATS[cgV]&&CATS[cgV][catV]){
+    ss.innerHTML='<option value="">— Select sub-category —</option>'+
+      CATS[cgV][catV].map(s=>`<option value="${s}">${s}</option>`).join('');
+    sf.style.display='block';
+  } else {sf.style.display='none';}
+  clrE('cat-em');
+}
+
+function showCondF(){
+  document.getElementById('cond-f').style.display=['Products'].includes(cgV)?'block':'none';
+}
+
+/* CONDITION */
+function selCond(el){
+  document.querySelectorAll('.cp').forEach(p=>p.classList.remove('sel'));
+  el.classList.add('sel');condV=el.dataset.cv;
+  document.getElementById('cond').value=condV;clrE('cond-em');
+}
+
+/* AVAILABILITY */
+function selAvail(v){
+  availV=v;
+  document.getElementById('av-avail').classList.toggle('sel',v==='Available');
+  document.getElementById('av-sold').classList.toggle('sel',v==='Sold Out');
+  document.getElementById('avail').value=v;
+}
+
+/* PRICE */
+function togNeg(){negV=!negV;document.getElementById('negBtn').classList.toggle('on',negV);}
+function togCTA(){
+  ctaV=document.getElementById('ctaCk').checked;
+  document.getElementById('ctaLbl').classList.toggle('on',ctaV);
+  document.getElementById('price').disabled=ctaV;
+  if(ctaV)document.getElementById('price').value='';
+  clrE('price-em');
+}
+function chkPrice(){clrE('price-em');}
+
+/* CHAR COUNTER */
+function countChars(id,cid,max){
+  const l=document.getElementById(id).value.length;
+  const el=document.getElementById(cid);
+  el.textContent=l+' / '+max;
+  el.style.color=l>max*.9?'var(--red)':'var(--m)';
+}
+
+/* TAGS */
+function renderTags(){
+  const box=document.getElementById('tagsBox'),inp=document.getElementById('ti');
+  box.querySelectorAll('.tag').forEach(t=>t.remove());
+  tags.forEach((t,i)=>{
+    const s=document.createElement('span');s.className='tag';
+    s.innerHTML=`${t}<button class="tx" onclick="rmTag(${i})">✕</button>`;
+    box.insertBefore(s,inp);
+  });
+}
+function rmTag(i){tags.splice(i,1);renderTags();}
+function addTag(v){const t=v.trim().replace(/,$/,'').trim();if(t&&!tags.includes(t)&&tags.length<10){tags.push(t);renderTags();}}
+function tkd(e){
+  if(e.key==='Enter'||e.key===','||e.key===';'){e.preventDefault();addTag(e.target.value);e.target.value='';}
+  else if(e.key==='Backspace'&&!e.target.value&&tags.length){tags.pop();renderTags();}
+}
+function toi(el){if(el.value.includes(',')){el.value.split(',').forEach(v=>addTag(v));el.value='';}}
+
+/* IMAGES */
+function addFiles(files){
+  const rem=5-imgs.length;
+  Array.from(files).slice(0,rem).forEach(f=>{
+    if(!f.type.startsWith('image/')){return;}
+    if(f.size>5*1024*1024){alert(`"${f.name}" exceeds 5MB.`);return;}
+    const r=new FileReader();
+    r.onload=e=>{
+      imgs.push({src:e.target.result});
+      renderImgs();
+      if(imgs.length>=1){clrE('photos-em');document.getElementById('dz').style.borderColor='';}
+    };
+    r.readAsDataURL(f);
+  });
+}
+function renderImgs(){
+  const g=document.getElementById('ig');g.innerHTML='';
+  imgs.forEach((im,i)=>{
+    const d=document.createElement('div');d.className='ith'+(i===0?' main':'');
+    d.innerHTML=`<img src="${im.src}" alt=""/><button class="irm" onclick="rmImg(${i})">✕</button>`;
+    g.appendChild(d);
+  });
+  if(imgs.length<5){
+    const a=document.createElement('label');a.className='ia';
+    a.innerHTML=`<input type="file" accept="image/*" multiple onchange="addFiles(this.files)"/><span class="ia-p">+</span><span>Add</span>`;
+    g.appendChild(a);
+  }
+}
+function rmImg(i){imgs.splice(i,1);renderImgs();}
+
+
+/* PHONE */
+function fmtPh(el){let v=el.value.replace(/\D/g,'');if(v.length>10)v=v.slice(0,10);el.value=v;}
+
+/* NAVIGATION */
+function goNext(){if(!validate(cur))return;cur++;if(cur>5){publish();return;}switchS(cur);}
+function goBack(){if(cur<=1)return;cur--;switchS(cur);}
+function handleBack(){if(cur===1){location.href=sessionStorage.getItem('pu-lf')||'dashboard.html';}else goBack();}
+
+function switchS(n){
+  for(let i=1;i<=5;i++){const el=document.getElementById('s'+i);if(el)el.style.display=i===n?'block':'none';}
+  updProg();updUI();
+  if(n===5)buildReview();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function updProg(){
+  for(let i=1;i<=5;i++){const p=document.getElementById('ps'+i);p.classList.remove('act','done');if(i<cur)p.classList.add('done');else if(i===cur)p.classList.add('act');}
+}
+function updUI(){
+  document.getElementById('bkBtn').style.display=cur>1?'block':'none';
+  document.getElementById('blbl').textContent=cur===1?'Cancel':'Back';
+  const ttls=['','Category','Details','Photos','Contact','Review'];
+  document.getElementById('nttl').textContent=ttls[cur]||'Post Listing';
+  const nb=document.getElementById('nxBtn');
+  if(cur===5){nb.textContent='🚀 Publish Listing';}
+  else{nb.innerHTML=`${cur===4?'Review Listing':'Continue'} <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#0d0e11" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>`;}
+}
+
+/* VALIDATION */
+function validate(n){
+  let ok=true;
+  if(n===1){
+    if(!cgV){sE('cg-em');ok=false;}else clrE('cg-em');
+    if(!catV){sE('cat-em');ok=false;}else clrE('cat-em');
+  }
+  if(n===2){
+    const t=document.getElementById('title').value.trim(),d=document.getElementById('desc').value.trim(),p=parseFloat(document.getElementById('price').value);
+    if(t.length<5){sE('title-em',true,'title');ok=false;}else{clrE('title-em');document.getElementById('title').classList.remove('err');}
+    if(d.length<20){sE('desc-em',true,'desc');ok=false;}else{clrE('desc-em');document.getElementById('desc').classList.remove('err');}
+    if(!ctaV&&(isNaN(p)||p<0)){sE('price-em',true,'price');ok=false;}else clrE('price-em');
+    if(['Products'].includes(cgV)&&!condV){sE('cond-em');ok=false;}else clrE('cond-em');
+  }
+  if(n===4){
+    const nm=document.getElementById('sname').value.trim(),ph=document.getElementById('phone').value.replace(/\D/g,'');
+    if(!nm){sE('sname-em',true,'sname');ok=false;}else{clrE('sname-em');document.getElementById('sname').classList.remove('err');}
+    if(ph.length<9){sE('phone-em',true,'phone');ok=false;}else{clrE('phone-em');document.getElementById('phone').classList.remove('err');}
+  }
+  return ok;
+}
+function sE(id,cls,iid){const e=document.getElementById(id);if(e)e.style.display='block';if(cls&&iid){const el=document.getElementById(iid);if(el)el.classList.add('err');}}
+function clrE(id){const e=document.getElementById(id);if(e)e.style.display='none';}
+
+/* BUILD REVIEW */
+function buildReview(){
+  const title=document.getElementById('title').value,brand=document.getElementById('brand').value,desc=document.getElementById('desc').value,price=document.getElementById('price').value;
+  const meetup=document.getElementById('meetup').value,nm=document.getElementById('sname').value,ph=document.getElementById('phone').value;
+  const priceStr=ctaV?'Contact for Price':(price?(negV?`GH₵ ${parseFloat(price).toLocaleString()} (Negotiable)`:`GH₵ ${parseFloat(price).toLocaleString()}`):'—');
+  const catFull=catV+(document.getElementById('subcat').value?` › ${document.getElementById('subcat').value}`:'');
+  const infoRows=[
+    ['Category Group',cgV],['Category',catFull],['Title',title],
+    brand?['Brand',brand]:[],
+    ['Availability',`<span class="rvbg">${availV}</span>`],
+    (['Products'].includes(cgV)&&condV)?['Condition',condV]:[],
+    ['Price',`<span class="rvp">${priceStr}</span>`],
+    tags.length?['Key Services',tags.join(', ')]:[],
+    ['Description',desc.length>130?desc.slice(0,130)+'…':desc],
+  ].filter(r=>r.length);
+  document.getElementById('rv-info').innerHTML=infoRows.map(r=>`<div class="rvr"><span class="rvk">${r[0]}</span><span class="rvv">${r[1]}</span></div>`).join('');
+  if(imgs.length){document.getElementById('rv-ps').style.display='block';document.getElementById('rv-imgs').innerHTML=imgs.map(im=>`<img src="${im.src}" alt=""/>`).join('');}
+  else document.getElementById('rv-ps').style.display='none';
+  const cRows=[['Name',nm],['Phone',ph||'—'],meetup?['Meetup Spot',meetup]:[]].filter(r=>r.length);
+  document.getElementById('rv-contact').innerHTML=cRows.map(r=>`<div class="rvr"><span class="rvk">${r[0]}</span><span class="rvv">${r[1]}</span></div>`).join('');
+}
+
+/* PUBLISH */
+function publish(){
+  const nb=document.getElementById('nxBtn');nb.disabled=true;nb.textContent='⏳ Publishing…';
+  setTimeout(()=>{
+    for(let i=1;i<=5;i++){const el=document.getElementById('s'+i);if(el)el.style.display='none';}
+    document.getElementById('progBar').style.display='none';
+    document.getElementById('bwrap').style.display='none';
+    document.getElementById('suc').style.display='block';
+    document.getElementById('nttl').textContent='Published!';
+    document.getElementById('blbl').textContent='Done';
+    window.scrollTo({top:0,behavior:'smooth'});
+  },1100);
+}
+
+/* RESET */
+function resetForm(){
+  cur=1;cgV='Services';catV='';subV='';condV='Brand New';availV='Available';negV=false;ctaV=false;tags=[];imgs=[];
+  ['title','brand','desc','price','sname','phone','meetup'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.classList.remove('err');}});
+  ['cat','subcat'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('sf').style.display='none';
+  document.getElementById('ig').innerHTML='';
+  document.getElementById('tagsBox').querySelectorAll('.tag').forEach(t=>t.remove());
+  document.getElementById('ti').value='';
+  document.getElementById('negBtn').classList.remove('on');
+  document.getElementById('ctaCk').checked=false;document.getElementById('ctaLbl').classList.remove('on');
+  document.getElementById('price').disabled=false;
+  selAvail('Available');
+  document.querySelectorAll('.cp').forEach((p,i)=>p.classList.toggle('sel',i===0));
+  document.querySelectorAll('.cg').forEach(c=>c.classList.toggle('sel',c.dataset.cg==='Services'));
+  selCG(document.querySelector('.cg.sel'));
+  document.getElementById('progBar').style.display='block';document.getElementById('bwrap').style.display='flex';document.getElementById('suc').style.display='none';
+  for(let i=1;i<=5;i++){const el=document.getElementById('s'+i);if(el)el.style.display=i===1?'block':'none';}
+  updProg();updUI();window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* DRAG & DROP */
+const dz=document.getElementById('dz');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');addFiles(e.dataTransfer.files);});
+
+/* INIT */
+(function(){
+  if(document.referrer)sessionStorage.setItem('pu-lf',document.referrer);
+  const p=new URLSearchParams(location.search),t=p.get('type');
+  if(t==='product'||t==='sell'){const el=document.querySelector('[data-cg="Products"]');if(el)selCG(el);}
+  else{selCG(document.querySelector('.cg.sel'));}
+  showCondF();updProg();updUI();
+})();
+</script>
+</body>
+</html>

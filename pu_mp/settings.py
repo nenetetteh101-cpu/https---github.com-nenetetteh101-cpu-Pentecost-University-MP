@@ -25,8 +25,11 @@ SECRET_KEY = 'django-insecure-#&_+ob*xrq+o%8wtkz!%l=5+g=rkkk4cpoar==6$h8d_^5t*kh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
+# settings.py
+LOGIN_REDIRECT_URL = 'dashboard_view'
+LOGOUT_REDIRECT_URL = 'login_view'
 
 # Application definition
 
@@ -96,7 +99,10 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+
+
 ]
+
 
 
 # Internationalization
@@ -115,3 +121,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
