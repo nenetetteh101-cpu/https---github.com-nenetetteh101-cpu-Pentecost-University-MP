@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
-  <title>Dashboard — PU-Marketplace</title>
+  <title>Dashboard — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     :root{--a:#e8c96a;--a2:#5be5c5;--red:#ff6b6b;--r:16px;--nh:60px;--bh:78px;--sw:228px}
@@ -246,7 +246,7 @@
 <div class="ov" id="ov" onclick="closeSb()"></div>
 <aside class="sb" id="sb">
   <div class="sbh">
-    <div class="sbl">PU-<span>Marketplace</span></div>
+    <div class="sbl">PU-<span>Connect</span></div>
     <button class="sbx" onclick="closeSb()">✕</button>
   </div>
   <div class="sbsec">Navigate</div>
@@ -277,14 +277,14 @@
   <ul class="sbul">
     <li><a href="auth.html" style="color:var(--red)"><span class="ico">🚪</span>Log Out</a></li>
   </ul>
-  <div class="sbft">© 2026 PU-Marketplace<br>Built for campus, by students.</div>
+  <div class="sbft">© 2026 PU-Connect<br>Built for campus, by students.</div>
 </aside>
 <nav class="tnav">
   <button class="hbg" id="hbg"><span></span><span></span><span></span></button>
   <div class="tabs">
     <button class="tab on">All</button>
     <button class="tab" onclick="location.href='dashboard-products.html'">Products</button>
-    <button class="tab" onclick="location.href='reels.html'">Services</button>
+    <button class="tab" onclick="location.href='dashboard-services.html'">Services</button>
   </div>
   <button class="notibtn" id="notibtn" title="Notifications">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
@@ -319,33 +319,17 @@
     <button class="far p" onclick="fmv(-1)">‹</button>
     <button class="far n" onclick="fmv(1)">›</button>
     <div class="ftr" id="ft">
-      <div class="fsl"><img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=900&q=80&auto=format" alt="MacBook"/><div class="fov"></div><div class="fin"><div class="ftg">🚀 Boosted</div><div class="fnm">MacBook Pro 14" M2 — Excellent Condition</div><div class="fmeta"><span class="fpr">GH₵ 6,500</span><span class="fse">@kweku_tech</span><span class="fca">Electronics</span></div></div></div>
-      <div class="fsl"><img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?w=900&q=80&auto=format" alt="Design"/><div class="fov"></div><div class="fin"><div class="ftg">🚀 Boosted</div><div class="fnm">Professional Logo &amp; Brand Design Service</div><div class="fmeta"><span class="fpr">From GH₵ 80</span><span class="fse">@adwoa_creative</span><span class="fca">Service</span></div></div></div>
-      <div class="fsl"><img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=900&q=80&auto=format" alt="Desk"/><div class="fov"></div><div class="fin"><div class="ftg">🚀 Boosted</div><div class="fnm">Minimalist Study Desk &amp; Chair Set</div><div class="fmeta"><span class="fpr">GH₵ 450</span><span class="fse">@esi_hostel</span><span class="fca">Furniture</span></div></div></div>
-      <div class="fsl"><img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=900&q=80&auto=format" alt="Tutoring"/><div class="fov"></div><div class="fin"><div class="ftg">🚀 Boosted</div><div class="fnm">1-on-1 STEM Tutoring — All Levels</div><div class="fmeta"><span class="fpr">GH₵ 40/hr</span><span class="fse">@kofi_tutor</span><span class="fca">Service</span></div></div></div>
-      <div class="fsl"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=900&q=80&auto=format" alt="Headphones"/><div class="fov"></div><div class="fin"><div class="ftg">🚀 Boosted</div><div class="fnm">Sony WH-1000XM5 Noise Cancelling</div><div class="fmeta"><span class="fpr">GH₵ 980</span><span class="fse">@abena_audio</span><span class="fca">Electronics</span></div></div></div>
+      <!-- Boosted listings will appear here once users promote their listings -->
     </div>
     <div class="fdt" id="fd"></div>
   </div>
   <div class="slbl"><h2>🛒 All Listings</h2><a href="dashboard-products.html">View all</a></div>
   <div class="grid" id="ag">
-    <div class="lc" data-name="Data Structures Textbook"><div class="lcm"><img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=75&auto=format" alt="Book" loading="lazy"/><span class="lbg" style="background:rgba(91,229,197,.25);color:#5be5c5">Textbook</span></div><div class="lbd"><div class="lnm">Data Structures Textbook</div><div class="lpr">GH₵ 55</div><div class="lrw"><span class="lsl">@yaw_cs</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Full HD Monitor 24"><div class="lcm"><img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&q=75&auto=format" alt="Monitor" loading="lazy"/><span class="lbg" style="background:rgba(232,201,106,.2);color:var(--a)">Electronics</span></div><div class="lbd"><div class="lnm">Full HD Monitor 24"</div><div class="lpr">GH₵ 900</div><div class="lrw"><span class="lsl">@kojo_tech</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Campus Backpack"><div class="lcm"><img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&q=75&auto=format" alt="Backpack" loading="lazy"/><span class="lbg" style="background:rgba(160,120,255,.2);color:#a78bfa">Fashion</span></div><div class="lbd"><div class="lnm">Campus Backpack</div><div class="lpr">GH₵ 70</div><div class="lrw"><span class="lsl">@ama_bags</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Scientific Calculator"><div class="lcm"><img src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=400&q=75&auto=format" alt="Calculator" loading="lazy"/><span class="lbg" style="background:rgba(91,229,197,.2);color:#5be5c5">Tools</span></div><div class="lbd"><div class="lnm">Scientific Calculator</div><div class="lpr">GH₵ 80</div><div class="lrw"><span class="lsl">@abena_maths</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Mechanical Keyboard"><div class="lcm"><img src="https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400&q=75&auto=format" alt="Keyboard" loading="lazy"/><span class="lbg" style="background:rgba(232,201,106,.2);color:var(--a)">Electronics</span></div><div class="lbd"><div class="lnm">Mechanical Keyboard</div><div class="lpr">GH₵ 280</div><div class="lrw"><span class="lsl">@kofi_gear</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Ergonomic Chair"><div class="lcm"><img src="https://images.unsplash.com/photo-1592078615290-033ee584e267?w=400&q=75&auto=format" alt="Chair" loading="lazy"/><span class="lbg" style="background:rgba(255,107,107,.2);color:#ff8c8c">Furniture</span></div><div class="lbd"><div class="lnm">Ergonomic Chair</div><div class="lpr">GH₵ 350</div><div class="lrw"><span class="lsl">@akua_dorm</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Android Smartphone"><div class="lcm"><img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=75&auto=format" alt="Phone" loading="lazy"/><span class="lbg" style="background:rgba(232,201,106,.2);color:var(--a)">Electronics</span></div><div class="lbd"><div class="lnm">Android Smartphone</div><div class="lpr">GH₵ 620</div><div class="lrw"><span class="lsl">@kweku_phones</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Ankara Dress"><div class="lcm"><img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400&q=75&auto=format" alt="Fashion" loading="lazy"/><span class="lbg" style="background:rgba(251,146,60,.2);color:#fb923c">Fashion</span></div><div class="lbd"><div class="lnm">Ankara Dress (M)</div><div class="lpr">GH₵ 45</div><div class="lrw"><span class="lsl">@adwoa_fashion</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Drawing Instruments Set"><div class="lcm"><img src="https://images.unsplash.com/photo-1453928582365-b6ad33cbcf64?w=400&q=75&auto=format" alt="Drawing" loading="lazy"/><span class="lbg" style="background:rgba(91,229,197,.2);color:#5be5c5">Tools</span></div><div class="lbd"><div class="lnm">Drawing Instruments Set</div><div class="lpr">GH₵ 35</div><div class="lrw"><span class="lsl">@abena_arch</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Bluetooth Earbuds"><div class="lcm"><img src="https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400&q=75&auto=format" alt="Earbuds" loading="lazy"/><span class="lbg" style="background:rgba(232,201,106,.2);color:var(--a)">Electronics</span></div><div class="lbd"><div class="lnm">Bluetooth Earbuds</div><div class="lpr">GH₵ 180</div><div class="lrw"><span class="lsl">@esi_audio</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="LED Desk Lamp"><div class="lcm"><img src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&q=75&auto=format" alt="Lamp" loading="lazy"/><span class="lbg" style="background:rgba(255,107,107,.2);color:#ff8c8c">Furniture</span></div><div class="lbd"><div class="lnm">LED Desk Lamp</div><div class="lpr">GH₵ 55</div><div class="lrw"><span class="lsl">@yaw_room</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Chemistry Textbook"><div class="lcm"><img src="https://images.unsplash.com/photo-1532153975070-2e9ab71f1b14?w=400&q=75&auto=format" alt="Books" loading="lazy"/><span class="lbg" style="background:rgba(91,229,197,.2);color:#5be5c5">Textbook</span></div><div class="lbd"><div class="lnm">Chemistry Textbook</div><div class="lpr">GH₵ 40</div><div class="lrw"><span class="lsl">@kwame_sci</span><button class="lfv">🤍</button></div></div></div>
   </div>
 </div>
 </div>
 <div class="dr" id="dr"><div class="dov" onclick="closeDr()"></div><div class="dsh"><div class="dhn"></div><div class="dh"><span class="dic" id="dico"></span><div class="dtl" id="dttl"></div></div><div class="dsb" id="dsb"></div><div class="dg" id="dg"></div></div></div>
-<div class="mov" id="mv"><div class="modal"><div class="mtl">Post Something 🎉</div><div class="msb">What would you like to list on PU-Marketplace?</div><div class="mop"><div class="mo" onclick="location.href='create-listing.html'"><span class="moic">📦</span><div class="molb">Sell Product</div></div><div class="mo" onclick="location.href='create-listing.html?type=service'"><span class="moic">🛠️</span><div class="molb">Offer Service</div></div><div class="mo" onclick="location.href='profile.html'"><span class="moic">🔍</span><div class="molb">Request Item</div></div><div class="mo" onclick="openBoost()"><span class="moic">🚀</span><div class="molb">Feature Listing</div></div></div><button class="mcl" onclick="closeMod()">Cancel</button></div></div>
+<div class="mov" id="mv"><div class="modal"><div class="mtl">Post Something 🎉</div><div class="msb">What would you like to list on PU-Connect?</div><div class="mop"><div class="mo" onclick="location.href='create-listing.html'"><span class="moic">📦</span><div class="molb">Sell Product</div></div><div class="mo" onclick="location.href='create-listing.html?type=service'"><span class="moic">🛠️</span><div class="molb">Offer Service</div></div><div class="mo" onclick="location.href='profile.html'"><span class="moic">🔍</span><div class="molb">Request Item</div></div><div class="mo" onclick="openBoost()"><span class="moic">🚀</span><div class="molb">Feature Listing</div></div></div><button class="mcl" onclick="closeMod()">Cancel</button></div></div>
 
 <!-- NOTIFICATION PANEL -->
 <div class="npanel" id="npanel">
@@ -439,14 +423,7 @@ function doSearch(inp){const v=inp.value.toLowerCase();document.querySelectorAll
 function clearS(){const i=document.getElementById('si');i.value='';doSearch(i)}
 document.querySelectorAll('.lfv').forEach(b=>{b.addEventListener('click',e=>{e.stopPropagation();b.textContent=b.textContent==='🤍'?'❤️':'🤍'})});
 /* ── NOTIFICATIONS ── */
-const NOTIFS=[
-  {id:1,icon:'🚀',bg:'rgba(232,201,106,.12)',title:'Your listing is now Boosted!',desc:'Dell XPS 13 is live in Featured. Est. 10× more views today.',time:'Just now',unread:true},
-  {id:2,icon:'💬',bg:'rgba(91,229,197,.12)',title:'New message from @kofi_tech',desc:'Hey, is the MacBook still available?',time:'5 min ago',unread:true},
-  {id:3,icon:'❤️',bg:'rgba(255,107,107,.12)',title:'@ama_bags liked your listing',desc:'North Face Backpack got a new like.',time:'12 min ago',unread:true},
-  {id:4,icon:'🏷️',bg:'rgba(160,120,255,.12)',title:'Price drop alert',desc:'Sony WH-1000XM5 you wished just dropped to GH₵ 650.',time:'1 hr ago',unread:false},
-  {id:5,icon:'⭐',bg:'rgba(232,201,106,.12)',title:'New review received',desc:'@yaw_cs left you a 5-star review on your last transaction.',time:'2 hrs ago',unread:false},
-  {id:6,icon:'📦',bg:'rgba(91,229,197,.12)',title:'Order confirmed',desc:'Mechanical Keyboard purchase confirmed by @kofi_gear.',time:'Yesterday',unread:false},
-];
+const NOTIFS=[];
 let notifs=[...NOTIFS];
 function renderNotifs(){
   const list=document.getElementById('nlist');

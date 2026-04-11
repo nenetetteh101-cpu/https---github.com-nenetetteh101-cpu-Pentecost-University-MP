@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
-<title>Post a Listing — PU-Marketplace</title>
+<title>Post a Listing — PU-Connect</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root{--a:#e8c96a;--a2:#5be5c5;--red:#ff6b6b;--r:13px;--nh:56px}
@@ -192,7 +192,7 @@ option{background:var(--card);color:var(--t)}
   <div class="sh">
     <div class="se">Step 1 of 5 · Category</div>
     <div class="st">What are you posting?</div>
-    <div class="ss">Choose a category group — exactly as listed on Bisame</div>
+    <div class="ss">Choose a category group, then pick your specific category</div>
   </div>
 
   <div class="f">
@@ -226,7 +226,7 @@ option{background:var(--card);color:var(--t)}
 
   <div class="f">
     <label class="fl" for="title">Listing Title <span class="req">*</span></label>
-    <input type="text" id="title" maxlength="80" placeholder='e.g. HP Laptop 15.6" Core i7 — Barely Used' oninput="countChars('title','tcc',80)"/>
+    <input type="text" id="title" maxlength="80" placeholder='e.g. MacBook Pro 13 — Barely Used' oninput="countChars('title','tcc',80)"/>
     <div style="display:flex;justify-content:space-between;margin-top:.26rem">
       <span class="em" id="title-em" style="display:none;position:static">Title required (min 5 chars)</span>
       <span id="tcc" style="font-size:.65rem;color:var(--m);margin-left:auto">0 / 80</span>
@@ -286,7 +286,7 @@ option{background:var(--card);color:var(--t)}
     <div class="em" id="desc-em">Description required (min 20 chars)</div>
   </div>
 
-  <!-- Key Services — exactly as Bisame labels it -->
+  <!-- Tags / Keywords -->
   <div class="f">
     <label class="fl">Key Services / Tags <span class="opt">(optional)</span></label>
     <div class="tw" id="tagsBox" onclick="document.getElementById('ti').focus()">
@@ -320,12 +320,12 @@ option{background:var(--card);color:var(--t)}
   <div class="sh">
     <div class="se">Step 4 of 5 · Contact</div>
     <div class="st">Contact Details</div>
-    <div class="ss">All buyer conversations happen through the PU-Marketplace in-app chat</div>
+    <div class="ss">All buyer conversations happen through the PU-Connect in-app chat</div>
   </div>
 
   <div class="f">
     <label class="fl" for="sname">Your Name <span class="req">*</span></label>
-    <input type="text" id="sname" placeholder="e.g. Kwame Asante" maxlength="50"/>
+    <input type="text" id="sname" placeholder="Your full name" maxlength="50"/>
     <div class="em" id="sname-em">Name is required</div>
   </div>
 
@@ -361,10 +361,10 @@ option{background:var(--card);color:var(--t)}
 <div class="suc" id="suc">
   <div class="suc-i">🎉</div>
   <div class="suc-t">Listing Published!</div>
-  <div class="suc-s">Your listing is now live on PU-Marketplace. Buyers will reach you through in-app chat.</div>
+  <div class="suc-s">Your listing is now live on PU-Connect. Buyers will reach you through in-app chat. It may take a moment to appear in the feed.</div>
   <a href="listings.html" class="sb">View My Listings</a>
-  <button class="sb tl" onclick="resetForm()">Post Another Listing</button>
-  <a href="dashboard.html" class="sb g">Back to Dashboard</a>
+  <a href="dashboard.html" id="sucViewLink" class="sb tl">Browse Marketplace</a>
+  <button class="sb g" onclick="resetForm()">Post Another Listing</button>
 </div>
 
 </div><!-- /wrap -->
@@ -530,7 +530,6 @@ function renderImgs(){
 }
 function rmImg(i){imgs.splice(i,1);renderImgs();}
 
-
 /* PHONE */
 function fmtPh(el){let v=el.value.replace(/\D/g,'');if(v.length>10)v=v.slice(0,10);el.value=v;}
 
@@ -561,52 +560,270 @@ function updUI(){
 /* VALIDATION */
 function validate(n){
   let ok=true;
+
   if(n===1){
     if(!cgV){sE('cg-em');ok=false;}else clrE('cg-em');
+    const catEl=document.getElementById('cat');
+    catV=catEl.value;
     if(!catV){sE('cat-em');ok=false;}else clrE('cat-em');
   }
+
   if(n===2){
-    const t=document.getElementById('title').value.trim(),d=document.getElementById('desc').value.trim(),p=parseFloat(document.getElementById('price').value);
-    if(t.length<5){sE('title-em',true,'title');ok=false;}else{clrE('title-em');document.getElementById('title').classList.remove('err');}
-    if(d.length<20){sE('desc-em',true,'desc');ok=false;}else{clrE('desc-em');document.getElementById('desc').classList.remove('err');}
-    if(!ctaV&&(isNaN(p)||p<0)){sE('price-em',true,'price');ok=false;}else clrE('price-em');
-    if(['Products'].includes(cgV)&&!condV){sE('cond-em');ok=false;}else clrE('cond-em');
+    const titleEl=document.getElementById('title');
+    const descEl=document.getElementById('desc');
+    const priceEl=document.getElementById('price');
+    const t=titleEl.value.trim();
+    const d=descEl.value.trim();
+    const p=parseFloat(priceEl.value);
+
+    if(t.length<5){sE('title-em',true,'title');ok=false;}
+    else{clrE('title-em');titleEl.classList.remove('err');}
+
+    if(d.length<20){sE('desc-em',true,'desc');ok=false;}
+    else{clrE('desc-em');descEl.classList.remove('err');}
+
+    if(!ctaV&&(isNaN(p)||p<0)){sE('price-em',true,'price');ok=false;}
+    else{clrE('price-em');priceEl.classList.remove('err');}
+
+    if(cgV==='Products'&&!condV){sE('cond-em');ok=false;}
+    else clrE('cond-em');
   }
+
+  if(n===3){
+    if(imgs.length<1){
+      sE('photos-em');
+      document.getElementById('dz').style.borderColor='var(--red)';
+      ok=false;
+    }else{
+      clrE('photos-em');
+      document.getElementById('dz').style.borderColor='';
+    }
+  }
+
   if(n===4){
-    const nm=document.getElementById('sname').value.trim(),ph=document.getElementById('phone').value.replace(/\D/g,'');
-    if(!nm){sE('sname-em',true,'sname');ok=false;}else{clrE('sname-em');document.getElementById('sname').classList.remove('err');}
-    if(ph.length<9){sE('phone-em',true,'phone');ok=false;}else{clrE('phone-em');document.getElementById('phone').classList.remove('err');}
+    const nmEl=document.getElementById('sname');
+    const phEl=document.getElementById('phone');
+    const nm=nmEl.value.trim();
+    const ph=phEl.value.replace(/\D/g,'');
+    if(!nm){sE('sname-em',true,'sname');ok=false;}
+    else{clrE('sname-em');nmEl.classList.remove('err');}
+    if(ph.length<9){sE('phone-em',true,'phone');ok=false;}
+    else{clrE('phone-em');phEl.classList.remove('err');}
   }
+
   return ok;
 }
-function sE(id,cls,iid){const e=document.getElementById(id);if(e)e.style.display='block';if(cls&&iid){const el=document.getElementById(iid);if(el)el.classList.add('err');}}
+
+function sE(id,cls,iid){
+  const e=document.getElementById(id);if(e)e.style.display='block';
+  if(cls&&iid){const el=document.getElementById(iid);if(el)el.classList.add('err');}
+}
 function clrE(id){const e=document.getElementById(id);if(e)e.style.display='none';}
+
+/* ── AUTO-FILL contact from saved profile ── */
+function prefillContact(){
+  try{
+    const p=JSON.parse(localStorage.getItem('pu-profile')||'{}');
+    const nm=document.getElementById('sname');
+    const ph=document.getElementById('phone');
+    if(nm&&!nm.value&&p.name)nm.value=p.name;
+    if(ph&&!ph.value&&p.phone)ph.value=p.phone;
+  }catch(e){}
+}
+
+/* ── DRAFT AUTO-SAVE (every field change saves to sessionStorage) ── */
+function saveDraft(){
+  const draft={
+    cgV,catV,
+    subcat:document.getElementById('subcat')?.value||'',
+    condV,availV,negV,ctaV,tags,
+    title:document.getElementById('title')?.value||'',
+    brand:document.getElementById('brand')?.value||'',
+    desc:document.getElementById('desc')?.value||'',
+    price:document.getElementById('price')?.value||'',
+    sname:document.getElementById('sname')?.value||'',
+    phone:document.getElementById('phone')?.value||'',
+    meetup:document.getElementById('meetup')?.value||'',
+    cur,
+  };
+  try{sessionStorage.setItem('pu-draft-listing',JSON.stringify(draft));}catch(e){}
+}
+
+function loadDraft(){
+  try{
+    const raw=sessionStorage.getItem('pu-draft-listing');
+    if(!raw)return;
+    const d=JSON.parse(raw);
+    // Restore category group
+    if(d.cgV){
+      const cgEl=document.querySelector(`[data-cg="${d.cgV}"]`);
+      if(cgEl)selCG(cgEl);
+    }
+    // Restore category
+    if(d.catV){
+      const catEl=document.getElementById('cat');
+      if(catEl){catEl.value=d.catV;onCatCh();}
+    }
+    if(d.subcat){const s=document.getElementById('subcat');if(s)s.value=d.subcat;}
+    // Restore condition
+    if(d.condV){
+      const cp=document.querySelector(`.cp[data-cv="${d.condV}"]`);
+      if(cp)selCond(cp);
+    }
+    if(d.availV)selAvail(d.availV);
+    negV=d.negV||false;document.getElementById('negBtn')?.classList.toggle('on',negV);
+    ctaV=d.ctaV||false;
+    const ctaCk=document.getElementById('ctaCk');
+    if(ctaCk){ctaCk.checked=ctaV;document.getElementById('ctaLbl')?.classList.toggle('on',ctaV);document.getElementById('price').disabled=ctaV;}
+    tags=d.tags||[];renderTags();
+    const flds=['title','brand','desc','price','sname','phone','meetup'];
+    flds.forEach(id=>{const el=document.getElementById(id);if(el&&d[id])el.value=d[id];});
+    if(d.title)countChars('title','tcc',80);
+    if(d.desc)countChars('desc','dcc',1000);
+  }catch(e){sessionStorage.removeItem('pu-draft-listing');}
+}
+
+/* Attach draft saving to all inputs */
+function attachDraftSave(){
+  ['title','brand','desc','price','sname','phone','meetup'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.addEventListener('input',saveDraft);
+  });
+}
 
 /* BUILD REVIEW */
 function buildReview(){
-  const title=document.getElementById('title').value,brand=document.getElementById('brand').value,desc=document.getElementById('desc').value,price=document.getElementById('price').value;
-  const meetup=document.getElementById('meetup').value,nm=document.getElementById('sname').value,ph=document.getElementById('phone').value;
+  const title=document.getElementById('title').value.trim();
+  const brand=document.getElementById('brand').value.trim();
+  const desc=document.getElementById('desc').value.trim();
+  const price=document.getElementById('price').value;
+  const meetup=document.getElementById('meetup').value.trim();
+  const nm=document.getElementById('sname').value.trim();
+  const ph=document.getElementById('phone').value.trim();
+  const subcatVal=document.getElementById('subcat').value;
   const priceStr=ctaV?'Contact for Price':(price?(negV?`GH₵ ${parseFloat(price).toLocaleString()} (Negotiable)`:`GH₵ ${parseFloat(price).toLocaleString()}`):'—');
-  const catFull=catV+(document.getElementById('subcat').value?` › ${document.getElementById('subcat').value}`:'');
+  const catFull=catV+(subcatVal?` › ${subcatVal}`:'');
+
   const infoRows=[
-    ['Category Group',cgV],['Category',catFull],['Title',title],
-    brand?['Brand',brand]:[],
+    ['Type',cgV],
+    ['Category',catFull],
+    ['Title',escH(title)],
+    brand?['Brand',escH(brand)]:[],
     ['Availability',`<span class="rvbg">${availV}</span>`],
-    (['Products'].includes(cgV)&&condV)?['Condition',condV]:[],
+    (cgV==='Products'&&condV)?['Condition',condV]:[],
     ['Price',`<span class="rvp">${priceStr}</span>`],
-    tags.length?['Key Services',tags.join(', ')]:[],
-    ['Description',desc.length>130?desc.slice(0,130)+'…':desc],
+    tags.length?['Tags',tags.map(t=>`<span class="rvbg">${escH(t)}</span>`).join(' ')]:[],
+    ['Description',escH(desc.length>150?desc.slice(0,150)+'…':desc)],
   ].filter(r=>r.length);
-  document.getElementById('rv-info').innerHTML=infoRows.map(r=>`<div class="rvr"><span class="rvk">${r[0]}</span><span class="rvv">${r[1]}</span></div>`).join('');
-  if(imgs.length){document.getElementById('rv-ps').style.display='block';document.getElementById('rv-imgs').innerHTML=imgs.map(im=>`<img src="${im.src}" alt=""/>`).join('');}
-  else document.getElementById('rv-ps').style.display='none';
-  const cRows=[['Name',nm],['Phone',ph||'—'],meetup?['Meetup Spot',meetup]:[]].filter(r=>r.length);
-  document.getElementById('rv-contact').innerHTML=cRows.map(r=>`<div class="rvr"><span class="rvk">${r[0]}</span><span class="rvv">${r[1]}</span></div>`).join('');
+
+  document.getElementById('rv-info').innerHTML=infoRows.map(r=>`
+    <div class="rvr"><span class="rvk">${r[0]}</span><span class="rvv">${r[1]}</span></div>`).join('');
+
+  if(imgs.length){
+    document.getElementById('rv-ps').style.display='block';
+    document.getElementById('rv-imgs').innerHTML=imgs.map(im=>`<img src="${im.src}" alt="" />`).join('');
+  }else{
+    document.getElementById('rv-ps').style.display='none';
+  }
+
+  const contactRows=[
+    ['Name',escH(nm)],
+    ph?['Phone',escH(ph)]:[],
+    meetup?['Meetup Spot',escH(meetup)]:[],
+  ].filter(r=>r.length);
+  document.getElementById('rv-contact').innerHTML=contactRows.map(r=>`
+    <div class="rvr"><span class="rvk">${r[0]}</span><span class="rvv">${r[1]}</span></div>`).join('');
 }
 
-/* PUBLISH */
+/* ── PUBLISH — writes real listing to localStorage ── */
 function publish(){
-  const nb=document.getElementById('nxBtn');nb.disabled=true;nb.textContent='⏳ Publishing…';
+  const nb=document.getElementById('nxBtn');
+  nb.disabled=true;
+  nb.textContent='⏳ Publishing…';
+
+  // Collect all form data
+  const title=document.getElementById('title').value.trim();
+  const brand=document.getElementById('brand').value.trim();
+  const desc=document.getElementById('desc').value.trim();
+  const priceRaw=document.getElementById('price').value;
+  const meetup=document.getElementById('meetup').value.trim();
+  const nm=document.getElementById('sname').value.trim();
+  const ph=document.getElementById('phone').value.trim();
+  const subcatVal=document.getElementById('subcat').value;
+
+  // Map the PU-Connect category to the dashboard-services cat key
+  const CATMAP={
+    'Creative Arts':'design','Digital Services':'tech','Education':'tutoring',
+    'Transport & Delivery':'delivery','Writing & Editing':'writing',
+    'Fashion & Sewing':'photo','Catering':'food','Cleaning Services':'print',
+    'Events':'video','Building Skills':'tech','Beauty and Personal Care':'design',
+    'Repairs & Maintenance':'tech','Other Services':'other',
+    // Products categories
+    'Electronics':'electronics','Books & Notes':'textbooks',
+    'Food & Drinks':'food','Fashion & Clothing':'fashion',
+    'Phones & Accessories':'electronics','Computers & Networking':'electronics',
+    'Home & Living':'furniture','Shoes & Footwear':'fashion',
+    'Bags & Luggage':'fashion','Sports & Fitness':'sports',
+    'Beauty & Personal Care':'beauty','Vehicles & Spare Parts':'vehicles',
+    'Tools & Equipment':'tools','Other Products':'other',
+  };
+  const catSlug=CATMAP[catV]||catV.toLowerCase().replace(/\s+/g,'-');
+
+  // Build the listing object
+  const listing={
+    id:'lst-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
+    title,
+    name:title,
+    type:cgV==='Services'?'service':'product',
+    cat:catSlug,
+    category:catV,
+    subcategory:subcatVal||'',
+    brand:brand||'',
+    condition:cgV==='Products'?condV:'',
+    availability:availV,
+    price:ctaV?null:parseFloat(priceRaw)||0,
+    priceLabel:ctaV?'Contact for Price':(priceRaw?(negV?`GH₵ ${parseFloat(priceRaw).toLocaleString()} (Negotiable)`:`GH₵ ${parseFloat(priceRaw).toLocaleString()}`):''),
+    negotiable:negV,
+    contactForPrice:ctaV,
+    description:desc,
+    tags:[...tags],
+    img:imgs.length?imgs[0].src:'',
+    images:imgs.map(i=>i.src),
+    seller:nm,
+    sellerUsername:(()=>{try{const p=JSON.parse(localStorage.getItem('pu-profile')||'{}');return p.username||nm.toLowerCase().replace(/\s+/g,'_');}catch(e){return nm.toLowerCase().replace(/\s+/g,'_');}})(),
+    phone:ph,
+    meetup,
+    status:availV==='Available'?'active':'sold',
+    postedAt:Date.now(),
+    views:0,
+  };
+
+  // Save to localStorage
+  try{
+    const existing=JSON.parse(localStorage.getItem('pu-listings')||'[]');
+    existing.unshift(listing);
+    // Keep max 200 listings to avoid storage limits
+    if(existing.length>200)existing.splice(200);
+    localStorage.setItem('pu-listings',JSON.stringify(existing));
+  }catch(e){
+    // Storage full — show a friendly error and stop
+    nb.disabled=false;
+    nb.innerHTML='🚀 Publish Listing';
+    alert('Storage is full. Please delete some old listings before posting a new one.');
+    return;
+  }
+
+  // Also update the user profile listing count
+  try{
+    const p=JSON.parse(localStorage.getItem('pu-profile')||'{}');
+    p.listings=(p.listings||0)+1;
+    localStorage.setItem('pu-profile',JSON.stringify(p));
+  }catch(e){}
+
+  // Clear draft
+  sessionStorage.removeItem('pu-draft-listing');
+
+  // Show success state
   setTimeout(()=>{
     for(let i=1;i<=5;i++){const el=document.getElementById('s'+i);if(el)el.style.display='none';}
     document.getElementById('progBar').style.display='none';
@@ -614,27 +831,36 @@ function publish(){
     document.getElementById('suc').style.display='block';
     document.getElementById('nttl').textContent='Published!';
     document.getElementById('blbl').textContent='Done';
+    // Set the "View Listing" link to show this specific listing
+    const viewLink=document.getElementById('sucViewLink');
+    if(viewLink){viewLink.href=cgV==='Services'?'dashboard-services.html':'dashboard-products.html';}
     window.scrollTo({top:0,behavior:'smooth'});
-  },1100);
+  },800);
 }
+
+/* XSS guard */
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 /* RESET */
 function resetForm(){
   cur=1;cgV='Services';catV='';subV='';condV='Brand New';availV='Available';negV=false;ctaV=false;tags=[];imgs=[];
-  ['title','brand','desc','price','sname','phone','meetup'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.classList.remove('err');}});
+  ['title','brand','desc','price','sname','phone','meetup'].forEach(id=>{
+    const el=document.getElementById(id);if(el){el.value='';el.classList.remove('err');}
+  });
   ['cat','subcat'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('sf').style.display='none';
   document.getElementById('ig').innerHTML='';
   document.getElementById('tagsBox').querySelectorAll('.tag').forEach(t=>t.remove());
   document.getElementById('ti').value='';
   document.getElementById('negBtn').classList.remove('on');
-  document.getElementById('ctaCk').checked=false;document.getElementById('ctaLbl').classList.remove('on');
-  document.getElementById('price').disabled=false;
+  const ctaCk=document.getElementById('ctaCk');
+  if(ctaCk){ctaCk.checked=false;document.getElementById('ctaLbl').classList.remove('on');document.getElementById('price').disabled=false;}
   selAvail('Available');
   document.querySelectorAll('.cp').forEach((p,i)=>p.classList.toggle('sel',i===0));
-  document.querySelectorAll('.cg').forEach(c=>c.classList.toggle('sel',c.dataset.cg==='Services'));
-  selCG(document.querySelector('.cg.sel'));
-  document.getElementById('progBar').style.display='block';document.getElementById('bwrap').style.display='flex';document.getElementById('suc').style.display='none';
+  selCG(document.querySelector('.cg[data-cg="Services"]'));
+  document.getElementById('progBar').style.display='block';
+  document.getElementById('bwrap').style.display='flex';
+  document.getElementById('suc').style.display='none';
   for(let i=1;i<=5;i++){const el=document.getElementById('s'+i);if(el)el.style.display=i===1?'block':'none';}
   updProg();updUI();window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -649,10 +875,17 @@ dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');ad
 (function(){
   if(document.referrer)sessionStorage.setItem('pu-lf',document.referrer);
   const p=new URLSearchParams(location.search),t=p.get('type');
-  if(t==='product'||t==='sell'){const el=document.querySelector('[data-cg="Products"]');if(el)selCG(el);}
-  else{selCG(document.querySelector('.cg.sel'));}
+  if(t==='product'||t==='sell'){
+    const el=document.querySelector('[data-cg="Products"]');if(el)selCG(el);
+  }else{
+    selCG(document.querySelector('.cg[data-cg="Services"]'));
+  }
   showCondF();updProg();updUI();
+  attachDraftSave();
+  loadDraft();
+  prefillContact();
 })();
+
 </script>
 </body>
 </html>

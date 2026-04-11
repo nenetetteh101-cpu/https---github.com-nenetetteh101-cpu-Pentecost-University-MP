@@ -2,7 +2,8 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>How We Trade — PU-Marketplace</title>
+  <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
+  <title>How We Trade — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     :root{--a:#e8c96a;--a2:#5be5c5;--red:#ff6b6b;--r:16px;--nh:60px;--bh:78px;--sw:228px}
@@ -36,6 +37,8 @@
     .sbd{height:1px;background:var(--b);margin:.35rem 1.3rem}
     .sbft{padding:.9rem 1.3rem;margin-top:auto;font-size:.7rem;color:var(--m);line-height:1.6}
     @media(min-width:960px){.sb{left:0;top:var(--nh);border-top:none}.ov{display:none!important}.hbg{display:none!important}.wrap{margin-left:var(--sw)}.botnav{left:calc(50% + var(--sw)/2)}}
+    @media(max-width:600px){.hero-card{padding:1.5rem 1rem}.hc-title{font-size:1.35rem}.cta-row{flex-direction:column}.cta-btn{min-width:unset;width:100%}.faqs{margin-bottom:1rem}.section-title{font-size:1.05rem}}
+    @media(max-width:400px){.step{flex-wrap:wrap}.step-num{margin-bottom:.3rem}.safety-strip{flex-direction:column;gap:.6rem}}
     .wrap{position:relative;z-index:1}
     .inner{max-width:760px;margin:0 auto;padding:1.5rem 1rem 0}
     /* HERO */
@@ -129,7 +132,7 @@
     <li><a href="index.html"><span class="ico">🏠</span>Home</a></li>
     <li><a href="dashboard.html"><span class="ico">⚡</span>Dashboard</a></li>
     <li><a href="dashboard-products.html"><span class="ico">📦</span>Products</a></li>
-    <li><a href="dashboard-services.html"><span class="ico">🛠️</span>Services</a></li>
+    <li><a href="reels.html"><span class="ico">🛠️</span>Services</a></li>
     <li><a href="wishlist.html"><span class="ico">❤️</span>Wishlist</a></li>
     <li><a href="orders.html"><span class="ico">🛒</span>My Orders</a></li>
     <li><a href="listings.html"><span class="ico">🏷️</span>My Listings</a></li>
@@ -137,7 +140,7 @@
   <div class="sbd"></div>
   <div class="sbsec">Account</div>
   <ul class="sbul">
-    <li><a href="auth.html"><span class="ico">👤</span>Profile</a></li>
+    <li><a href="profile.html"><span class="ico">👤</span>Profile</a></li>
   </ul>
   <div class="sbd"></div>
   <div class="sbsec">Info &amp; Legal</div>
@@ -150,7 +153,7 @@
   </ul>
   <div class="sbd"></div>
   <ul class="sbul"><li><a href="auth.html" style="color:var(--red)"><span class="ico">🚪</span>Log Out</a></li></ul>
-  <div class="sbft">© 2026 PU-Marketplace<br>Built for campus, by students.</div>
+  <div class="sbft">© 2026 PU-Connect<br>Built for campus, by students.</div>
 </aside>
 
 <div class="wrap"><div class="inner">
@@ -159,7 +162,7 @@
     <div class="hc-glow"></div>
     <span class="hc-icon">🤝</span>
     <div class="hc-title">Safe, Simple,<br>Campus Meetups</div>
-    <p class="hc-sub">PU-Marketplace runs on trust and community. Every trade happens face-to-face — no app payments, no middlemen. Just verified students, meeting on campus.</p>
+    <p class="hc-sub">PU-Connect runs on trust and community. Every trade happens face-to-face — no app payments, no middlemen. Just verified students, meeting on campus.</p>
   </div>
 
   <div class="principles">
@@ -172,7 +175,7 @@
   <div class="section-title">📋 How a Trade Works</div>
   <div class="steps">
     <div class="step"><div class="step-num">1</div><div><div class="step-title">Find a listing you like</div><div class="step-desc">Browse Products or Services. Save to Wishlist and tap any listing for full details and the seller's rating.</div></div></div>
-    <div class="step"><div class="step-num">2</div><div><div class="step-title">Message the seller in-app</div><div class="step-desc">Tap "Message Seller" to open secure in-app chat. Ask questions, negotiate price — all within PU-Marketplace.</div></div></div>
+    <div class="step"><div class="step-num">2</div><div><div class="step-title">Message the seller in-app</div><div class="step-desc">Tap "Message Seller" to open secure in-app chat. Ask questions, negotiate price — all within PU-Connect.</div></div></div>
     <div class="step"><div class="step-num">3</div><div><div class="step-title">Agree on a campus meetup spot</div><div class="step-desc">Choose a busy, well-lit location — Library Foyer, Student Union, or your faculty common area. Bring a friend for high-value trades.</div></div></div>
     <div class="step"><div class="step-num">4</div><div><div class="step-title">Inspect, agree, and exchange</div><div class="step-desc">Check the item thoroughly. Payment is handled directly between you and the seller — cash or whatever you both agree on.</div></div></div>
     <div class="step"><div class="step-num">5</div><div><div class="step-title">Mark complete &amp; review</div><div class="step-desc">Confirm the trade in the app and leave an honest review to build the seller's (and your) campus reputation.</div></div></div>
@@ -203,7 +206,7 @@
 
   <div class="section-title">❓ Common Questions</div>
   <div class="faqs">
-    <div class="faq-item"><div class="faq-q" onclick="tFaq(this)">Why doesn't PU-Marketplace handle payments?<span class="faq-chev">▼</span></div><div class="faq-a"><div class="faq-a-inner">Keeping payments between buyers and sellers directly keeps things simple, transparent, and free. You're always in full control of your money. We provide the tools to connect — you decide how to transact.</div></div></div>
+    <div class="faq-item"><div class="faq-q" onclick="tFaq(this)">Why doesn't PU-Connect handle payments?<span class="faq-chev">▼</span></div><div class="faq-a"><div class="faq-a-inner">Keeping payments between buyers and sellers directly keeps things simple, transparent, and free. You're always in full control of your money. We provide the tools to connect — you decide how to transact.</div></div></div>
     <div class="faq-item"><div class="faq-q" onclick="tFaq(this)">What if a seller doesn't show up?<span class="faq-chev">▼</span></div><div class="faq-a"><div class="faq-a-inner">Report it through the app — tap the seller's profile and select "Report". Our team reviews within 2 hours and may issue a warning or suspension. This is why all communication should stay in-app: there's always a record.</div></div></div>
     <div class="faq-item"><div class="faq-q" onclick="tFaq(this)">Can I negotiate the price in chat?<span class="faq-chev">▼</span></div><div class="faq-a"><div class="faq-a-inner">Yes. The in-app chat is the right place to discuss price, condition, and meetup details. Listings marked "Fixed Price" indicate the seller prefers not to negotiate.</div></div></div>
     <div class="faq-item"><div class="faq-q" onclick="tFaq(this)">What if the item isn't as described?<span class="faq-chev">▼</span></div><div class="faq-a"><div class="faq-a-inner">You are never obligated to complete a trade. If an item is significantly different from its listing, walk away and report it. Leaving an honest review also helps other students stay informed.</div></div></div>
@@ -220,22 +223,22 @@
 
 <nav class="botnav" id="bn">
   <button class="ni" onclick="location.href='dashboard.html'"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nlbl">Home</span></button>
-  <button class="ni" onclick="location.href='dashboard-services.html'"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span class="nlbl">Reels</span></button>
-  <button class="nadd" onclick="location.href='listings.html'"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-  <button class="ni" onclick="location.href='payments.html'"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="nlbl">Chat</span></button>
-  <button class="ni" onclick="location.href='auth.html'"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nlbl">Profile</span></button>
+  <button class="ni" onclick="location.href='reels.html'"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span class="nlbl">Reels</span></button>
+  <button class="nadd" onclick="location.href='create-listing.html'"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+  <button class="ni" onclick="location.href='chat.html'"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="nlbl">Chat</span></button>
+  <button class="ni" onclick="location.href='profile.html'"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nlbl">Profile</span></button>
 </nav>
 
 <script>
 const html=document.documentElement,tb=document.getElementById('thbtn');let dark=true;
-function applyTheme(d){html.setAttribute('data-theme',d?'dark':'light');tb.textContent=d?'🌞':'🌙';dark=d;localStorage.setItem('pu-theme',d?'dark':'light')}
+function applyTheme(d){html.setAttribute('data-theme',d?'dark':'light');const tm=document.getElementById('themeColorMeta');if(tm)tm.setAttribute('content',d?'#0d0e11':'#f0ede8');tb.textContent=d?'🌞':'🌙';dark=d;localStorage.setItem('pu-theme',d?'dark':'light')}
 const sv=localStorage.getItem('pu-theme');if(sv)applyTheme(sv==='dark');
 tb.addEventListener('click',()=>applyTheme(!dark));
 const sb=document.getElementById('sb'),ov=document.getElementById('ov');
 document.getElementById('hbg').onclick=()=>{sb.classList.add('on');ov.classList.add('on');document.body.style.overflow='hidden'};
 function closeSb(){sb.classList.remove('on');ov.classList.remove('on');document.body.style.overflow=''}
 if(window.innerWidth>=960)sb.classList.add('on');
-window.addEventListener('resize',()=>{if(window.innerWidth>=960){sb.classList.add('on');ov.classList.remove('on')}});
+window.addEventListener('resize',()=>{if(window.innerWidth>=960){sb.classList.add('on');ov.classList.remove('on')}else{sb.classList.remove('on');}});
 const BN=document.getElementById('bn');let ly=0,tk=false;
 window.addEventListener('scroll',()=>{if(!tk){requestAnimationFrame(()=>{const y=window.scrollY;if(y>ly+10&&y>80)BN.classList.add('hide');else if(y<ly-10)BN.classList.remove('hide');ly=y;tk=false});tk=true}},{passive:true});
 function tFaq(el){const item=el.closest('.faq-item');const open=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));if(!open)item.classList.add('open')}

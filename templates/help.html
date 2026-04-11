@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Help Centre — PU-Marketplace</title>
+  <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
+  <title>Help Centre — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
-    :root {
+    :root, [data-theme="dark"] {
       --bg: #0d0e11;
       --surface: #15171c;
       --card: #1c1f27;
@@ -15,6 +16,16 @@
       --text: #f0eeea;
       --muted: #7a7e8a;
       --border: rgba(255,255,255,0.07);
+    }
+    [data-theme="light"] {
+      --bg: #f0ede8;
+      --surface: #e8e4de;
+      --card: #ffffff;
+      --accent: #c9a030;
+      --accent2: #2aab8e;
+      --text: #1a1a1a;
+      --muted: #888888;
+      --border: rgba(0,0,0,0.08);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -37,6 +48,14 @@
     .nav-links a { text-decoration: none; color: var(--muted); font-size: .88rem; font-weight: 500; transition: color .2s; }
     .nav-links a:hover { color: var(--text); }
     .nav-cta { background: var(--accent); color: #0d0e11 !important; padding: .5rem 1.2rem; border-radius: 6px; font-weight: 600 !important; }
+    .nav-theme-btn {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; border: none; background: rgba(255,255,255,.06);
+      font-size: 1rem; flex-shrink: 0; transition: transform .3s; color: var(--text);
+    }
+    [data-theme="light"] .nav-theme-btn { background: rgba(0,0,0,.06); }
+    .nav-theme-btn:hover { transform: rotate(22deg); }
 
     /* HERO + SEARCH */
     .hero {
@@ -171,6 +190,21 @@
       .footer-inner { flex-direction: column; text-align: center; }
       .footer-links { justify-content: center; }
     }
+  
+    @media (max-width: 480px) {
+      h1 { letter-spacing: -1px; }
+      .hero-sub { font-size: .88rem; }
+      .search-input { font-size: .88rem; padding: .78rem 1rem .78rem 2.6rem; }
+      .qt-title { font-size: 1.2rem; }
+      .faq-section-title { font-size: 1.1rem; }
+      .acc-question { font-size: .85rem; }
+      .acc-content { font-size: .83rem; }
+    }
+    @media (max-width: 380px) {
+      .help-layout { padding: 0 1rem 3rem; }
+      .quick-topics { padding: 2rem 1rem; }
+      .contact-inner { padding: 2.5rem 1rem; }
+    }
   </style>
 </head>
 <body>
@@ -178,9 +212,11 @@
 <nav>
   <a href="index.html" class="logo">PU-<span>Marketplace</span></a>
   <ul class="nav-links">
-    <li><a href="about.html">About</a></li>
+    <li><a href="dashboard.html">Dashboard</a>
+      <a href="about.html">About</a></li>
     <li><a href="safety.html">Safety</a></li>
     <li><a href="terms.html">Terms</a></li>
+    <li><button class="nav-theme-btn" id="themeBtn">🌞</button></li>
     <li><a href="auth.html" class="nav-cta">Get Started</a></li>
   </ul>
 </nav>
@@ -272,17 +308,17 @@
       <div class="accordion">
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
-            <span class="acc-question">What is PU-Marketplace?</span>
+            <span class="acc-question">What is PU-Connect?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">PU-Marketplace is a campus-only peer-to-peer marketplace built exclusively for university students. It allows verified students to buy, sell, and trade textbooks, electronics, services, and more — safely, within the campus community.</div></div>
+          <div class="acc-body"><div class="acc-content">PU-Connect is a campus-only peer-to-peer marketplace built exclusively for university students. It allows verified students to buy, sell, and trade textbooks, electronics, services, and more — safely, within the campus community.</div></div>
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
-            <span class="acc-question">Who can use PU-Marketplace?</span>
+            <span class="acc-question">Who can use PU-Connect?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">PU-Marketplace is available to all currently enrolled students, faculty, and accredited staff of the university. You must be 18 or older and must register with a valid email address. All accounts are verified before trading begins.</div></div>
+          <div class="acc-body"><div class="acc-content">PU-Connect is available to all currently enrolled students, faculty, and accredited staff of the university. You must be 18 or older and must register with a valid email address. All accounts are verified before trading begins.</div></div>
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
@@ -293,17 +329,17 @@
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
-            <span class="acc-question">Is PU-Marketplace free to use?</span>
+            <span class="acc-question">Is PU-Connect free to use?</span>
             <span class="acc-chevron">▼</span>
           </button>
           <div class="acc-body"><div class="acc-content">Yes — signing up and listing items is completely <strong>free</strong> for all campus users. We may introduce optional premium features in the future, and we'll always notify users at least 30 days in advance of any fee changes.</div></div>
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
-            <span class="acc-question">Can I use PU-Marketplace on mobile?</span>
+            <span class="acc-question">Can I use PU-Connect on mobile?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">Absolutely. PU-Marketplace is fully responsive and works seamlessly on all smartphones and tablets through your mobile browser. A dedicated mobile app is on our roadmap and will be announced when available.</div></div>
+          <div class="acc-body"><div class="acc-content">Absolutely. PU-Connect is fully responsive and works seamlessly on all smartphones and tablets through your mobile browser. A dedicated mobile app is on our roadmap and will be announced when available.</div></div>
         </div>
       </div>
     </div>
@@ -345,7 +381,7 @@
             <span class="acc-question">My account was suspended. What do I do?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">If your account was suspended, you should receive an email explaining the reason. If you believe the suspension was in error, you can appeal by emailing <a href="/cdn-cgi/l/email-protection#2a4b5a5a4f4b46596a5a5f07474b58414f5e5a464b494f044f4e5f044d42"><span class="__cf_email__" data-cfemail="b3d2c3c3d6d2dfc0f3c3c69eded2c1d8d6c7c3dfd2d0d69dd6d7c69dd4db">[email&#160;protected]</span></a> with your username and a brief description. We aim to review all appeals within 5 business days.</div></div>
+          <div class="acc-body"><div class="acc-content">If your account was suspended, you should receive an email explaining the reason. If you believe the suspension was in error, you can appeal by emailing <a href="/cdn-cgi/l/email-protection#482938382d29243b08383d6525293a232d3c3824292b2d662d2c3d662f20"><span class="__cf_email__" data-cfemail="dfbeafafbabeb3ac9fafaaf2b2beadb4baabafb3bebcbaf1babbaaf1b8b7">[email&#160;protected]</span></a> with your username and a brief description. We aim to review all appeals within 5 business days.</div></div>
         </div>
       </div>
     </div>
@@ -363,7 +399,7 @@
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
-            <span class="acc-question">What can I sell on PU-Marketplace?</span>
+            <span class="acc-question">What can I sell on PU-Connect?</span>
             <span class="acc-chevron">▼</span>
           </button>
           <div class="acc-body"><div class="acc-content">You can sell any legal item or service relevant to campus life, including:
@@ -397,7 +433,7 @@
             <span class="acc-question">Why was my listing removed?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">Listings are removed if they violate our <a href="terms.html">Terms of Service</a> — for example, prohibited items, misleading descriptions, or duplicate listings. You'll receive a notification explaining the reason. If you believe the removal was an error, email <a href="/cdn-cgi/l/email-protection#d5a6a0a5a5baa7a195a5a0f8b8b4a7beb0a1a5b9b4b6b0fbb0b1a0fbb2bd"><span class="__cf_email__" data-cfemail="89fafcf9f9e6fbfdc9f9fca4e4e8fbe2ecfdf9e5e8eaeca7ecedfca7eee1">[email&#160;protected]</span></a>.</div></div>
+          <div class="acc-body"><div class="acc-content">Listings are removed if they violate our <a href="terms.html">Terms of Service</a> — for example, prohibited items, misleading descriptions, or duplicate listings. You'll receive a notification explaining the reason. If you believe the removal was an error, email <a href="/cdn-cgi/l/email-protection#285b5d5858475a5c68585d0545495a434d5c5844494b4d064d4c5d064f40"><span class="__cf_email__" data-cfemail="0b787e7b7b64797f4b7b7e26666a79606e7f7b676a686e256e6f7e256c63">[email&#160;protected]</span></a>.</div></div>
         </div>
       </div>
     </div>
@@ -425,7 +461,7 @@
             <span class="acc-question">What if the item isn't as described?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">If an item significantly differs from its description and you used our escrow payment system, <strong>do not confirm receipt</strong> — funds won't be released to the seller until you do. Contact us at <a href="/cdn-cgi/l/email-protection#d1a2a4a1a1bea3a591a1a4fcbcb0a3bab4a5a1bdb0b2b4ffb4b5a4ffb6b9"><span class="__cf_email__" data-cfemail="592a2c2929362b2d19292c7434382b323c2d2935383a3c773c3d2c773e31">[email&#160;protected]</span></a> within 24 hours of the meetup to open a dispute.</div></div>
+          <div class="acc-body"><div class="acc-content">If an item significantly differs from its description and you used our escrow payment system, <strong>do not confirm receipt</strong> — funds won't be released to the seller until you do. Contact us at <a href="/cdn-cgi/l/email-protection#4a393f3a3a25383e0a3a3f67272b38212f3e3a262b292f642f2e3f642d22"><span class="__cf_email__" data-cfemail="30434540405f42447040451d5d51425b5544405c5153551e5554451e5758">[email&#160;protected]</span></a> within 24 hours of the meetup to open a dispute.</div></div>
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
@@ -446,7 +482,7 @@
             <span class="acc-question">What payment methods are accepted?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">PU-Marketplace supports <strong>Mobile Money (MTN, Vodafone, AirtelTigo)</strong> and our in-platform <strong>escrow system</strong>. For small-value in-person trades, cash is also acceptable. We strongly recommend using escrow for any transaction above GH₵ 50.</div></div>
+          <div class="acc-body"><div class="acc-content">PU-Connect supports <strong>Mobile Money (MTN, Vodafone, AirtelTigo)</strong> and our in-platform <strong>escrow system</strong>. For small-value in-person trades, cash is also acceptable. We strongly recommend using escrow for any transaction above GH₵ 50.</div></div>
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
@@ -454,7 +490,7 @@
             <span class="acc-chevron">▼</span>
           </button>
           <div class="acc-body"><div class="acc-content">When you use escrow:<br><br>
-            <strong>1.</strong> Buyer sends payment → funds are held securely by PU-Marketplace.<br>
+            <strong>1.</strong> Buyer sends payment → funds are held securely by PU-Connect.<br>
             <strong>2.</strong> Buyer and seller meet on campus to complete the exchange.<br>
             <strong>3.</strong> Buyer confirms receipt in the app → funds are released to the seller.<br><br>
             If the buyer doesn't confirm within 48 hours of the agreed meetup time, funds are released automatically. If a dispute is raised, our team reviews and decides within 3 business days.
@@ -471,7 +507,7 @@
               <li>The seller cancelled the transaction</li>
               <li>The item was proven to be significantly not as described</li>
             </ul>
-            Cash transactions between users are not covered by our refund policy. Always use escrow for protection. Contact <a href="/cdn-cgi/l/email-protection#cab9bfbabaa5b8be8ababfe7a7abb8a1afbebaa6aba9afe4afaebfe4ada2"><span class="__cf_email__" data-cfemail="d6a5a3a6a6b9a4a296a6a3fbbbb7a4bdb3a2a6bab7b5b3f8b3b2a3f8b1be">[email&#160;protected]</span></a> to initiate a refund claim.
+            Cash transactions between users are not covered by our refund policy. Always use escrow for protection. Contact <a href="/cdn-cgi/l/email-protection#681b1d1818071a1c28181d4505091a030d1c1804090b0d460d0c1d460f00"><span class="__cf_email__" data-cfemail="daa9afaaaab5a8ae9aaaaff7b7bba8b1bfaeaab6bbb9bff4bfbeaff4bdb2">[email&#160;protected]</span></a> to initiate a refund claim.
           </div></div>
         </div>
         <div class="acc-item">
@@ -493,7 +529,7 @@
             <span class="acc-question">How do I report a user or listing?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">Tap the <strong>⋯ More</strong> menu on any listing or user profile and select <strong>"Report"</strong>. Choose the reason (fraud, prohibited item, harassment, etc.), add details, and submit. Our safety team reviews all reports within 2 hours. You can also email <a href="/cdn-cgi/l/email-protection#bccfdddad9c8c5fcccc991d1ddced7d9c8ccd0dddfd992d9d8c992dbd4"><span class="__cf_email__" data-cfemail="b0c3d1d6d5c4c9f0c0c59dddd1c2dbd5c4c0dcd1d3d59ed5d4c59ed7d8">[email&#160;protected]</span></a> directly.</div></div>
+          <div class="acc-body"><div class="acc-content">Tap the <strong>⋯ More</strong> menu on any listing or user profile and select <strong>"Report"</strong>. Choose the reason (fraud, prohibited item, harassment, etc.), add details, and submit. Our safety team reviews all reports within 2 hours. You can also email <a href="/cdn-cgi/l/email-protection#f685979093828fb68683db9b97849d9382869a979593d8939283d8919e"><span class="__cf_email__" data-cfemail="bccfdddad9c8c5fcccc991d1ddced7d9c8ccd0dddfd992d9d8c992dbd4">[email&#160;protected]</span></a> directly.</div></div>
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
@@ -505,7 +541,7 @@
             1. Do NOT release escrow payment if you haven't already.<br>
             2. Document everything — screenshots of messages, listings, and any receipts.<br>
             3. Report the user through the app (⋯ More → Report).<br>
-            4. Email <a href="/cdn-cgi/l/email-protection#6f1c0e090a1b162f1f1a42020e1d040a1b1f030e0c0a410a0b1a410807"><span class="__cf_email__" data-cfemail="5221333437262b1222277f3f3320393726223e3331377c3736277c353a">[email&#160;protected]</span></a> with your evidence.<br>
+            4. Email <a href="/cdn-cgi/l/email-protection#cbb8aaadaebfb28bbbbee6a6aab9a0aebfbba7aaa8aee5aeafbee5aca3"><span class="__cf_email__" data-cfemail="f1829097948588b18184dc9c90839a9485819d909294df949584df9699">[email&#160;protected]</span></a> with your evidence.<br>
             5. If you've suffered financial loss or feel unsafe, contact campus security.<br><br>
             We take fraud extremely seriously and will act on all substantiated reports.
           </div></div>
@@ -537,17 +573,17 @@
     <h2 class="block-title">Get in Touch with Our Team</h2>
     <p class="block-sub">Can't find what you're looking for? Our support team is here Monday to Friday, 8am – 5pm GMT.</p>
     <div class="contact-grid">
-      <a href="/cdn-cgi/l/email-protection#e1929491918e9395a19194cc8c80938a8495918d808284cf848594cf8689" class="contact-card">
+      <a href="/cdn-cgi/l/email-protection#d6a5a3a6a6b9a4a296a6a3fbbbb7a4bdb3a2a6bab7b5b3f8b3b2a3f8b1be" class="contact-card">
         <span class="cc-icon">📧</span>
         <div class="cc-title">Email Support</div>
         <p class="cc-desc">Send us a message and we'll get back to you within 24 hours on business days.</p>
-        <div class="cc-action"><span class="__cf_email__" data-cfemail="ed9e989d9d829f99ad9d98c0808c9f8688999d818c8e88c3888998c38a85">[email&#160;protected]</span> →</div>
+        <div class="cc-action"><span class="__cf_email__" data-cfemail="92e1e7e2e2fde0e6d2e2e7bffff3e0f9f7e6e2fef3f1f7bcf7f6e7bcf5fa">[email&#160;protected]</span> →</div>
       </a>
-      <a href="/cdn-cgi/l/email-protection#b9cad8dfdccdc0f9c9cc94d4d8cbd2dccdc9d5d8dadc97dcddcc97ded1" class="contact-card">
+      <a href="/cdn-cgi/l/email-protection#bccfdddad9c8c5fcccc991d1ddced7d9c8ccd0dddfd992d9d8c992dbd4" class="contact-card">
         <span class="cc-icon">🚨</span>
         <div class="cc-title">Safety Team</div>
         <p class="cc-desc">Report fraud, harassment, or safety concerns. We respond within 2 hours.</p>
-        <div class="cc-action"><span class="__cf_email__" data-cfemail="a1d2c0c7c4d5d8e1d1d48cccc0d3cac4d5d1cdc0c2c48fc4c5d48fc6c9">[email&#160;protected]</span> →</div>
+        <div class="cc-action"><span class="__cf_email__" data-cfemail="097a686f6c7d7049797c2464687b626c7d7965686a6c276c6d7c276e61">[email&#160;protected]</span> →</div>
       </a>
       <a href="safety.html" class="contact-card">
         <span class="cc-icon">🛡️</span>
@@ -564,14 +600,13 @@
     <div class="footer-logo">PU-<span>Marketplace</span></div>
     <div class="footer-links">
       <a href="index.html">Home</a>
-    <a href="dashboard.html">Dashboard</a>
       <a href="about.html">About</a>
       <a href="safety.html">Safety</a>
       <a href="help.html">Help Centre</a>
       <a href="privacy.html">Privacy</a>
       <a href="terms.html">Terms</a>
     </div>
-    <div class="footer-copy">© 2026 PU-Marketplace. All rights reserved.</div>
+    <div class="footer-copy">© 2026 PU-Connect. All rights reserved.</div>
   </div>
 </footer>
 
@@ -615,4 +650,10 @@
     if (!val || val.length < 2) { resultsEl.classList.remove('show'); return; }
     const lower = val.toLowerCase();
     const matches = allFAQs.filter(f => f.q.toLowerCase().includes(lower) || f.a.toLowerCase().includes(lower)).slice(0, 6);
-    if (!matches.length) { resultsEl.innerHTML = '<div class="search-result-item"><span class="sr
+    if (!matches.length) { resultsEl.innerHTML = '<div class="search-result-item"><span class="sri-icon">🤷</span><span class="sri-text">No results found. Try different keywords.</span></div>'; resultsEl.classList.add('show'); return; }
+    resultsEl.innerHTML = matches.map(m => `<div class="search-result-item" onclick="goToSection('${m.sectionId}','${m.q}')"><span class="sri-icon">❓</span><div class="sri-text"><strong>${m.q}</strong><br>${m.sectionTitle}</div></div>`).join('');
+    resultsEl.classList.add('show');
+  }
+
+  function goToSection(id, question) {
+    document.getElementById('searchResults').classList.remove('show')

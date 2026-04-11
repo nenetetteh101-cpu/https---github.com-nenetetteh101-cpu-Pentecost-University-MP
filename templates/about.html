@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>About Us — PU-Marketplace</title>
+  <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
+  <title>About Us — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
-    :root {
+    :root, [data-theme="dark"] {
       --bg: #0d0e11;
       --surface: #15171c;
       --card: #1c1f27;
@@ -15,6 +16,22 @@
       --text: #f0eeea;
       --muted: #7a7e8a;
       --border: rgba(255,255,255,0.07);
+      --inp: rgba(255,255,255,0.06);
+      --shadow: 0 8px 32px rgba(0,0,0,0.55);
+      --glass: rgba(18,20,28,0.65);
+    }
+    [data-theme="light"] {
+      --bg: #f0ede8;
+      --surface: #e8e4de;
+      --card: #ffffff;
+      --accent: #c9a030;
+      --accent2: #2aab8e;
+      --text: #1a1a1a;
+      --muted: #888888;
+      --border: rgba(0,0,0,0.08);
+      --inp: rgba(0,0,0,0.05);
+      --shadow: 0 8px 32px rgba(0,0,0,0.12);
+      --glass: rgba(255,255,255,0.75);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -38,6 +55,8 @@
     .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
     .nav-links a { text-decoration: none; color: var(--muted); font-size: .88rem; font-weight: 500; transition: color .2s; }
     .nav-links a:hover { color: var(--text); }
+    .nav-theme-btn { width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:rgba(255,255,255,.06);font-size:1rem;flex-shrink:0;transition:transform .3s;color:var(--text); }
+    .nav-theme-btn:hover{transform:rotate(22deg);}
     .nav-cta { background: var(--accent); color: #0d0e11 !important; padding: .5rem 1.2rem; border-radius: 6px; font-weight: 600 !important; }
 
     /* HERO */
@@ -238,7 +257,28 @@
       .footer-inner { flex-direction: column; text-align: center; }
       .footer-links { justify-content: center; }
     }
-    @media (max-width: 480px) { .team-grid { grid-template-columns: 1fr; } .hero-stats { gap: 2rem; } }
+    @media (max-width: 480px) {
+      .team-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+      .hero-stat-num { font-size: 2rem; }
+      h1 { font-size: clamp(2.2rem, 9vw, 3.5rem); letter-spacing: -1.5px; }
+      .timeline::before { left: 48px; }
+      .tl-year { min-width: 38px; font-size: .78rem; }
+      .tl-item { gap: 1.2rem; }
+      .story-card { padding: 1.5rem; }
+      .floating-badge { position: static; margin-top: 1rem; display: inline-block; }
+      .cta-strip-inner { padding: 3rem 1.5rem; }
+      .btn-primary, .btn-ghost { width: 100%; justify-content: center; }
+    }
+    @media (max-width: 380px) {
+      .section-inner { padding: 3rem 1rem; }
+      .hero { padding: 4.5rem 1.2rem 3rem; }
+      .hero-stat-num { font-size: 1.8rem; }
+      .tl-year { display: none; }
+      .timeline::before { display: none; }
+      .tl-item { padding-left: 0; }
+      .mcard-title, .feat-title { font-size: 1.05rem; }
+    }
   </style>
 </head>
 <body>
@@ -250,6 +290,7 @@
     <li><a href="safety.html">Safety</a></li>
     <li><a href="help.html">Help Centre</a></li>
     <li><a href="terms.html">Terms</a></li>
+    <li><button class="nav-theme-btn" id="themeBtn">🌞</button></li>
     <li><a href="auth.html" class="nav-cta">Get Started</a></li>
   </ul>
 </nav>
@@ -262,7 +303,7 @@
   <div class="hero-inner">
     <div class="hero-eyebrow">Our Story</div>
     <h1>Built on Campus,<br>Built for <em>You.</em></h1>
-    <p class="hero-desc">PU-Marketplace was born from a simple frustration — students had no safe, easy way to trade within their own campus. We set out to fix that, and haven't looked back since.</p>
+    <p class="hero-desc">PU-Connect was born from a simple frustration — students had no safe, easy way to trade within their own campus. We set out to fix that, and haven't looked back since.</p>
     <div class="hero-stats">
       <div>
         <span class="hero-stat-num">2024</span>
@@ -295,9 +336,9 @@
       <div class="story-text reveal">
         <div class="eyebrow gold">How We Started</div>
         <h2 class="section-title">A Dorm Room Idea That Grew Into a Movement</h2>
-        <p>It started in 2024 when two final-year engineering students — Kwame and Abena — tried to sell their old textbooks before graduating. They posted on WhatsApp groups, got buried in noise, and eventually gave the books away for free out of frustration.</p>
-        <p>That weekend, they sketched out what would become PU-Marketplace: <strong>a dedicated, trusted space for campus commerce</strong>. No strangers, no spam — just students helping students.</p>
-        <p>Within three months of launching, over 800 students had signed up. Within a year, PU-Marketplace had processed more than GH₵ 500,000 in campus trades. Today, it's the go-to platform for everything from textbooks to tech, services to furniture — all within the university gates.</p>
+        <p>It started when final-year students tried to sell their old textbooks before graduating. They posted on WhatsApp groups, got buried in noise, and eventually gave the books away for free out of frustration.</p>
+        <p>That weekend, the idea took shape: <strong>a dedicated, trusted space for campus commerce</strong>. No strangers, no spam — just students helping students.</p>
+        <p>Within three months of launching, over 800 students had signed up. Within a year, PU-Connect had processed more than GH₵ 500,000 in campus trades. Today, it's the go-to platform for everything from textbooks to tech, services to furniture — all within the university gates.</p>
       </div>
       <div class="story-visual reveal">
         <div class="story-card">
@@ -306,8 +347,8 @@
           <div class="quote-author">
             <div class="qa-avatar">KA</div>
             <div>
-              <div class="qa-name">Kwame Asante</div>
-              <div class="qa-role">Co-Founder & CEO</div>
+              <div class="qa-name">PU-Connect Student</div>
+              <div class="qa-role">Verified Student</div>
             </div>
           </div>
           <div class="floating-badge">🎓 Founded by Students</div>
@@ -322,7 +363,7 @@
   <div class="section-inner">
     <div class="reveal">
       <div class="eyebrow teal">Our Purpose</div>
-      <h2 class="section-title">Why PU-Marketplace Exists</h2>
+      <h2 class="section-title">Why PU-Connect Exists</h2>
       <p class="section-sub">Three core beliefs drive every decision we make — from the features we build to the policies we set.</p>
     </div>
     <div class="mission-cards">
@@ -341,7 +382,7 @@
       <div class="mcard reveal">
         <span class="mcard-icon">💡</span>
         <div class="mcard-title">Student Empowerment</div>
-        <p class="mcard-desc">We believe every student has something of value to offer. PU-Marketplace is the stage — whether you're selling lecture notes or offering graphic design services.</p>
+        <p class="mcard-desc">We believe every student has something of value to offer. PU-Connect is the stage — whether you're selling lecture notes or offering graphic design services.</p>
         <div class="mcard-accent"></div>
       </div>
     </div>
@@ -398,7 +439,7 @@
         <div class="tl-dot"></div>
         <div class="tl-content">
           <div class="tl-title">First Launch</div>
-          <p class="tl-desc">PU-Marketplace launches in beta to 50 hand-picked students. First transaction: a used mechanical engineering textbook sold for GH₵ 40.</p>
+          <p class="tl-desc">PU-Connect launches in beta to 50 hand-picked students. First transaction: a used mechanical engineering textbook sold for GH₵ 40.</p>
         </div>
       </div>
       <div class="tl-item">
@@ -422,7 +463,7 @@
         <div class="tl-dot"></div>
         <div class="tl-content">
           <div class="tl-title">University Recognition</div>
-          <p class="tl-desc">The university officially endorses PU-Marketplace as a supported student initiative and integrates it into the student onboarding pack.</p>
+          <p class="tl-desc">The university officially endorses PU-Connect as a supported student initiative and integrates it into the student onboarding pack.</p>
         </div>
       </div>
       <div class="tl-item">
@@ -448,25 +489,25 @@
     <div class="team-grid">
       <div class="team-card reveal">
         <div class="team-avatar" style="background:linear-gradient(135deg,#e8c96a,#f5a623);color:#0d0e11">KA</div>
-        <div class="team-name">Kwame Asante</div>
+        <div class="team-name">Team Member</div>
         <div class="team-role">Co-Founder & CEO</div>
-        <p class="team-bio">BSc Computer Engineering. Built the first version of PU-Marketplace in a single weekend. Obsessed with user experience and campus community building.</p>
+        <p class="team-bio">Core member of the PU-Connect founding team.</p>
       </div>
       <div class="team-card reveal">
         <div class="team-avatar" style="background:linear-gradient(135deg,#5be5c5,#2dd4bf);color:#0d0e11">AB</div>
-        <div class="team-name">Abena Boateng</div>
+        <div class="team-name">Team Member</div>
         <div class="team-role">Co-Founder & COO</div>
         <p class="team-bio">BSc Business Administration. Runs day-to-day operations and student partnerships. The reason the platform actually works in practice, not just on paper.</p>
       </div>
       <div class="team-card reveal">
         <div class="team-avatar" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff">EO</div>
-        <div class="team-name">Esi Owusu</div>
+        <div class="team-name">Team Member</div>
         <div class="team-role">Head of Design</div>
-        <p class="team-bio">MFA Interaction Design. Crafts every pixel of the PU-Marketplace experience. Believes that good design is invisible — it just feels right.</p>
+        <p class="team-bio">Leads design and user experience at PU-Connect.</p>
       </div>
       <div class="team-card reveal">
         <div class="team-avatar" style="background:linear-gradient(135deg,#fb923c,#ea580c);color:#fff">KM</div>
-        <div class="team-name">Kofi Mensah</div>
+        <div class="team-name">Team Member</div>
         <div class="team-role">Lead Engineer</div>
         <p class="team-bio">BSc Software Engineering. Keeps the platform fast, secure, and running 24/7. If something breaks at 2am, he's already fixing it.</p>
       </div>
@@ -479,7 +520,7 @@
   <div class="cta-strip-inner">
     <div class="cta-text reveal">
       <h2>Ready to be Part of the Story?</h2>
-      <p>Join thousands of students already trading smarter on PU-Marketplace.</p>
+      <p>Join thousands of students already trading smarter on PU-Connect.</p>
     </div>
     <div class="cta-actions reveal">
       <a href="auth.html#signup" class="btn-primary">Create Free Account</a>
@@ -501,7 +542,7 @@
       <a href="privacy.html">Privacy</a>
       <a href="terms.html">Terms</a>
     </div>
-    <div class="footer-copy">© 2026 PU-Marketplace. All rights reserved.</div>
+    <div class="footer-copy">© 2026 PU-Connect. All rights reserved.</div>
   </div>
 </footer>
 
@@ -511,6 +552,12 @@
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.1 });
   reveals.forEach(el => obs.observe(el));
+</script>
+<script>
+const htmlEl=document.documentElement,themeB=document.getElementById("themeBtn");let isDark=true;
+function setTheme(d){htmlEl.setAttribute("data-theme",d?"dark":"light");if(themeB)themeB.textContent=d?"🌞":"🌙";isDark=d;localStorage.setItem("pu-theme",d?"dark":"light");const tm=document.getElementById("themeColorMeta");if(tm)tm.setAttribute("content",d?"#0d0e11":"#f0ede8");}
+const savedT=localStorage.getItem("pu-theme");if(savedT)setTheme(savedT==="dark");else setTheme(true);
+if(themeB)themeB.addEventListener("click",()=>setTheme(!isDark));
 </script>
 </body>
 </html>

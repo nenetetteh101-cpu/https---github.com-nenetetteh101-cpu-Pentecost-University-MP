@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Privacy Policy — PU-Marketplace</title>
+  <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
+  <title>Privacy Policy — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
-    :root {
+    :root, [data-theme="dark"] {
       --bg: #0d0e11;
       --surface: #15171c;
       --card: #1c1f27;
@@ -15,6 +16,16 @@
       --text: #f0eeea;
       --muted: #7a7e8a;
       --border: rgba(255,255,255,0.07);
+    }
+    [data-theme="light"] {
+      --bg: #f0ede8;
+      --surface: #e8e4de;
+      --card: #ffffff;
+      --accent: #2aab8e;
+      --accent2: #c9a030;
+      --text: #1a1a1a;
+      --muted: #888888;
+      --border: rgba(0,0,0,0.08);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -25,6 +36,7 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
+      overflow-x: hidden;
       line-height: 1.8;
     }
 
@@ -60,6 +72,14 @@
       text-decoration: none; transition: opacity .2s;
     }
     .nav-btn:hover { opacity: .85; }
+    .nav-theme-btn {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; border: none; background: rgba(255,255,255,.06);
+      font-size: 1rem; flex-shrink: 0; transition: transform .3s; color: var(--text);
+    }
+    [data-theme="light"] .nav-theme-btn { background: rgba(0,0,0,.06); }
+    .nav-theme-btn:hover { transform: rotate(22deg); }
 
     /* ── HERO HEADER ── */
     .page-hero {
@@ -261,6 +281,20 @@
       .data-table { font-size: .8rem; }
       .data-table th, .data-table td { padding: .6rem .7rem; }
     }
+  
+    @media (max-width: 600px) {
+      .nav-link { display: none; }
+      .page-title { font-size: clamp(1.8rem, 7vw, 2.8rem); letter-spacing: -1px; }
+      .section-heading { font-size: 1.25rem; }
+      .page-meta { flex-direction: column; gap: .6rem; font-size: .8rem; }
+      .data-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .page-footer { flex-direction: column; text-align: center; padding: 1.8rem 1.5rem; }
+      .footer-links { justify-content: center; gap: 1rem; }
+    }
+    @media (max-width: 380px) {
+      .page-layout { padding: 1.5rem 1rem; }
+      .rights-grid .right-card { padding: .9rem 1rem; }
+    }
   </style>
 </head>
 <body>
@@ -269,6 +303,7 @@
   <a href="index.html" class="logo">PU-<span>Marketplace</span></a>
   <div class="nav-right">
     <a href="terms.html" class="nav-link">Terms &amp; Conditions</a>
+    <button class="nav-theme-btn" id="themeBtn">🌞</button>
     <a href="auth.html" class="nav-btn">Get Started</a>
   </div>
 </nav>
@@ -282,7 +317,7 @@
     <div class="page-meta">
       <span>📅 Effective: 1 January 2026</span>
       <span>🔄 Last Updated: 31 March 2026</span>
-      <span>📍 PU-Marketplace, University Campus</span>
+      <span>📍 PU-Connect, University Campus</span>
     </div>
   </div>
 </header>
@@ -315,16 +350,16 @@
   <main class="content">
 
     <div class="intro-box">
-      <strong>Your privacy matters to us.</strong> This Privacy Policy explains how PU-Marketplace collects, uses, stores, and protects your personal information when you use our platform. We are committed to handling your data responsibly and transparently, in accordance with applicable data protection laws.
+      <strong>Your privacy matters to us.</strong> This Privacy Policy explains how PU-Connect collects, uses, stores, and protects your personal information when you use our platform. We are committed to handling your data responsibly and transparently, in accordance with applicable data protection laws.
     </div>
 
     <section class="section" id="p1">
       <div class="section-num">Section 01</div>
       <h2 class="section-heading">Who We Are</h2>
-      <p>PU-Marketplace ("we", "us", "our") is a campus-based peer-to-peer marketplace platform operated under the university. Our platform enables verified students and campus community members to list, buy, and sell goods and services within their university campus.</p>
+      <p>PU-Connect ("we", "us", "our") is a campus-based peer-to-peer marketplace platform operated under the university. Our platform enables verified students and campus community members to list, buy, and sell goods and services within their university campus.</p>
       <div class="highlight-box">
-        <strong>Data Controller:</strong> PU-Marketplace, Student Affairs Technology Division<br>
-        📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a5d5d7ccd3c4c6dce5d5d088c8c4d7cec0d1d5c9c4c6c08bc0c1d08bc2cd">[email&#160;protected]</a><br>
+        <strong>Data Controller:</strong> PU-Connect, Student Affairs Technology Division<br>
+        📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e797958e9186849ea79792ca8a86958c8293978b868482c9828392c9808f">[email&#160;protected]</a><br>
         📍 Student Affairs Office, University Campus, Ghana
       </div>
     </section>
@@ -385,7 +420,7 @@
     <section class="section" id="p3">
       <div class="section-num">Section 03</div>
       <h2 class="section-heading">How We Use Your Data</h2>
-      <p>We use the information we collect only for legitimate purposes directly related to operating PU-Marketplace. We do not sell your personal data to third parties.</p>
+      <p>We use the information we collect only for legitimate purposes directly related to operating PU-Connect. We do not sell your personal data to third parties.</p>
       <ul class="term-list">
         <li>To create and manage your account and verify your identity.</li>
         <li>To display your listings and facilitate transactions between users.</li>
@@ -441,7 +476,7 @@
     <section class="section" id="p7">
       <div class="section-num">Section 07</div>
       <h2 class="section-heading">Your Rights</h2>
-      <p>Depending on your jurisdiction, you may have the following rights regarding your personal data. To exercise any of these rights, contact us at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7d0d0f140b1c1e043d0d0850101c0f1618090d111c1e1853181908531a15">[email&#160;protected]</a></strong>. We will respond within <strong>30 days</strong>.</p>
+      <p>Depending on your jurisdiction, you may have the following rights regarding your personal data. To exercise any of these rights, contact us at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d0a0a2b9a6b1b3a990a0a5fdbdb1a2bbb5a4a0bcb1b3b5feb5b4a5feb7b8">[email&#160;protected]</a></strong>. We will respond within <strong>30 days</strong>.</p>
       <div class="rights-grid">
         <div class="right-card">
           <div class="right-card-title">👁️ Right of Access</div>
@@ -474,7 +509,7 @@
     <section class="section" id="p8">
       <div class="section-num">Section 08</div>
       <h2 class="section-heading">Cookies &amp; Tracking</h2>
-      <p>PU-Marketplace uses cookies and similar technologies to operate the Platform, remember your preferences, and understand how users interact with our services.</p>
+      <p>PU-Connect uses cookies and similar technologies to operate the Platform, remember your preferences, and understand how users interact with our services.</p>
       <table class="data-table">
         <thead>
           <tr><th>Cookie Type</th><th>Purpose</th><th>Duration</th></tr>
@@ -503,8 +538,8 @@
     <section class="section" id="p9">
       <div class="section-num">Section 09</div>
       <h2 class="section-heading">Children's Privacy</h2>
-      <p>PU-Marketplace is not directed at or intended for use by children under the age of 18. We do not knowingly collect personal data from minors. If we become aware that a user is under 18 years of age, we will take immediate steps to deactivate their account and delete their personal data.</p>
-      <p>If you believe a minor has registered on the Platform, please contact us immediately at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="90e0e2f9e6f1f3e9d0e0e5bdfdf1e2fbf5e4e0fcf1f3f5bef5f4e5bef7f8">[email&#160;protected]</a></strong>.</p>
+      <p>PU-Connect is not directed at or intended for use by children under the age of 18. We do not knowingly collect personal data from minors. If we become aware that a user is under 18 years of age, we will take immediate steps to deactivate their account and delete their personal data.</p>
+      <p>If you believe a minor has registered on the Platform, please contact us immediately at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9fefedf6e9fefce6dfefeab2f2feedf4faebeff3fefcfab1fafbeab1f8f7">[email&#160;protected]</a></strong>.</p>
     </section>
 
     <section class="section" id="p10">
@@ -519,7 +554,7 @@
         <li>In the event of a data breach that affects your rights and freedoms, we will notify you and the relevant authorities within the timeframes required by law.</li>
       </ul>
       <div class="highlight-box">
-        <strong>Your responsibility:</strong> Please choose a strong, unique password and never share your account credentials. If you suspect your account has been compromised, contact us immediately at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9feceaefeff0edebdfefeab2f2feedf4faebeff3fefcfab1fafbeab1f8f7">[email&#160;protected]</a></strong>.
+        <strong>Your responsibility:</strong> Please choose a strong, unique password and never share your account credentials. If you suspect your account has been compromised, contact us immediately at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="26555356564954526656530b4b47544d4352564a4745430843425308414e">[email&#160;protected]</a></strong>.
       </div>
     </section>
 
@@ -532,7 +567,7 @@
         <li>Displaying a prominent notice on the Platform.</li>
         <li>Updating the "Last Updated" date at the top of this page.</li>
       </ul>
-      <p>Your continued use of PU-Marketplace after the effective date of any changes constitutes your acceptance of the updated Privacy Policy. We encourage you to review this page periodically.</p>
+      <p>Your continued use of PU-Connect after the effective date of any changes constitutes your acceptance of the updated Privacy Policy. We encourage you to review this page periodically.</p>
     </section>
 
     <section class="section" id="p12">
@@ -540,12 +575,12 @@
       <h2 class="section-heading">Contact Us</h2>
       <p>If you have any questions, concerns, or requests regarding this Privacy Policy or the way we handle your personal data, please contact our Privacy Team:</p>
       <div class="highlight-box">
-        <strong>Privacy Team — PU-Marketplace</strong><br>
-        📧 Email: <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="60101209160103192010154d0d01120b0514100c0103054e0504154e0708">[email&#160;protected]</a></strong><br>
+        <strong>Privacy Team — PU-Connect</strong><br>
+        📧 Email: <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3747455e4156544e7747421a5a56455c5243475b5654521952534219505f">[email&#160;protected]</a></strong><br>
         📍 Address: Student Affairs Office, University Campus<br>
         🕐 Response Time: Within 30 days of receipt
       </div>
-      <p>For general support queries, please email <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6b181e1b1b04191f2b1b1e46060a19000e1f1b070a080e450e0f1e450c03">[email&#160;protected]</a></strong> or visit our Help Centre on the Platform.</p>
+      <p>For general support queries, please email <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="62111712120d10162212174f0f0310090716120e0301074c0706174c050a">[email&#160;protected]</a></strong> or visit our Help Centre on the Platform.</p>
     </section>
 
   </main>
@@ -556,9 +591,17 @@
   <div class="footer-links">
     <a href="index.html">Home</a>
     <a href="dashboard.html">Dashboard</a>
-    <a href="about.html">About</a>
-    <a href="safety.html">Safety</a>
-    <a href="help.html">Help Centre</a>
     <a href="terms.html">Terms &amp; Conditions</a>
     <a href="privacy.html">Privacy Policy</a>
     <a href="auth.html">Sign Up</a>
+  </div>
+  <div class="footer-copy">© 2026 PU-Connect. All rights reserved.</div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  const sections = document.querySelectorAll('.section[id]');
+  const tocLinks = document.querySelectorAll('.toc-list a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (

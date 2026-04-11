@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
-  <title>My Profile — PU-Marketplace</title>
+  <title>My Profile — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     /* ── TOKENS ── */
@@ -363,7 +363,7 @@
   <div id="profileInfo">
     <!-- Inline name edit — tap pencil to activate -->
     <div class="name-row">
-      <div class="prof-name" id="dispName">Kwame Asante</div>
+      <div class="prof-name" id="dispName">Your Name</div>
       <button class="name-edit-btn" id="nameEditBtn" onclick="toggleNameEdit()" title="Edit name">
         <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
       </button>
@@ -373,7 +373,7 @@
       <button class="name-save-btn" onclick="saveInlineName()">✓</button>
       <button class="name-cancel-btn" onclick="cancelNameEdit()">✕</button>
     </div>
-    <div class="prof-username" id="dispUsername">@kwame_sell · Member since Jan 2025</div>
+    <div class="prof-username" id="dispUsername">@username</div>
     <div class="prof-bio" id="dispBio">Final year Computer Engineering student. Selling textbooks, electronics and gadgets. Trustworthy seller — 98% positive ratings. Campus meetups only 📍</div>
     <div class="prof-tags" id="dispTags">
       <span class="prof-tag" id="tagLocation">📍 Greater Accra</span>
@@ -587,7 +587,7 @@
     <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     <span class="nlbl">Home</span>
   </button>
-  <button class="ni" onclick="location.href='dashboard-services.html'">
+  <button class="ni" onclick="location.href='reels.html'">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
     <span class="nlbl">Reels</span>
   </button>
@@ -686,7 +686,7 @@ apTh(dark);TB.onclick=()=>apTh(!dark);
 function toggleDarkMode(cb){apTh(cb.checked);}
 
 /* ── PROFILE DATA ── */
-const DEFAULT={name:'Kwame Asante',username:'kwame_sell',bio:'Final year Computer Engineering student. Selling textbooks, electronics and gadgets. Trustworthy seller — 98% positive ratings. Campus meetups only 📍',faculty:'Engineering',location:'Greater Accra',phone:'',avatarSrc:'',onlineStatus:true};
+const DEFAULT={name:'',username:'',bio:'',faculty:'',location:'',phone:'',avatarSrc:'',onlineStatus:true};
 function loadProfile(){try{const p=JSON.parse(localStorage.getItem('pu-profile'));return p?{...DEFAULT,...p}:DEFAULT;}catch{return DEFAULT;}}
 function saveProfileData(p){localStorage.setItem('pu-profile',JSON.stringify(p));}
 function initials(name){const parts=name.trim().split(' ').filter(Boolean);return(parts[0]?.[0]||'')+(parts[1]?.[0]||'');}
@@ -798,23 +798,13 @@ function renderRatingBars(){
 }
 
 /* ── REVIEWS ── */
-const REVIEWS=[
-  {initials:'AB',avCls:'tl',name:'Abena Boateng',stars:5,time:'2 days ago',text:'Super fast response and the textbook was exactly as described. Great seller, highly recommend!',listing:'Organic Chemistry Vol. 2'},
-  {initials:'EO',avCls:'pu',name:'Esi Owusu',stars:5,time:'1 week ago',text:'Laptop was in perfect condition, met at the library as agreed. Very professional.',listing:'HP Laptop 15.6" Core i7'},
-  {initials:'KM',avCls:'or',name:'Kofi Mensah',stars:5,time:'2 weeks ago',text:'Fair price, nice guy, smooth transaction. Will buy from again.',listing:'Mechanical Keyboard'},
-];
+const REVIEWS=[];
 function renderReviews(){
   document.getElementById('reviewsList').innerHTML=REVIEWS.map(r=>`<div class="review-item"><div class="rev-header"><div class="rev-av ${r.avCls}">${r.initials}</div><div class="rev-info"><div class="rev-name">${r.name}</div><div class="rev-meta"><span class="rev-stars">${'⭐'.repeat(r.stars)}</span> · ${r.time}</div></div></div><div class="rev-text">${r.text}</div><div class="rev-listing">📦 ${r.listing}</div></div>`).join('');
 }
 
 /* ── LISTINGS ── */
-const LISTINGS=[
-  {emoji:'💻',name:'HP Laptop 15.6"',price:'GH₵ 1,800',views:'124 views',status:'active'},
-  {emoji:'⌨️',name:'Mechanical Keyboard',price:'GH₵ 280',views:'56 views',status:'active'},
-  {emoji:'📚',name:'Organic Chem Vol.2',price:'GH₵ 45',views:'38 views',status:'active'},
-  {emoji:'🎧',name:'Sony WH-1000XM4',price:'GH₵ 650',views:'91 views',status:'active'},
-  {emoji:'📐',name:'Drawing Instruments',price:'GH₵ 35',views:'22 views',status:'sold'},
-];
+const LISTINGS=[];
 function renderListings(){
   document.getElementById('listingsScroll').innerHTML=LISTINGS.map(l=>`<div class="lcard" onclick="location.href='listings.html'"><div class="lcard-img">${l.emoji}<span class="lcard-badge ${l.status==='active'?'badge-active':'badge-sold'}">${l.status==='active'?'Active':'Sold'}</span></div><div class="lcard-body"><div class="lcard-name">${l.name}</div><div class="lcard-price">${l.price}</div><div class="lcard-views">👁 ${l.views}</div></div></div>`).join('');
 }
@@ -978,7 +968,7 @@ function _doSaveProfile(name,username,p){
 }
 
 /* ── LOGOUT ── */
-function confirmLogout(){if(confirm('Log out of PU-Marketplace?'))location.href='auth.html';}
+function confirmLogout(){if(confirm('Log out of PU-Connect?'))location.href='auth.html';}
 
 /* ── TOAST ── */
 let toastTimer;

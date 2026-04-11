@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PU-Marketplace — Join the Campus</title>
+  <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
+  <title>PU-Connect — Join the Campus</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
-    :root {
+    :root, [data-theme="dark"] {
       --bg: #0d0e11;
       --surface: #15171c;
       --card: #1c1f27;
@@ -19,6 +20,20 @@
       --border-focus: rgba(232,201,106,0.5);
       --error: #ff6b6b;
       --success: #5be5c5;
+    }
+    [data-theme="light"] {
+      --bg: #f0ede8;
+      --surface: #e8e5e0;
+      --card: #ffffff;
+      --input-bg: #f5f3ef;
+      --accent: #c9a030;
+      --accent2: #2aab8e;
+      --text: #1a1a1a;
+      --muted: #888;
+      --border: rgba(0,0,0,0.1);
+      --border-focus: rgba(201,160,48,0.5);
+      --error: #d94040;
+      --success: #2aab8e;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -522,6 +537,17 @@
     @media (max-width: 480px) {
       .input-row { grid-template-columns: 1fr; }
       .right-panel { padding: 1.5rem 1.2rem; }
+      .auth-box { max-width: 100%; }
+      .form-title { font-size: 1.6rem; }
+      .tab-btn { font-size: .82rem; padding: .6rem .4rem; }
+      .social-row { grid-template-columns: 1fr; }
+      .btn-submit { padding: .85rem; font-size: .9rem; }
+      .check-group label { font-size: .78rem; }
+    }
+    @media (max-width: 360px) {
+      .right-panel { padding: 1.2rem .9rem; }
+      .auth-tabs { padding: 4px; }
+      .input-wrap input, .input-wrap select { font-size: .85rem; padding: .72rem .9rem .72rem 2.5rem; }
     }
 
     /* Back to home link */
@@ -590,11 +616,11 @@
   </div>
 
   <div class="panel-testimonial">
-    <p class="testimonial-text">"Sold my old laptop and bought all my semester textbooks on PU-Marketplace — saved so much time and money!"</p>
+    <p class="testimonial-text">"Sold my old laptop and bought all my semester textbooks on PU-Connect — saved so much time and money!"</p>
     <div class="testimonial-author">
       <div class="author-avatar">AK</div>
       <div>
-        <div class="author-name">Abena Kyei</div>
+        <div class="author-name">PU-Connect Student</div>
         <div class="author-role">Level 300 · Engineering</div>
       </div>
     </div>
@@ -609,7 +635,10 @@
   <div class="auth-box">
 
     <!-- Mobile only -->
-    <a href="index.html" class="mobile-logo">PU-<span>Marketplace</span></a>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem;">
+      <a href="index.html" class="mobile-logo">PU-<span>Marketplace</span></a>
+      <button id="authThemeBtn" onclick="authToggleTheme()" style="width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:var(--input-bg);font-size:1rem;flex-shrink:0;transition:transform .3s;">🌞</button>
+    </div>
     <a href="index.html" class="back-home">← Back to Home</a>
 
     <!-- Tabs -->
@@ -672,7 +701,7 @@
           <label class="input-label">First Name</label>
           <div class="input-wrap">
             <span class="input-icon">👤</span>
-            <input type="text" id="su-fname" placeholder="Kwame" />
+            <input type="text" id="su-fname" placeholder="First name" />
           </div>
           <span class="field-error" id="su-fname-err">First name is required.</span>
         </div>
@@ -699,9 +728,9 @@
         <label class="input-label">Username</label>
         <div class="input-wrap">
           <span class="input-icon at-sign">@</span>
-          <input type="text" id="su-username" placeholder="e.g. kwame_mensah" autocomplete="username" />
+          <input type="text" id="su-username" placeholder="e.g. your.name or username" autocomplete="username" oninput="validateUsernameInput(this)" />
         </div>
-        <span class="field-error" id="su-username-err">Username must be at least 3 characters (letters, numbers, _ only).</span>
+        <span class="field-error" id="su-username-err">3–30 chars, letters/numbers/dots/underscores only. No spaces or leading special chars.</span>
       </div>
 
       <div class="input-group">
@@ -767,6 +796,21 @@
 </div>
 
 <script>
+  // ── USERNAME VALIDATION ──
+  function validateUsernameInput(el) {
+    // Strip any character that isn't a letter, number, dot, or underscore
+    el.value = el.value.replace(/[^a-zA-Z0-9._]/g, '');
+  }
+
+  function isValidUsername(u) {
+    if (!u || u.length < 3 || u.length > 30) return false;
+    if (!/^[a-zA-Z0-9]/.test(u)) return false;       // must start with letter/number
+    if (!/[a-zA-Z0-9]$/.test(u)) return false;        // must end with letter/number
+    if (/\.{2,}/.test(u) || /_{2,}/.test(u)) return false; // no consecutive . or _
+    if (!/^[a-zA-Z0-9._]+$/.test(u)) return false;    // only allowed chars
+    return true;
+  }
+
   // ── TAB SWITCHING ──
   function switchTab(tab) {
     document.getElementById('panel-login').classList.toggle('active', tab === 'login');
@@ -871,7 +915,7 @@
     if (!fname) { showErr('su-fname-err', true); markInput('su-fname', true); valid = false; }
     if (!lname) { showErr('su-lname-err', true); markInput('su-lname', true); valid = false; }
     if (!email || !/\S+@\S+\.\S+/.test(email)) { showErr('su-email-err', true); markInput('su-email', true); valid = false; }
-    if (!username || username.length < 3 || !/^[a-zA-Z0-9_]+$/.test(username)) { showErr('su-username-err', true); markInput('su-username', true); valid = false; }
+    if (!isValidUsername(username)) { showErr('su-username-err', true); markInput('su-username', true); valid = false; }
     if (!pw || pw.length < 8) { showErr('su-pw-err', true); markInput('su-password', true); valid = false; }
     if (pw && confirm && pw !== confirm) { showErr('su-confirm-err', true); markInput('su-confirm', true); valid = false; }
     if (!terms) {
@@ -901,6 +945,20 @@
   function handleSocial(provider) {
     showToast(`Connecting to ${provider}…`, provider === 'Google' ? '🔵' : '⚫');
   }
+
+  // ── THEME TOGGLE ──
+  let authDark = localStorage.getItem('pu-theme') !== 'light';
+  function authApplyTheme(d) {
+    document.documentElement.setAttribute('data-theme', d ? 'dark' : 'light');
+    const btn = document.getElementById('authThemeBtn');
+    if (btn) btn.textContent = d ? '🌞' : '🌙';
+    authDark = d;
+    localStorage.setItem('pu-theme', d ? 'dark' : 'light');
+    const tm = document.getElementById('themeColorMeta');
+    if (tm) tm.setAttribute('content', d ? '#0d0e11' : '#f0ede8');
+  }
+  function authToggleTheme() { authApplyTheme(!authDark); }
+  authApplyTheme(authDark);
 
   // Auto-switch tab via URL hash
   if (window.location.hash === '#signup') switchTab('signup');

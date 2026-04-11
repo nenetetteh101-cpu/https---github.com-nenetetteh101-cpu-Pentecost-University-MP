@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <meta name="theme-color" content="#000000" id="themeColorMeta"/>
-  <title>Reels — PU-Marketplace</title>
+  <title>Reels — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
     /* ── TOKENS ── */
@@ -379,12 +379,7 @@
       <label>Linked Listing <span style="font-weight:300;color:#7a7e8a;text-transform:none;letter-spacing:0">(optional)</span></label>
       <select id="listingSelect">
         <option value="">— Link to a listing —</option>
-        <option value="1" data-emoji="💻" data-price="GH₵ 1,800">HP Laptop 15.6" Core i7 — GH₵ 1,800</option>
-        <option value="2" data-emoji="⌨️" data-price="GH₵ 280">Mechanical Keyboard — GH₵ 280</option>
-        <option value="3" data-emoji="📚" data-price="GH₵ 45">Organic Chemistry Vol.2 — GH₵ 45</option>
-        <option value="4" data-emoji="🎨" data-price="From GH₵ 50">Graphic Design Services — From GH₵ 50</option>
-        <option value="5" data-emoji="👗" data-price="GH₵ 45">Ankara Dress (Size M) — GH₵ 45</option>
-      </select>
+        </select>
     </div>
 
     <!-- Progress -->
@@ -409,9 +404,9 @@
     <div class="sheet-handle"></div>
     <div class="ps-img" id="psImg">💻</div>
     <div class="ps-badge">Available</div>
-    <div class="ps-name" id="psName">HP Laptop 15.6" Core i7</div>
-    <div class="ps-price" id="psPrice">GH₵ 1,800</div>
-    <div class="ps-seller" id="psSeller">Listed by @kwame_sell</div>
+    <div class="ps-name" id="psName">—</div>
+    <div class="ps-price" id="psPrice">—</div>
+    <div class="ps-seller" id="psSeller">—</div>
     <div class="ps-divider"></div>
     <div class="ps-desc" id="psDesc">Barely used HP laptop. Intel Core i7, 16GB RAM, 512GB SSD. Battery 6+ hrs. Comes with original charger and bag.</div>
     <div class="ps-actions">
@@ -457,7 +452,7 @@
       <div class="share-item" onclick="shareAction('copy')"><div class="share-ico" style="background:rgba(255,255,255,.07)">🔗</div><div class="share-lbl">Copy Link</div></div>
     </div>
     <div class="share-link-row">
-      <span class="share-link-text" id="shareLink">pu-marketplace.edu.gh/reels/r001</span>
+      <span class="share-link-text" id="shareLink">pu-connect.edu.gh/reels/r001</span>
       <button class="share-copy-btn" onclick="copyLink()">Copy</button>
     </div>
   </div>
@@ -469,68 +464,7 @@
 /* ══════════════════════════════════════
    REEL DATA
 ══════════════════════════════════════ */
-const REELS=[
-  {
-    id:'r001',
-    src:'',// no video src — shows placeholder bg
-    bg:'linear-gradient(135deg,#1a1508 0%,#2a200a 40%,#0d1117 100%)',
-    bgEmoji:'💻',
-    seller:{name:'Kwame Asante',handle:'@kwame_sell',initials:'KA',avGrad:'linear-gradient(135deg,#e8c96a,#f5c842)'},
-    caption:'This HP laptop is in perfect condition 🔥 Intel Core i7, 16GB RAM. Perfect for engineering students. DM to negotiate! #Laptop #CampusDeal',
-    product:{name:'HP Laptop 15.6" Core i7',price:'GH₵ 1,800',emoji:'💻',desc:'Barely used. Core i7, 16GB RAM, 512GB SSD. Battery lasts 6+ hrs. Original charger included.'},
-    likes:284,comments:34,shares:18,saves:61,liked:false,saved:false,following:false,
-    music:'Campus Vibes Mix • PU-Marketplace',
-    tags:['#Laptop','#CampusDeal','#Engineering'],
-  },
-  {
-    id:'r002',
-    src:'',
-    bg:'linear-gradient(135deg,#0a1628 0%,#1a2a4a 50%,#0d1117 100%)',
-    bgEmoji:'🎨',
-    seller:{name:'Esi Owusu',handle:'@esi_design',initials:'EO',avGrad:'linear-gradient(135deg,#a78bfa,#7c3aed)'},
-    caption:'Logo design for your campus business 🎨✨ 3 concepts, unlimited revisions, full brand pack. DM me now! #GraphicDesign #CampusBusiness',
-    product:{name:'Graphic Design Services',price:'From GH₵ 80',emoji:'🎨',desc:'Logos, flyers, social media graphics & brand guides. Fast turnaround. Portfolio available on request.'},
-    likes:512,comments:87,shares:43,saves:129,liked:false,saved:false,following:false,
-    music:'Creative Beats • Esi Designs',
-    tags:['#Design','#Logo','#CampusBusiness'],
-  },
-  {
-    id:'r003',
-    src:'',
-    bg:'linear-gradient(135deg,#0d2010 0%,#1a3a1a 50%,#0d1117 100%)',
-    bgEmoji:'📚',
-    seller:{name:'Abena Boateng',handle:'@abena_b',initials:'AB',avGrad:'linear-gradient(135deg,#5be5c5,#2dd4bf)'},
-    caption:'Organic Chemistry 8th edition — barely used, no markings 📚 Science students grab this before it\'s gone! #TextBook #Chemistry #ScienceFaculty',
-    product:{name:'Organic Chemistry Vol. 2',price:'GH₵ 45',emoji:'📚',desc:'8th edition by McMurry. Excellent condition. Only used for one semester. Perfect for Year 1 & 2 students.'},
-    likes:178,comments:29,shares:12,saves:44,liked:false,saved:false,following:false,
-    music:'Study Mode • Campus Playlist',
-    tags:['#TextBook','#Chemistry'],
-  },
-  {
-    id:'r004',
-    src:'',
-    bg:'linear-gradient(135deg,#1a0a00 0%,#3a1800 50%,#0d1117 100%)',
-    bgEmoji:'⌨️',
-    seller:{name:'Kofi Mensah',handle:'@kofi_gear',initials:'KM',avGrad:'linear-gradient(135deg,#fb923c,#ea580c)'},
-    caption:'Keychron K2 mechanical keyboard — barely touched ⌨️🔥 Brown switches, RGB, wireless. Perfect for CS students! #MechKeyboard #TechDeal',
-    product:{name:'Mechanical Keyboard (Keychron K2)',price:'GH₵ 280',emoji:'⌨️',desc:'Brown switches, 84 keys, RGB backlight, Bluetooth + USB. Works with Mac & Windows. Barely used — 3 months old.'},
-    likes:341,comments:52,shares:27,saves:88,liked:false,saved:false,following:false,
-    music:'Tech Vibes • Kofi Gear',
-    tags:['#Keyboard','#Tech','#CSStudent'],
-  },
-  {
-    id:'r005',
-    src:'',
-    bg:'linear-gradient(135deg,#1a0a1a 0%,#2a0a3a 50%,#0d1117 100%)',
-    bgEmoji:'👗',
-    seller:{name:'Adwoa Asante',handle:'@adwoa_fashion',initials:'AA',avGrad:'linear-gradient(135deg,#e8c96a,#f5c842)'},
-    caption:'Ankara dress only worn once 👗🌟 Size M, vibrant colours, perfect for events and celebrations! Grab it before it\'s gone! #Fashion #Ankara #CampusStyle',
-    product:{name:'Ankara Dress (Size M)',price:'GH₵ 45',emoji:'👗',desc:'Beautiful Ankara print dress. Worn once to a party. Excellent condition. Perfect for cultural events.'},
-    likes:623,comments:91,shares:56,saves:147,liked:false,saved:false,following:false,
-    music:'Afrobeats Mix • Adwoa Fashion',
-    tags:['#Fashion','#Ankara','#Style'],
-  },
-];
+const REELS=[];
 
 /* ── STATE ── */
 let currentReelIdx=0;
@@ -808,31 +742,7 @@ function closeProduct(e){
 /* ══════════════════════════════════════
    COMMENTS
 ══════════════════════════════════════ */
-const COMMENTS_DATA={
-  r001:[
-    {initials:'AB',avClr:'#5be5c5',name:'Abena Boateng',text:'Is this still available? 😍',time:'2h',likes:12},
-    {initials:'EO',avClr:'#a78bfa',name:'Esi Owusu',text:'What processor generation is it?',time:'1h',likes:5},
-    {initials:'KM',avClr:'#fb923c',name:'Kofi Mensah',text:'Price is fair for a Core i7! I bought mine for GH₵ 2,500 😅',time:'45m',likes:23},
-  ],
-  r002:[
-    {initials:'KA',avClr:'#e8c96a',name:'Kwame Asante',text:'Your designs are 🔥🔥 Do you do event posters too?',time:'5h',likes:34},
-    {initials:'AB',avClr:'#5be5c5',name:'Abena Boateng',text:'DM sent! Need a flyer for my club event 🙏',time:'3h',likes:8},
-  ],
-  r003:[
-    {initials:'KM',avClr:'#fb923c',name:'Kofi Mensah',text:'Is this the McMurry edition? Does it have the solutions manual?',time:'1d',likes:3},
-    {initials:'EO',avClr:'#a78bfa',name:'Esi Owusu',text:'I need this so badly 😭 Still available?',time:'18h',likes:7},
-  ],
-  r004:[
-    {initials:'AB',avClr:'#5be5c5',name:'Abena Boateng',text:'What switches? Linear or tactile?',time:'3h',likes:4},
-    {initials:'EO',avClr:'#a78bfa',name:'Esi Owusu',text:'I have the same keyboard! Great choice for programmers 👏',time:'2h',likes:18},
-    {initials:'KA',avClr:'#e8c96a',name:'Kwame Asante',text:'Would you take GH₵ 250?',time:'30m',likes:1},
-  ],
-  r005:[
-    {initials:'KM',avClr:'#fb923c',name:'Kofi Mensah',text:'The colours are so vibrant! 😍',time:'6h',likes:29},
-    {initials:'AB',avClr:'#5be5c5',name:'Abena Boateng',text:'I love the pattern! Any size S available?',time:'4h',likes:11},
-    {initials:'KA',avClr:'#e8c96a',name:'Kwame Asante',text:'Getting this for my sister 🎁',time:'2h',likes:6},
-  ],
-};
+const COMMENTS_DATA={};
 
 function openComments(idx){
   activeCommentsIdx=idx;
@@ -872,7 +782,7 @@ function postComment(){
   const inp=document.getElementById('commentInput');
   const text=inp.value.trim();if(!text)return;
   const p=JSON.parse(localStorage.getItem('pu-profile')||'{}');
-  const name=p.name||'Kwame Asante';
+  const name=p.name||'User';
   const ini=(name.split(' ').map(w=>w[0]||'').join('').slice(0,2))||'KA';
   const item=document.createElement('div');
   item.className='comment-item';
@@ -914,7 +824,7 @@ let shareReelIdx=null;
 function openShare(idx){
   shareReelIdx=idx;
   const r=ALL_REELS[idx];
-  document.getElementById('shareLink').textContent=`pu-marketplace.edu.gh/reels/${r.id}`;
+  document.getElementById('shareLink').textContent=`pu-connect.edu.gh/reels/${r.id}`;
   document.getElementById('shareOverlay').classList.add('open');
   pauseReel(idx);
 }
@@ -1027,8 +937,8 @@ function publishReel(){
 
 function finishUpload(caption){
   const p=JSON.parse(localStorage.getItem('pu-profile')||'{}');
-  const name=p.name||'Kwame Asante';
-  const username=p.username||'kwame_sell';
+  const name=p.name||'User';
+  const username=p.username||'user';
   const ini=(name.split(' ').map(w=>w[0]||'').join('').slice(0,2))||'KA';
   const avSrc=p.avatarSrc||'';
 

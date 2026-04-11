@@ -2,7 +2,8 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Wishlist — PU-Marketplace</title>
+  <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
+  <title>Wishlist — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     :root{--a:#e8c96a;--a2:#5be5c5;--red:#ff6b6b;--r:16px;--nh:60px;--bh:78px;--sw:228px}
@@ -56,6 +57,8 @@
     /* GRID */
     .wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:.9rem}
     @media(min-width:1100px){.wgrid{grid-template-columns:repeat(5,1fr)}}
+    @media(max-width:600px){.wgrid{grid-template-columns:repeat(2,1fr)}.fpills{flex-wrap:nowrap;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}.ph-sub{font-size:.8rem}}
+    @media(max-width:320px){.wgrid{grid-template-columns:1fr}}
     @media(max-width:380px){.wgrid{grid-template-columns:repeat(2,1fr)}}
     .wcard{background:var(--card);border:1px solid var(--b);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:transform .3s,border-color .3s;position:relative}
     .wcard:hover{transform:translateY(-4px);border-color:rgba(255,107,107,.3)}
@@ -109,7 +112,7 @@
     <li><a href="index.html"><span class="ico">🏠</span>Home</a></li>
     <li><a href="dashboard.html"><span class="ico">⚡</span>Dashboard</a></li>
     <li><a href="dashboard-products.html"><span class="ico">📦</span>Products</a></li>
-    <li><a href="dashboard-services.html"><span class="ico">🛠️</span>Services</a></li>
+    <li><a href="reels.html"><span class="ico">🛠️</span>Services</a></li>
     <li><a href="wishlist.html" class="act"><span class="ico">❤️</span>Wishlist</a></li>
     <li><a href="orders.html"><span class="ico">🛒</span>My Orders</a></li>
     <li><a href="listings.html"><span class="ico">🏷️</span>My Listings</a></li>
@@ -117,7 +120,7 @@
   <div class="sbd"></div>
   <div class="sbsec">Account</div>
   <ul class="sbul">
-    <li><a href="auth.html"><span class="ico">👤</span>Profile</a></li>
+    <li><a href="profile.html"><span class="ico">👤</span>Profile</a></li>
   </ul>
   <div class="sbd"></div>
   <div class="sbsec">Info &amp; Legal</div>
@@ -130,7 +133,7 @@
   </ul>
   <div class="sbd"></div>
   <ul class="sbul"><li><a href="auth.html" style="color:var(--red)"><span class="ico">🚪</span>Log Out</a></li></ul>
-  <div class="sbft">© 2026 PU-Marketplace<br>Built for campus, by students.</div>
+  <div class="sbft">© 2026 PU-Connect<br>Built for campus, by students.</div>
 </aside>
 <div class="wrap"><div class="inner">
   <div class="ph">
@@ -150,38 +153,25 @@
 </div></div>
 <nav class="botnav" id="bn">
   <button class="ni" onclick="location.href='dashboard.html'"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nlbl">Home</span></button>
-  <button class="ni" onclick="location.href='dashboard-services.html'"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span class="nlbl">Reels</span></button>
-  <button class="nadd" onclick="location.href='listings.html'"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-  <button class="ni" onclick="location.href='payments.html'"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="nlbl">Chat</span></button>
-  <button class="ni" onclick="location.href='auth.html'"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nlbl">Profile</span></button>
+  <button class="ni" onclick="location.href='reels.html'"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span class="nlbl">Reels</span></button>
+  <button class="nadd" onclick="location.href='create-listing.html'"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+  <button class="ni" onclick="location.href='chat.html'"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="nlbl">Chat</span></button>
+  <button class="ni" onclick="location.href='profile.html'"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nlbl">Profile</span></button>
 </nav>
 <script>
 const html=document.documentElement,tb=document.getElementById('thbtn');let dark=true;
-function applyTheme(d){html.setAttribute('data-theme',d?'dark':'light');tb.textContent=d?'🌞':'🌙';dark=d;localStorage.setItem('pu-theme',d?'dark':'light')}
+function applyTheme(d){html.setAttribute('data-theme',d?'dark':'light');const tm=document.getElementById('themeColorMeta');if(tm)tm.setAttribute('content',d?'#0d0e11':'#f0ede8');tb.textContent=d?'🌞':'🌙';dark=d;localStorage.setItem('pu-theme',d?'dark':'light')}
 const sv=localStorage.getItem('pu-theme');if(sv)applyTheme(sv==='dark');
 tb.addEventListener('click',()=>applyTheme(!dark));
 const sb=document.getElementById('sb'),ov=document.getElementById('ov');
 document.getElementById('hbg').onclick=()=>{sb.classList.add('on');ov.classList.add('on');document.body.style.overflow='hidden'};
 function closeSb(){sb.classList.remove('on');ov.classList.remove('on');document.body.style.overflow=''}
 if(window.innerWidth>=960)sb.classList.add('on');
-window.addEventListener('resize',()=>{if(window.innerWidth>=960){sb.classList.add('on');ov.classList.remove('on')}});
+window.addEventListener('resize',()=>{if(window.innerWidth>=960){sb.classList.add('on');ov.classList.remove('on')}else{sb.classList.remove('on');}});
 const BN=document.getElementById('bn');let ly=0,tk=false;
 window.addEventListener('scroll',()=>{if(!tk){requestAnimationFrame(()=>{const y=window.scrollY;if(y>ly+10&&y>80)BN.classList.add('hide');else if(y<ly-10)BN.classList.remove('hide');ly=y;tk=false});tk=true}},{passive:true});
 
-const ITEMS=[
-  {id:1,name:'Dell XPS 13 Laptop',price:2400,cat:'electronics',seller:'@kofi_tech',img:'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&q=75&auto=format',badge:'Electronics',bc:'rgba(232,201,106,.18)',bt:'var(--a)'},
-  {id:2,name:'Sony WH-1000XM5',price:780,cat:'electronics',seller:'@abena_sound',img:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=400&q=75&auto=format',badge:'Electronics',bc:'rgba(232,201,106,.18)',bt:'var(--a)'},
-  {id:3,name:'Organic Chemistry Vol.2',price:35,cat:'textbooks',seller:'@kwame_sci',img:'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400&q=75&auto=format',badge:'Textbook',bc:'rgba(91,229,197,.18)',bt:'#5be5c5'},
-  {id:4,name:'Compact Study Desk',price:130,cat:'furniture',seller:'@esi_dorm',img:'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=400&q=75&auto=format',badge:'Furniture',bc:'rgba(91,229,197,.18)',bt:'#5be5c5'},
-  {id:5,name:'Nike Air Max 42',price:210,cat:'fashion',seller:'@sneaker_ato',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=75&auto=format',badge:'Fashion',bc:'rgba(251,146,60,.18)',bt:'#fb923c'},
-  {id:6,name:'Logo & Brand Design',price:60,cat:'services',seller:'@ama_designs',img:'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&q=75&auto=format',badge:'Service',bc:'rgba(160,120,255,.18)',bt:'#a78bfa'},
-  {id:7,name:'iPad 9th Gen 64GB',price:1650,cat:'electronics',seller:'@tab_kojo',img:'https://images.unsplash.com/photo-1612831455359-970e23a1e4e9?w=400&q=75&auto=format',badge:'Electronics',bc:'rgba(232,201,106,.18)',bt:'var(--a)'},
-  {id:8,name:'North Face Backpack',price:70,cat:'fashion',seller:'@ama_bags',img:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&q=75&auto=format',badge:'Fashion',bc:'rgba(160,120,255,.18)',bt:'#a78bfa'},
-  {id:9,name:'Data Structures Book',price:55,cat:'textbooks',seller:'@yaw_cs',img:'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=75&auto=format',badge:'Textbook',bc:'rgba(91,229,197,.18)',bt:'#5be5c5'},
-  {id:10,name:'Ergonomic Chair',price:350,cat:'furniture',seller:'@akua_room',img:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&q=75&auto=format',badge:'Furniture',bc:'rgba(91,229,197,.18)',bt:'#5be5c5'},
-  {id:11,name:'STEM Tutoring Service',price:40,cat:'services',seller:'@yaw_teaches',img:'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&q=75&auto=format',badge:'Service',bc:'rgba(160,120,255,.18)',bt:'#a78bfa'},
-  {id:12,name:'Samsung Galaxy A52',price:620,cat:'electronics',seller:'@kweku_phones',img:'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&q=75&auto=format',badge:'Electronics',bc:'rgba(232,201,106,.18)',bt:'var(--a)'},
-];
+const ITEMS=[];
 let saved=new Set(ITEMS.map(i=>i.id)),activeCat='all';
 function render(){
   const g=document.getElementById('wg');

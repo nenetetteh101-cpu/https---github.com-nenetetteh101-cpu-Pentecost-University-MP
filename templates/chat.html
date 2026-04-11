@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
-  <title>Messages — PU-Marketplace</title>
+  <title>Messages — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     /* ── TOKENS (match dashboard exactly) ── */
@@ -534,7 +534,7 @@
         </button>
         <div class="chat-av" id="chatAv" onclick="viewProfile()" style="cursor:pointer" title="View profile">KA</div>
         <div class="chat-info" onclick="viewProfile()" style="cursor:pointer;flex:1;min-width:0" title="View profile">
-          <div class="chat-name" id="chatName">Kwame Asante</div>
+          <div class="chat-name" id="chatName">—</div>
           <div class="chat-status" id="chatStatus">Online</div>
         </div>
         <div class="chat-actions">
@@ -551,8 +551,8 @@
       <div class="listing-banner" id="listingBanner" onclick="openListing()">
         <div class="lb-img" id="lbImg">📦</div>
         <div class="lb-info">
-          <div class="lb-name" id="lbName">HP Laptop 15.6" Core i7</div>
-          <div class="lb-price" id="lbPrice">GH₵ 1,800</div>
+          <div class="lb-name" id="lbName">—</div>
+          <div class="lb-price" id="lbPrice">—</div>
         </div>
         <span class="lb-arrow">›</span>
       </div>
@@ -725,9 +725,9 @@
     <div class="lm-img" id="lmImg">📦</div>
     <div class="lm-body">
       <div class="lm-badge" id="lmBadge">Available</div>
-      <div class="lm-name" id="lmName">HP Laptop 15.6" Core i7</div>
-      <div class="lm-price" id="lmPrice">GH₵ 1,800</div>
-      <div class="lm-seller" id="lmSeller">Listed by @kwame_sell</div>
+      <div class="lm-name" id="lmName">—</div>
+      <div class="lm-price" id="lmPrice">—</div>
+      <div class="lm-seller" id="lmSeller">—</div>
       <div class="lm-divider"></div>
       <div class="lm-desc" id="lmDesc">Barely used HP laptop, Intel Core i7, 16GB RAM, 512GB SSD. Great for students and professionals. Battery lasts 6+ hours. Comes with original charger and bag.</div>
       <div class="lm-actions">
@@ -778,9 +778,9 @@
       </div>
 
       <!-- Name & username -->
-      <div class="up-name" id="upName">Kwame Asante</div>
-      <div class="up-username" id="upUsername">@kwame_sell</div>
-      <div class="up-bio" id="upBio">Campus seller. Fast responses, honest listings. 34 successful trades. Meetups only 📍</div>
+      <div class="up-name" id="upName">—</div>
+      <div class="up-username" id="upUsername">@—</div>
+      <div class="up-bio" id="upBio">—</div>
 
       <!-- Tags -->
       <div class="up-tags" id="upTags">
@@ -902,7 +902,7 @@
     <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     <span class="nlbl">Home</span>
   </button>
-  <button class="ni" onclick="setNi(this);location.href='dashboard-services.html'">
+  <button class="ni" onclick="setNi(this);location.href='reels.html'">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
     <span class="nlbl">Reels</span>
   </button>
@@ -930,48 +930,7 @@ apTh(dark);
 TB.addEventListener('click',()=>apTh(!dark));
 
 /* ── CONVERSATION DATA ── */
-const CONVS=[
-  {id:1,name:'Kwame Asante',initials:'KA',avCls:'',role:'seller',listing:'HP Laptop 15.6" Core i7',listingEmoji:'💻',price:'GH₵ 1,800',time:'Just now',badge:2,type:'buying',status:'online',
-   messages:[
-    {from:'in',text:'Hey! Is the laptop still available?',time:'10:02 AM'},
-    {from:'out',text:'Yes it is! Still in great condition. When would you like to see it?',time:'10:04 AM'},
-    {from:'in',text:'Great! Can you do GH₵ 1,600? I can meet you today at the library.',time:'10:06 AM',offer:{amount:'GH₵ 1,600',item:'HP Laptop 15.6" Core i7',status:'pending'}},
-    {from:'out',text:'Let me think about it. The lowest I can go is GH₵ 1,700.',time:'10:10 AM'},
-    {from:'in',text:'Deal! Let\'s meet at the Main Library Foyer at 3pm?',time:'10:12 AM'},
-   ]},
-  {id:2,name:'Abena Boateng',initials:'AB',avCls:'teal',role:'buyer',listing:'Organic Chemistry Vol. 2',listingEmoji:'📚',price:'GH₵ 45',time:'2 hr ago',badge:0,type:'selling',status:'away',
-   messages:[
-    {from:'in',text:'Hi! I saw your Organic Chemistry textbook. Is it the 8th edition?',time:'08:15 AM'},
-    {from:'out',text:'Yes, 8th edition. Very clean, only used it for one semester.',time:'08:18 AM'},
-    {from:'in',text:'Perfect. Could we meet tomorrow morning near the Science Faculty?',time:'08:20 AM'},
-    {from:'out',text:null,meetup:{spot:'Science Faculty Entrance',date:'Tomorrow, 9:00 AM',note:'I\'ll be wearing a red hoodie'},time:'08:22 AM'},
-    {from:'in',text:'👍 Perfect! See you then.',time:'08:24 AM'},
-   ]},
-  {id:3,name:'Esi Owusu',initials:'EO',avCls:'purple',role:'seller',listing:'Graphic Design Services',listingEmoji:'🎨',price:'From GH₵ 50',time:'Yesterday',badge:0,type:'buying',status:'away',
-   messages:[
-    {from:'out',text:'Hello! I need a logo designed for my campus business. Can you help?',time:'Yesterday 3:20 PM'},
-    {from:'in',text:'Absolutely! What kind of business is it? And do you have a colour preference?',time:'Yesterday 3:25 PM'},
-    {from:'out',text:'It\'s a food delivery service. I\'m thinking green and gold.',time:'Yesterday 3:30 PM'},
-    {from:'in',text:'Love that combo! I\'ll prepare 3 concepts for you. My rate is GH₵ 80 for a full logo pack — includes PNG, SVG and brand guidelines.',time:'Yesterday 3:35 PM'},
-    {from:'out',text:'That works for me! When can you start?',time:'Yesterday 3:38 PM'},
-    {from:'in',text:'I can start today and deliver the first draft within 48 hours.',time:'Yesterday 3:40 PM'},
-   ]},
-  {id:4,name:'Kofi Mensah',initials:'KM',avCls:'orange',role:'buyer',listing:'Mechanical Keyboard',listingEmoji:'⌨️',price:'GH₵ 280',time:'Mon',badge:1,type:'selling',status:'online',
-   messages:[
-    {from:'in',text:'Is the keyboard still available? I\'ve been looking for a good mechanical one.',time:'Mon 5:10 PM'},
-    {from:'out',text:'Yes! It\'s a Keychron K2 with brown switches. Barely used, bought it 3 months ago.',time:'Mon 5:14 PM'},
-    {from:'in',text:'Any chance you\'ll take GH₵ 250?',time:'Mon 5:16 PM',offer:{amount:'GH₵ 250',item:'Mechanical Keyboard (Keychron K2)',status:'declined'}},
-    {from:'out',text:'Sorry, GH₵ 280 is my final price. It\'s a fair deal for what you\'re getting.',time:'Mon 5:18 PM'},
-    {from:'in',text:'Fair enough. I\'ll take it. When are you free to meet?',time:'Mon 5:22 PM'},
-   ]},
-  {id:5,name:'Adwoa Asante',initials:'AA',avCls:'',role:'seller',listing:'Ankara Dress (Size M)',listingEmoji:'👗',price:'GH₵ 45',time:'Sun',badge:0,type:'buying',status:'away',
-   messages:[
-    {from:'out',text:'Hello! Is the dress still available?',time:'Sun 12:00 PM'},
-    {from:'in',text:'Yes it is! It was only worn once for a party.',time:'Sun 12:05 PM'},
-    {from:'out',text:'Great! Can I see more photos?',time:'Sun 12:06 PM'},
-    {from:'in',text:'Sure! Let me send them shortly.',time:'Sun 12:08 PM'},
-   ]},
-];
+const CONVS=[];
 
 const QUICK_REPLIES=[
   'Is this still available?','Can we meet today?','I\'ll take it!','What\'s your lowest price?','Can you deliver?','Send more photos',
@@ -1391,16 +1350,7 @@ function confirmSchedule(){
 /* ══════════════════════════════════════
    NEW CONVERSATION SEARCH
 ══════════════════════════════════════ */
-const ALL_USERS=[
-  {name:'Kwame Asante',username:'kwame_sell',initials:'KA',avCls:'',convId:1},
-  {name:'Abena Boateng',username:'abena_b',initials:'AB',avCls:'teal',convId:2},
-  {name:'Esi Owusu',username:'esi_design',initials:'EO',avCls:'purple',convId:3},
-  {name:'Kofi Mensah',username:'kofi_gear',initials:'KM',avCls:'orange',convId:4},
-  {name:'Adwoa Asante',username:'adwoa_fashion',initials:'AA',avCls:'',convId:5},
-  {name:'Yaw Darko',username:'yaw_cs',initials:'YD',avCls:'teal',convId:null},
-  {name:'Akua Mensah',username:'akua_dorm',initials:'AM',avCls:'purple',convId:null},
-  {name:'Kweku Adu',username:'kweku_phones',initials:'KA',avCls:'orange',convId:null},
-];
+const ALL_USERS=[];
 
 function openNewChat(){
   document.getElementById('ncSearchInput').value='';
@@ -1491,13 +1441,7 @@ function closeMoreMenu(){
 }
 
 /* ── USER PROFILE SHEET ── */
-const UP_DATA={
-  1:{username:'kwame_sell',bio:'Final year CS Engineering student. 34 successful trades. Fast responses, honest listings. Campus meetups only 📍',faculty:'Engineering',location:'Greater Accra',listings:12,sold:34,rating:'4.9⭐',badges:[{cls:'gold',t:'✅ Verified Student'},{cls:'teal',t:'🔒 ID Verified'},{cls:'gold',t:'🏆 Top Seller'},{cls:'teal',t:'⚡ Fast Responder'}],items:[{e:'💻',n:'HP Laptop 15.6"',p:'GH₵ 1,800'},{e:'⌨️',n:'Mechanical Keyboard',p:'GH₵ 280'},{e:'📚',n:'Organic Chem Vol.2',p:'GH₵ 45'}]},
-  2:{username:'abena_b',bio:'Selling used textbooks in great condition. Honest and friendly seller. All campus meetups.',faculty:'Natural Sciences',location:'Ashanti',listings:5,sold:11,rating:'4.8⭐',badges:[{cls:'gold',t:'✅ Verified Student'},{cls:'teal',t:'⚡ Fast Responder'}],items:[{e:'📚',n:'Organic Chem Vol.2',p:'GH₵ 45'},{e:'📖',n:'Biology Textbook',p:'GH₵ 30'}]},
-  3:{username:'esi_design',bio:'Graphic designer for campus businesses. Logos, flyers, social media. Fast turnaround. DM to order.',faculty:'Arts & Humanities',location:'Greater Accra',listings:8,sold:22,rating:'5.0⭐',badges:[{cls:'gold',t:'✅ Verified Student'},{cls:'gold',t:'🏆 Top Seller'},{cls:'teal',t:'⭐ 5-Star Seller'}],items:[{e:'🎨',n:'Logo Design',p:'From GH₵ 80'},{e:'📄',n:'Flyer Design',p:'From GH₵ 50'}]},
-  4:{username:'kofi_gear',bio:'Tech enthusiast selling quality electronics and peripherals. All items tested before listing.',faculty:'Computer Science',location:'Greater Accra',listings:9,sold:18,rating:'4.7⭐',badges:[{cls:'gold',t:'✅ Verified Student'},{cls:'teal',t:'🔒 ID Verified'}],items:[{e:'⌨️',n:'Keychron K2',p:'GH₵ 280'},{e:'🖱️',n:'Logitech MX Master',p:'GH₵ 180'}]},
-  5:{username:'adwoa_fashion',bio:'Fashion lover selling gently used clothing and accessories. Great deals for campus style.',faculty:'Business Administration',location:'Greater Accra',listings:14,sold:27,rating:'4.9⭐',badges:[{cls:'gold',t:'✅ Verified Student'},{cls:'teal',t:'⚡ Fast Responder'}],items:[{e:'👗',n:'Ankara Dress (M)',p:'GH₵ 45'},{e:'👜',n:'Leather Tote Bag',p:'GH₵ 60'}]},
-};
+const UP_DATA={};
 
 function viewProfile(){
   closeMoreMenu();
@@ -1655,13 +1599,7 @@ function submitReport(){
 /* ══════════════════════════════════════
    LISTING MODAL
 ══════════════════════════════════════ */
-const LISTING_DETAILS={
-  1:{desc:'Barely used HP 15.6" laptop. Intel Core i7, 16GB RAM, 512GB SSD. Battery lasts 6+ hrs. Comes with original charger and bag. Perfect for CS or engineering students.',badge:'Available'},
-  2:{desc:'Organic Chemistry, 8th edition by McMurry. Very clean — used for one semester only. Pages are unmarked. Perfect for Year 1 and 2 science students.',badge:'Available'},
-  3:{desc:'Professional graphic design services for students and campus businesses. Logos, flyers, social media graphics and more. Fast turnaround, competitive rates.',badge:'Available'},
-  4:{desc:'Keychron K2 wireless mechanical keyboard with brown switches. 84 keys, RGB backlight, works with Mac and Windows. Barely used — bought 3 months ago.',badge:'Available'},
-  5:{desc:'Beautiful Ankara print dress, size M. Only worn once to a party. Excellent condition. Perfect for cultural events and celebrations.',badge:'Available'},
-};
+const LISTING_DETAILS={};
 
 function openListing(){
   closeMoreMenu();
