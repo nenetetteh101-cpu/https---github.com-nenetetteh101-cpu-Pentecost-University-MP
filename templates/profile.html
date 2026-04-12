@@ -70,18 +70,18 @@
   <div id="profileInfo">
     <!-- Inline name edit — tap pencil to activate -->
     <div class="name-row">
-      <div class="prof-name" id="dispName">Kwame Asante</div>
+      <div class="prof-username" id="dispUsername">@{{ user.username }} · Member since {{ user.date_joined|date:"M Y" }}</div>
       <button class="name-edit-btn" id="nameEditBtn" onclick="toggleNameEdit()" title="Edit name">
         <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
       </button>
     </div>
     <div class="name-edit-row" id="nameEditRow" style="display:none">
-      <input type="text" id="inlineNameInput" class="inline-name-input" placeholder="Your full name" maxlength="50"/>
+      <input type="text"  id="inlineNameInput" class="inline-name-input" value="{{ user.first_name }} {{ user.last_name }}" />
       <button class="name-save-btn" onclick="saveInlineName()">✓</button>
       <button class="name-cancel-btn" onclick="cancelNameEdit()">✕</button>
     </div>
-    <div class="prof-username" id="dispUsername">@kwame_sell · Member since Jan 2025</div>
-    <div class="prof-bio" id="dispBio">Final year Computer Engineering student. Selling textbooks, electronics and gadgets. Trustworthy seller — 98% positive ratings. Campus meetups only 📍</div>
+    <div class="prof-username" id="dispUsername">@{{ user.username }} · Member since {{ user.date_joined|date:"M Y" }}</div>
+    <div class="prof-bio" id="dispBio">{{ profile.bio }}</div>
     <div class="prof-tags" id="dispTags">
       <span class="prof-tag" id="tagLocation">📍 Greater Accra</span>
       <span class="prof-tag" id="tagFaculty">🎓 Engineering Faculty</span>
@@ -318,12 +318,12 @@
     </div>
     <div class="field">
       <label class="field-lbl">Username</label>
-      <input type="text" id="editUsername" placeholder="@username" maxlength="30" oninput="sanitiseUsernameInput(this)"/>
+      <input type="text" id="editUsername" value="{{ user.username }}" />
       <div class="username-notice" id="usernameNotice"></div>
     </div>
     <div class="field">
       <label class="field-lbl">Bio <span class="opt">(optional)</span></label>
-      <textarea id="editBio" maxlength="200" placeholder="Tell buyers about yourself…" oninput="updateBioCount(this)"></textarea>
+      <textarea id="editBio">{{ profile.bio }}</textarea>
       <div style="text-align:right;font-size:.68rem;color:var(--m);margin-top:.2rem" id="bioCount">0 / 200</div>
     </div>
     <div class="field">

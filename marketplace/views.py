@@ -138,6 +138,26 @@ def signup_view(request):
             })
     return render(request, 'auth.html', {'active_tab': 'signup'})
 
+# @login_required
+# def profile_view(request):
+#     # Django knows exactly who is logged in via request.user
+#     user_profile = request.user.profile 
+    
+#     context = {
+#         'profile': user_profile
+#     }
+#     return render(request, 'profile.html', context)
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
+@login_required
+def profile_view(request):
+    # This automatically gets the profile linked to the logged-in user
+    context = {
+        'profile': request.user.profile,
+        'user': request.user
+    }
+    return render(request, 'profile.html', context)
 
 
 @never_cache
