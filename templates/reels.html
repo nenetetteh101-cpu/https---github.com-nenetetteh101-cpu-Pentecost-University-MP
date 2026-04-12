@@ -6,7 +6,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <meta name="theme-color" content="#000000" id="themeColorMeta"/>
-  <title>Reels — PU-Marketplace</title>
+  <title>Reels — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="{% static 'css/reels.css' %}" rel="stylesheet"/>
 </head>
@@ -151,7 +151,7 @@
       <div class="share-item" onclick="shareAction('copy')"><div class="share-ico" style="background:rgba(255,255,255,.07)">🔗</div><div class="share-lbl">Copy Link</div></div>
     </div>
     <div class="share-link-row">
-      <span class="share-link-text" id="shareLink">pu-marketplace.edu.gh/reels/r001</span>
+      <span class="share-link-text" id="shareLink">pu-Connect.edu.gh/reels/r001</span>
       <button class="share-copy-btn" onclick="copyLink()">Copy</button>
     </div>
   </div>
@@ -173,7 +173,7 @@ const REELS=[
     caption:'This HP laptop is in perfect condition 🔥 Intel Core i7, 16GB RAM. Perfect for engineering students. DM to negotiate! #Laptop #CampusDeal',
     product:{name:'HP Laptop 15.6" Core i7',price:'GH₵ 1,800',emoji:'💻',desc:'Barely used. Core i7, 16GB RAM, 512GB SSD. Battery lasts 6+ hrs. Original charger included.'},
     likes:284,comments:34,shares:18,saves:61,liked:false,saved:false,following:false,
-    music:'Campus Vibes Mix • PU-Marketplace',
+    music:'Campus Vibes Mix • PU-Connect',
     tags:['#Laptop','#CampusDeal','#Engineering'],
   },
   {
@@ -608,7 +608,7 @@ let shareReelIdx=null;
 function openShare(idx){
   shareReelIdx=idx;
   const r=ALL_REELS[idx];
-  document.getElementById('shareLink').textContent=`pu-marketplace.edu.gh/reels/${r.id}`;
+  document.getElementById('shareLink').textContent=`pu-Connect.edu.gh/reels/${r.id}`;
   document.getElementById('shareOverlay').classList.add('open');
   pauseReel(idx);
 }

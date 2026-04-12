@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
-  <title>My Listings — PU-Marketplace</title>
+  <title>My Listings — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link href="{% static 'css/listings.css' %}" rel="stylesheet"/>
  
@@ -22,10 +22,10 @@
 </nav>
 <div class="ov" id="ov" onclick="closeSb()"></div>
 <aside class="sb" id="sb">
-  <div class="sbh"><div class="sbl">PU-<span>Marketplace</span></div><button class="sbx" onclick="closeSb()">✕</button></div>
+  <div class="sbh"><div class="sbl">PU-<span>Connect</span></div><button class="sbx" onclick="closeSb()">✕</button></div>
   <div class="sbsec">Navigate</div>
     {% include 'in_dashboard.html' %}
-  <div class="sbft">© 2026 PU-Marketplace</div>
+  <div class="sbft">© 2026 PU-Connect</div>
 </aside>
 <div class="wrap"><div class="inner">
   <div class="ph">
@@ -78,16 +78,7 @@ const BN=document.getElementById('bn');let ly=0,tk=false;
 window.addEventListener('scroll',()=>{if(!tk){requestAnimationFrame(()=>{const y=window.scrollY;if(y>ly+10&&y>80)BN.classList.add('hide');else if(y<ly-10)BN.classList.remove('hide');ly=y;tk=false});tk=true}},{passive:true});
 
 const LISTINGS=[
-  {id:1,name:'Mechanical Keyboard RGB',cat:'Electronics',price:280,status:'boosted',views:87,date:'Posted 2 Apr',img:'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=200&q=70&auto=format'},
-  {id:2,name:'Organic Chemistry Vol.2',cat:'Textbook',price:35,status:'active',views:34,date:'Posted 28 Mar',img:'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=200&q=70&auto=format'},
-  {id:3,name:'Campus Delivery Service',cat:'Service',price:10,status:'active',views:52,date:'Posted 25 Mar',img:'https://images.unsplash.com/photo-1526367790999-0150786686a2?w=200&q=70&auto=format'},
-  {id:4,name:'North Face Backpack',cat:'Fashion',price:70,status:'sold',views:41,date:'Sold 20 Mar',img:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=200&q=70&auto=format'},
-  {id:5,name:'Casio FX-991EX',cat:'Tools',price:85,status:'active',views:28,date:'Posted 18 Mar',img:'https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=200&q=70&auto=format'},
-  {id:6,name:'Compact Study Desk',cat:'Furniture',price:130,status:'paused',views:19,date:'Posted 15 Mar',img:'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=200&q=70&auto=format'},
-  {id:7,name:'STEM Tutoring — Maths',cat:'Service',price:40,status:'active',views:65,date:'Posted 10 Mar',img:'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=200&q=70&auto=format'},
-  {id:8,name:'Ergonomic Chair',cat:'Furniture',price:350,status:'active',views:31,date:'Posted 5 Mar',img:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=200&q=70&auto=format'},
-  {id:9,name:'Drawing Instruments Set',cat:'Tools',price:35,status:'sold',views:22,date:'Sold 1 Mar',img:'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=200&q=70&auto=format'},
-  {id:10,name:'Business Law Textbook',cat:'Textbook',price:45,status:'paused',views:14,date:'Posted 28 Feb',img:'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=200&q=70&auto=format'},
+ 
 ];
 const SMAP={active:'ls-active',sold:'ls-sold',paused:'ls-paused',boosted:'ls-boosted'};
 const SLABEL={active:'Active',sold:'Sold',paused:'Paused',boosted:'🚀 Boosted'};

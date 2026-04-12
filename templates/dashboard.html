@@ -7,7 +7,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
-  <title>Dashboard — PU-Marketplace</title>
+  <title>Dashboard — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="{% static 'css/dashboard.css' %}"/>
 </head>
@@ -15,13 +15,13 @@
 <div class="ov" id="ov" onclick="closeSb()"></div>
 <aside class="sb" id="sb">
   <div class="sbh">
-    <div class="sbl">PU-<span>Marketplace</span></div>
+    <div class="sbl">PU-<span>Connect</span></div>
     <button class="sbx" onclick="closeSb()">✕</button>
   </div>
   <div class="sbsec">Navigate</div>
   
     {% include 'in_dashboard.html' %}
-  <div class="sbft">© 2026 PU-Marketplace<br>Built for campus, by students.</div>
+  <div class="sbft">© 2026 PU-Connect<br>Built for campus, by students.</div>
 </aside>
 <nav class="tnav">
   <button class="hbg" id="hbg"><span></span><span></span><span></span></button>
@@ -63,11 +63,7 @@
     <button class="far p" onclick="fmv(-1)">‹</button>
     <button class="far n" onclick="fmv(1)">›</button>
     <div class="ftr" id="ft">
-      <div class="fsl"><img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=900&q=80&auto=format" alt="MacBook"/><div class="fov"></div><div class="fin"><div class="ftg">🚀 Boosted</div><div class="fnm">MacBook Pro 14" M2 — Excellent Condition</div><div class="fmeta"><span class="fpr">GH₵ 6,500</span><span class="fse">@kweku_tech</span><span class="fca">Electronics</span></div></div></div>
-      <div class="fsl"><img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?w=900&q=80&auto=format" alt="Design"/><div class="fov"></div><div class="fin"><div class="ftg">🚀 Boosted</div><div class="fnm">Professional Logo &amp; Brand Design Service</div><div class="fmeta"><span class="fpr">From GH₵ 80</span><span class="fse">@adwoa_creative</span><span class="fca">Service</span></div></div></div>
-      <div class="fsl"><img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=900&q=80&auto=format" alt="Desk"/><div class="fov"></div><div class="fin"><div class="ftg">🚀 Boosted</div><div class="fnm">Minimalist Study Desk &amp; Chair Set</div><div class="fmeta"><span class="fpr">GH₵ 450</span><span class="fse">@esi_hostel</span><span class="fca">Furniture</span></div></div></div>
-      <div class="fsl"><img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=900&q=80&auto=format" alt="Tutoring"/><div class="fov"></div><div class="fin"><div class="ftg">🚀 Boosted</div><div class="fnm">1-on-1 STEM Tutoring — All Levels</div><div class="fmeta"><span class="fpr">GH₵ 40/hr</span><span class="fse">@kofi_tutor</span><span class="fca">Service</span></div></div></div>
-      <div class="fsl"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=900&q=80&auto=format" alt="Headphones"/><div class="fov"></div><div class="fin"><div class="ftg">🚀 Boosted</div><div class="fnm">Sony WH-1000XM5 Noise Cancelling</div><div class="fmeta"><span class="fpr">GH₵ 980</span><span class="fse">@abena_audio</span><span class="fca">Electronics</span></div></div></div>
+    
     </div>
     <div class="fdt" id="fd"></div>
   </div>
@@ -77,7 +73,7 @@
 </div>
 </div>
 <div class="dr" id="dr"><div class="dov" onclick="closeDr()"></div><div class="dsh"><div class="dhn"></div><div class="dh"><span class="dic" id="dico"></span><div class="dtl" id="dttl"></div></div><div class="dsb" id="dsb"></div><div class="dg" id="dg"></div></div></div>
-<div class="mov" id="mv"><div class="modal"><div class="mtl">Post Something 🎉</div><div class="msb">What would you like to list on PU-Marketplace?</div><div class="mop"><div class="mo" onclick="location.href='{% url "create_listings_view" %}'"><span class="moic">📦</span><div class="molb">Sell Product</div></div><div class="mo" onclick="location.href='{% url "create_listings_view" %}?type=service'"><span class="moic">🛠️</span><div class="molb">Offer Service</div></div><div class="mo" onclick="location.href='{% url "profile_view" %}'"><span class="moic">🔍</span><div class="molb">Request Item</div></div><div class="mo" onclick="openBoost()"><span class="moic">🚀</span><div class="molb">Feature Listing</div></div></div><button class="mcl" onclick="closeMod()">Cancel</button></div></div>
+<div class="mov" id="mv"><div class="modal"><div class="mtl">Post Something 🎉</div><div class="msb">What would you like to list on PU-Connect?</div><div class="mop"><div class="mo" onclick="location.href='{% url "create_listings_view" %}'"><span class="moic">📦</span><div class="molb">Sell Product</div></div><div class="mo" onclick="location.href='{% url "create_listings_view" %}?type=service'"><span class="moic">🛠️</span><div class="molb">Offer Service</div></div><div class="mo" onclick="location.href='{% url "profile_view" %}'"><span class="moic">🔍</span><div class="molb">Request Item</div></div><div class="mo" onclick="openBoost()"><span class="moic">🚀</span><div class="molb">Feature Listing</div></div></div><button class="mcl" onclick="closeMod()">Cancel</button></div></div>
 
 <!-- NOTIFICATION PANEL -->
 <div class="npanel" id="npanel">

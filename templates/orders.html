@@ -4,7 +4,7 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Orders — PU-Marketplace</title>
+  <title>My Orders — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link href="{% static 'css/orders.css' %}" rel="stylesheet"/>
   
@@ -21,10 +21,10 @@
 </nav>
 <div class="ov" id="ov" onclick="closeSb()"></div>
 <aside class="sb" id="sb">
-  <div class="sbh"><div class="sbl">PU-<span>Marketplace</span></div><button class="sbx" onclick="closeSb()">✕</button></div>
+  <div class="sbh"><div class="sbl">PU-<span>Connect</span></div><button class="sbx" onclick="closeSb()">✕</button></div>
   <div class="sbsec">Navigate</div>
     {% include 'in_dashboard.html' %}`
-  <div class="sbft">© 2026 PU-Marketplace<br>Built for campus, by students.</div>
+  <div class="sbft">© 2026 PU-Connect<br>Built for campus, by students.</div>
 </aside>
 <div class="wrap"><div class="inner">
   <div class="ph">
@@ -63,14 +63,7 @@ const BN=document.getElementById('bn');let ly=0,tk=false;
 window.addEventListener('scroll',()=>{if(!tk){requestAnimationFrame(()=>{const y=window.scrollY;if(y>ly+10&&y>80)BN.classList.add('hide');else if(y<ly-10)BN.classList.remove('hide');ly=y;tk=false});tk=true}},{passive:true});
 
 const ORDERS=[
-  {id:'ORD-001',name:'Dell XPS 13 Laptop',seller:'@kofi_tech',price:2400,status:'delivered',date:'28 Mar 2026',img:'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=200&q=70&auto=format'},
-  {id:'ORD-002',name:'Logo Design Service',seller:'@ama_designs',price:60,status:'delivered',date:'25 Mar 2026',img:'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=200&q=70&auto=format'},
-  {id:'ORD-003',name:'Sony WH-1000XM5',seller:'@abena_sound',price:780,status:'pending',date:'30 Mar 2026',img:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=200&q=70&auto=format'},
-  {id:'ORD-004',name:'Data Structures Book',seller:'@yaw_cs',price:55,status:'delivered',date:'20 Mar 2026',img:'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=200&q=70&auto=format'},
-  {id:'ORD-005',name:'Ergonomic Chair',seller:'@akua_room',price:350,status:'processing',date:'31 Mar 2026',img:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=200&q=70&auto=format'},
-  {id:'ORD-006',name:'North Face Backpack',seller:'@ama_bags',price:70,status:'cancelled',date:'15 Mar 2026',img:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=200&q=70&auto=format'},
-  {id:'ORD-007',name:'STEM Tutoring (3 sessions)',seller:'@yaw_teaches',price:120,status:'delivered',date:'10 Mar 2026',img:'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=200&q=70&auto=format'},
-  {id:'ORD-008',name:'Compact Study Desk',seller:'@esi_dorm',price:130,status:'delivered',date:'5 Mar 2026',img:'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=200&q=70&auto=format'},
+  
 ];
 const SMAP={delivered:'s-delivered',pending:'s-pending',cancelled:'s-cancelled',processing:'s-processing'};
 const SLABEL={delivered:'Delivered',pending:'Awaiting Meetup',cancelled:'Cancelled',processing:'Processing'};

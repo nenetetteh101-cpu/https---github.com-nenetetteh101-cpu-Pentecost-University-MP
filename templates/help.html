@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Help Centre — PU-Marketplace</title>
+  <title>Help Centre — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
    <link href="{% static 'css/help.css'%}" rel="stylesheet"/>
    <script src="{% static 'js/help.js' %}" defer></script>
@@ -15,7 +15,7 @@
 <body>
 
 <nav>
-  <a href="{%url 'home_view'%}" class="logo">PU-<span>Marketplace</span></a>
+  <a href="{%url 'home_view'%}" class="logo">PU-<span>Connect</span></a>
   <ul class="nav-links">
     {%include 'footer.html'%}
     <li><a href="{% url 'auth_view'}" class="nav-cta">Get Started</a></li>
@@ -107,17 +107,17 @@
       <div class="accordion">
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
-            <span class="acc-question">What is PU-Marketplace?</span>
+            <span class="acc-question">What is PU-Connect?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">PU-Marketplace is a campus-only peer-to-peer marketplace built exclusively for university students. It allows verified students to buy, sell, and trade textbooks, electronics, services, and more — safely, within the campus community.</div></div>
+          <div class="acc-body"><div class="acc-content">PU-Connect is a campus-only peer-to-peer Connect built exclusively for university students. It allows verified students to buy, sell, and trade textbooks, electronics, services, and more — safely, within the campus community.</div></div>
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
-            <span class="acc-question">Who can use PU-Marketplace?</span>
+            <span class="acc-question">Who can use PU-Connect?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">PU-Marketplace is available to all currently enrolled students, faculty, and accredited staff of the university. You must be 18 or older and must register with a valid email address. All accounts are verified before trading begins.</div></div>
+          <div class="acc-body"><div class="acc-content">PU-Connect is available to all currently enrolled students, faculty, and accredited staff of the university. You must be 18 or older and must register with a valid email address. All accounts are verified before trading begins.</div></div>
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
@@ -128,17 +128,17 @@
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
-            <span class="acc-question">Is PU-Marketplace free to use?</span>
+            <span class="acc-question">Is PU-Connect free to use?</span>
             <span class="acc-chevron">▼</span>
           </button>
           <div class="acc-body"><div class="acc-content">Yes — signing up and listing items is completely <strong>free</strong> for all campus users. We may introduce optional premium features in the future, and we'll always notify users at least 30 days in advance of any fee changes.</div></div>
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
-            <span class="acc-question">Can I use PU-Marketplace on mobile?</span>
+            <span class="acc-question">Can I use PU-Connect on mobile?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">Absolutely. PU-Marketplace is fully responsive and works seamlessly on all smartphones and tablets through your mobile browser. A dedicated mobile app is on our roadmap and will be announced when available.</div></div>
+          <div class="acc-body"><div class="acc-content">Absolutely. PU-Connect is fully responsive and works seamlessly on all smartphones and tablets through your mobile browser. A dedicated mobile app is on our roadmap and will be announced when available.</div></div>
         </div>
       </div>
     </div>
@@ -198,7 +198,7 @@
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
-            <span class="acc-question">What can I sell on PU-Marketplace?</span>
+            <span class="acc-question">What can I sell on PU-Connect?</span>
             <span class="acc-chevron">▼</span>
           </button>
           <div class="acc-body"><div class="acc-content">You can sell any legal item or service relevant to campus life, including:
@@ -281,7 +281,7 @@
             <span class="acc-question">What payment methods are accepted?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">PU-Marketplace supports <strong>Mobile Money (MTN, Vodafone, AirtelTigo)</strong> and our in-platform <strong>escrow system</strong>. For small-value in-person trades, cash is also acceptable. We strongly recommend using escrow for any transaction above GH₵ 50.</div></div>
+          <div class="acc-body"><div class="acc-content">PU-Connect supports <strong>Mobile Money (MTN, Vodafone, AirtelTigo)</strong> and our in-platform <strong>escrow system</strong>. For small-value in-person trades, cash is also acceptable. We strongly recommend using escrow for any transaction above GH₵ 50.</div></div>
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
@@ -289,7 +289,7 @@
             <span class="acc-chevron">▼</span>
           </button>
           <div class="acc-body"><div class="acc-content">When you use escrow:<br><br>
-            <strong>1.</strong> Buyer sends payment → funds are held securely by PU-Marketplace.<br>
+            <strong>1.</strong> Buyer sends payment → funds are held securely by PU-Connect.<br>
             <strong>2.</strong> Buyer and seller meet on campus to complete the exchange.<br>
             <strong>3.</strong> Buyer confirms receipt in the app → funds are released to the seller.<br><br>
             If the buyer doesn't confirm within 48 hours of the agreed meetup time, funds are released automatically. If a dispute is raised, our team reviews and decides within 3 business days.
@@ -396,14 +396,14 @@
 
 <footer>
   <div class="footer-inner">
-    <div class="footer-logo">PU-<span>Marketplace</span></div>
+    <div class="footer-logo">PU-<span>Connect</span></div>
     <div class="footer-links">
 
       {% include 'footer.html'%}
         
       
     </div>
-    <div class="footer-copy">© 2026 PU-Marketplace. All rights reserved.</div>
+    <div class="footer-copy">© 2026 PU-Connect. All rights reserved.</div>
   </div>
 </footer>
 

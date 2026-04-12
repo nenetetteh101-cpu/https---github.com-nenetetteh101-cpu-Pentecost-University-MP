@@ -7,7 +7,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
-  <title>Messages — PU-Marketplace</title>
+  <title>Messages — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link href="{% static 'css/chat.css' %}" rel="stylesheet"/>
     
@@ -1023,7 +1023,7 @@ function viewProfile(){
   closeMoreMenu();
   if(!activeConv)return;
   const c=activeConv;
-  const d=UP_DATA[c.id]||{username:c.name.toLowerCase().replace(' ','_'),bio:'Campus marketplace member.',faculty:'—',location:'—',listings:0,sold:0,rating:'—',badges:[{cls:'gold',t:'✅ Verified Student'}],items:[]};
+  const d=UP_DATA[c.id]||{username:c.name.toLowerCase().replace(' ','_'),bio:'Campus Connect member.',faculty:'—',location:'—',listings:0,sold:0,rating:'—',badges:[{cls:'gold',t:'✅ Verified Student'}],items:[]};
 
   // Avatar
   const avEl=document.getElementById('upAvatar');
