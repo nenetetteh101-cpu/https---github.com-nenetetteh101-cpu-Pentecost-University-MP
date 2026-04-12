@@ -1,0 +1,772 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
+  <title>My Profile — PU-Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="{% static 'css/profile.css' %}" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="tnav">
+  <button class="nav-back" onclick="history.back()">
+    <svg viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 5l-7 7 7 7"/></svg>
+    Back
+  </button>
+  <span class="nav-title">My Profile</span>
+  <button class="thbtn" id="thbtn">🌞</button>
+</nav>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-pattern"></div>
+  <div class="cover-glow"></div>
+  <div class="cover-glow2"></div>
+  <button class="cover-edit" onclick="openEditModal()">
+    <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    Edit Profile
+  </button>
+</div>
+
+<div class="main">
+
+  <!-- DEACTIVATED BANNER (shown when account is deactivated) -->
+  <div class="deactivated-banner" id="deactivatedBanner">
+    <p>⚠️ Your account is <strong>deactivated</strong>. Your listings and profile are hidden from other users.</p>
+    <button class="reactivate-btn" onclick="reactivateAccount()">Reactivate My Account</button>
+  </div>
+
+  <!-- AVATAR ROW -->
+  <div class="avatar-row">
+    <div class="avatar-wrap">
+      <div class="avatar" id="avatarEl">
+        <span id="avatarInitials">KA</span>
+        <img id="avatarImg" src="" alt="" style="display:none"/>
+      </div>
+      <div class="online-dot offline" id="onlineDot" title="Online status"></div>
+      <label class="avatar-badge" for="avatarFileInput" title="Change profile photo">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+      </label>
+      <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="handleDirectAvatarUpload(this)"/>
+    </div>
+    <div class="avatar-actions">
+      <a href="{% url 'create_listing_view' %}" class="btn-primary">+ New Listing</a>
+      <button class="btn-ghost" onclick="openEditModal()">
+        <svg viewBox="0 0 24 24" width="14" height="14"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Edit
+      </button>
+    </div>
+  </div>
+
+  <!-- PROFILE INFO -->
+  <div id="profileInfo">
+    <!-- Inline name edit — tap pencil to activate -->
+    <div class="name-row">
+      <div class="prof-name" id="dispName">Kwame Asante</div>
+      <button class="name-edit-btn" id="nameEditBtn" onclick="toggleNameEdit()" title="Edit name">
+        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </button>
+    </div>
+    <div class="name-edit-row" id="nameEditRow" style="display:none">
+      <input type="text" id="inlineNameInput" class="inline-name-input" placeholder="Your full name" maxlength="50"/>
+      <button class="name-save-btn" onclick="saveInlineName()">✓</button>
+      <button class="name-cancel-btn" onclick="cancelNameEdit()">✕</button>
+    </div>
+    <div class="prof-username" id="dispUsername">@kwame_sell · Member since Jan 2025</div>
+    <div class="prof-bio" id="dispBio">Final year Computer Engineering student. Selling textbooks, electronics and gadgets. Trustworthy seller — 98% positive ratings. Campus meetups only 📍</div>
+    <div class="prof-tags" id="dispTags">
+      <span class="prof-tag" id="tagLocation">📍 Greater Accra</span>
+      <span class="prof-tag" id="tagFaculty">🎓 Engineering Faculty</span>
+      <span class="prof-tag">⚡ Usually responds in &lt;1hr</span>
+      <span class="prof-tag" id="tagOnline" style="display:none">🟢 Online</span>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-box" onclick="location.href='{% url 'listings_view' %}'">
+      <span class="stat-num">12</span>
+      <span class="stat-lbl">Listings</span>
+    </div>
+    <div class="stat-box" onclick="location.href='{% url 'orders_view' %}'">
+      <span class="stat-num">34</span>
+      <span class="stat-lbl">Sold</span>
+    </div>
+    <div class="stat-box" onclick="scrollTo(0,document.getElementById('reviewsSection').offsetTop-70)">
+      <span class="stat-num">4.9</span>
+      <span class="stat-lbl">Rating</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num">98%</span>
+      <span class="stat-lbl">Response</span>
+    </div>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div class="quick-actions">
+    <a class="qa-btn" href="{% url 'listings_view' %}">
+      <span class="qa-icon">🏷️</span>
+      <span class="qa-lbl">Listings</span>
+    </a>
+    <a class="qa-btn" href="{% url 'orders_view' %}">
+      <span class="qa-icon">📦</span>
+      <span class="qa-lbl">Orders</span>
+    </a>
+    <a class="qa-btn" href="wishlist.html">
+      <span class="qa-icon">❤️</span>
+      <span class="qa-lbl">Saved</span>
+    </a>
+    <a class="qa-btn" href="#settings" onclick="smoothToSettings()">
+      <span class="qa-icon">⚙️</span>
+      <span class="qa-lbl">Settings</span>
+    </a>
+  </div>
+
+  <!-- RATING -->
+  <div id="reviewsSection">
+    <div class="rating-card">
+      <div class="rating-big">4.9</div>
+      <div class="rating-right">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <div class="rating-count">Based on 42 reviews</div>
+        <div class="rating-bars" id="ratingBars"></div>
+      </div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div class="slbl">
+      <h2>Reviews</h2>
+      <button class="see-all">See all →</button>
+    </div>
+    <div class="reviews-list" id="reviewsList"></div>
+  </div>
+
+  <div class="div"></div>
+
+  <!-- ACTIVE LISTINGS -->
+  <div class="slbl">
+    <h2>Active Listings</h2>
+    <a href="{% url 'listings_view' %}">View all →</a>
+  </div>
+  <div class="listings-scroll" id="listingsScroll"></div>
+
+  <div class="div"></div>
+
+  <!-- INFO CARDS -->
+  <div class="slbl"><h2>About</h2></div>
+  <div class="info-grid">
+    <div class="info-card">
+      <span class="info-icon">🎓</span>
+      <div>
+        <div class="info-label">Faculty</div>
+        <div class="info-val" id="infoFaculty">Engineering</div>
+      </div>
+    </div>
+    <div class="info-card">
+      <span class="info-icon">📍</span>
+      <div>
+        <div class="info-label">Location</div>
+        <div class="info-val" id="infoLocation">Greater Accra</div>
+      </div>
+    </div>
+    <div class="info-card">
+      <span class="info-icon">📅</span>
+      <div>
+        <div class="info-label">Member Since</div>
+        <div class="info-val">January 2025</div>
+      </div>
+    </div>
+    <div class="info-card">
+      <span class="info-icon">💬</span>
+      <div>
+        <div class="info-label">Response Time</div>
+        <div class="info-val">Under 1 hour</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRUST BADGES -->
+  <div class="slbl"><h2>Trust & Badges</h2></div>
+  <div class="badges-row">
+    <div class="badge-item gold"><span class="badge-ico">✅</span> Verified Student</div>
+    <div class="badge-item teal"><span class="badge-ico">🔒</span> ID Verified</div>
+    <div class="badge-item gold"><span class="badge-ico">🏆</span> Top Seller</div>
+    <div class="badge-item teal"><span class="badge-ico">⚡</span> Fast Responder</div>
+    <div class="badge-item gold"><span class="badge-ico">🤝</span> 30+ Trades</div>
+    <div class="badge-item teal"><span class="badge-ico">⭐</span> 5-Star Seller</div>
+  </div>
+
+  <!-- SETTINGS SECTION -->
+  <div class="div" id="settings"></div>
+  <div class="slbl"><h2>⚙️ Settings</h2></div>
+
+  <div class="set-group">
+    <div class="set-head">Appearance</div>
+    <div class="set-row">
+      <div class="set-left"><div class="set-lbl">Dark Mode</div><div class="set-desc">Switch between light and dark interface</div></div>
+      <label class="toggle"><input type="checkbox" id="darkToggle" onchange="toggleDarkMode(this)"/><span class="tslider"></span></label>
+    </div>
+  </div>
+
+  <div class="set-group">
+    <div class="set-head">Notifications</div>
+    <div class="set-row">
+      <div class="set-left"><div class="set-lbl">New Messages</div><div class="set-desc">Get notified when buyers message you</div></div>
+      <label class="toggle"><input type="checkbox" checked/><span class="tslider"></span></label>
+    </div>
+    <div class="set-row">
+      <div class="set-left"><div class="set-lbl">Order Updates</div><div class="set-desc">Transaction confirmations and status changes</div></div>
+      <label class="toggle"><input type="checkbox" checked/><span class="tslider"></span></label>
+    </div>
+    <div class="set-row">
+      <div class="set-left"><div class="set-lbl">Wishlist Price Drops</div><div class="set-desc">Alert when a saved item reduces in price</div></div>
+      <label class="toggle"><input type="checkbox" checked/><span class="tslider"></span></label>
+    </div>
+    <div class="set-row">
+      <div class="set-left"><div class="set-lbl">Promotional Emails</div><div class="set-desc">Weekly campus deals and featured listings</div></div>
+      <label class="toggle"><input type="checkbox"/><span class="tslider"></span></label>
+    </div>
+  </div>
+
+  <div class="set-group">
+    <div class="set-head">Privacy &amp; Status</div>
+    <div class="set-row">
+      <div class="set-left">
+        <div class="set-lbl">Show Online Status</div>
+        <div class="set-desc">Let buyers know when you're active — shows a green dot on your avatar and in chat</div>
+      </div>
+      <label class="toggle"><input type="checkbox" id="onlineToggle" onchange="setOnlineStatus(this.checked)"/><span class="tslider"></span></label>
+    </div>
+    <div class="set-row">
+      <div class="set-left"><div class="set-lbl">Profile Visibility</div><div class="set-desc">Who can see your profile and listings</div></div>
+      <select class="set-sel"><option>Campus Only</option><option>Everyone</option><option>Private</option></select>
+    </div>
+    <div class="set-row">
+      <div class="set-left"><div class="set-lbl">Two-Factor Authentication</div><div class="set-desc">Extra security for your account</div></div>
+      <label class="toggle"><input type="checkbox"/><span class="tslider"></span></label>
+    </div>
+    <div class="set-row">
+      <div class="set-left"><div class="set-lbl">Change Password</div><div class="set-desc">Update your login credentials</div></div>
+      <button class="edit-btn-sm" onclick="showToast('Password reset email sent 📧')">Change →</button>
+    </div>
+  </div>
+
+  <div class="set-group">
+    <div class="set-head">Listings &amp; Selling</div>
+    <div class="set-row">
+      <div class="set-left"><div class="set-lbl">Auto-renew Listings</div><div class="set-desc">Automatically re-list items after 30 days</div></div>
+      <label class="toggle"><input type="checkbox" checked/><span class="tslider"></span></label>
+    </div>
+    <div class="set-row">
+      <div class="set-left"><div class="set-lbl">Preferred Meetup Spot</div><div class="set-desc">Default campus meetup location</div></div>
+      <select class="set-sel"><option>Library Foyer</option><option>Student Union</option><option>Main Gate</option><option>Cafeteria</option></select>
+    </div>
+  </div>
+
+  <div class="danger-zone">
+    <div class="dz-title">⚠️ Danger Zone</div>
+    <div class="dz-desc">Deactivating hides your listings and profile. Deleting is permanent — all data removed within 90 days.</div>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+      <button class="dz-btn" id="deactivateBtn" onclick="deactivateAccount()">Deactivate Account</button>
+      <button class="dz-btn" onclick="if(confirm('Are you sure? This cannot be undone.'))location.href='auth.html'">Delete Account</button>
+    </div>
+  </div>
+
+  <!-- LOG OUT -->
+  <div class="div"></div>
+  <button onclick="confirmLogout()" style="width:100%;padding:.82rem;border-radius:12px;background:rgba(255,107,107,.08);color:var(--red);border:1.5px solid rgba(255,107,107,.2);font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;margin-bottom:1rem;transition:background .2s">
+    🚪 Log Out
+  </button>
+
+</div><!-- /main -->
+
+<!-- BOTTOM NAV -->
+<nav class="botnav" id="bn">
+  {%include 'bot_nav.html' %}
+  </button>
+</nav>
+
+<!-- EDIT PROFILE MODAL -->
+<div class="modal-overlay" id="editModal" onclick="closeEditModal(event)">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Edit Profile</div>
+
+    <!-- Avatar upload -->
+    <div class="avatar-upload-row">
+      <div class="av-preview" id="modalAvatarPreview">
+        <span id="modalAvatarInitials">KA</span>
+        <img id="modalAvatarImg" src="" alt="" style="display:none"/>
+      </div>
+      <label class="av-upload-btn">
+        📷 Change Photo
+        <input type="file" accept="image/*" onchange="handleAvatarUpload(this)"/>
+      </label>
+    </div>
+
+    <div class="field">
+      <label class="field-lbl">Full Name</label>
+      <input type="text" id="editName" placeholder="Your full name" maxlength="50"/>
+    </div>
+    <div class="field">
+      <label class="field-lbl">Username</label>
+      <input type="text" id="editUsername" placeholder="@username" maxlength="30" oninput="sanitiseUsernameInput(this)"/>
+      <div class="username-notice" id="usernameNotice"></div>
+    </div>
+    <div class="field">
+      <label class="field-lbl">Bio <span class="opt">(optional)</span></label>
+      <textarea id="editBio" maxlength="200" placeholder="Tell buyers about yourself…" oninput="updateBioCount(this)"></textarea>
+      <div style="text-align:right;font-size:.68rem;color:var(--m);margin-top:.2rem" id="bioCount">0 / 200</div>
+    </div>
+    <div class="field">
+      <label class="field-lbl">Faculty / Department</label>
+      <select id="editFaculty">
+        <option value="">— Select faculty —</option>
+        <option>Engineering</option>
+        <option>Computer Science</option>
+        <option>Business Administration</option>
+        <option>Medicine & Health Sciences</option>
+        <option>Law</option>
+        <option>Natural Sciences</option>
+        <option>Social Sciences</option>
+        <option>Arts & Humanities</option>
+        <option>Education</option>
+        <option>Agriculture</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="field-lbl">Location</label>
+      <select id="editLocation">
+        <option value="">— Select region —</option>
+        <option>Greater Accra</option><option>Ashanti</option><option>Central</option>
+        <option>Eastern</option><option>Western</option><option>Northern</option>
+        <option>Upper East</option><option>Upper West</option><option>Volta</option>
+        <option>Bono</option><option>Bono East</option><option>Ahafo</option>
+        <option>North East</option><option>Savannah</option><option>Oti</option>
+        <option>Western North</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="field-lbl">Phone <span class="opt">(private — not shown publicly)</span></label>
+      <input type="tel" id="editPhone" placeholder="024 XXX XXXX" maxlength="12"/>
+    </div>
+
+    <button class="save-btn" onclick="saveProfile()">Save Changes</button>
+    <button class="cancel-btn" onclick="closeEditModal()">Cancel</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── THEME ── */
+const H=document.documentElement,TB=document.getElementById('thbtn');
+let dark=localStorage.getItem('pu-th')!=='light';
+function apTh(d){H.setAttribute('data-theme',d?'dark':'light');TB.textContent=d?'🌞':'🌙';dark=d;localStorage.setItem('pu-th',d?'dark':'light');const m=document.getElementById('themeColorMeta');if(m)m.setAttribute('content',d?'#0d0e11':'#f0ede8');const dt=document.getElementById('darkToggle');if(dt)dt.checked=d;}
+apTh(dark);TB.onclick=()=>apTh(!dark);
+function toggleDarkMode(cb){apTh(cb.checked);}
+
+/* ── PROFILE DATA ── */
+const DEFAULT={name:'Kwame Asante',username:'kwame_sell',bio:'Final year Computer Engineering student. Selling textbooks, electronics and gadgets. Trustworthy seller — 98% positive ratings. Campus meetups only 📍',faculty:'Engineering',location:'Greater Accra',phone:'',avatarSrc:'',onlineStatus:true};
+function loadProfile(){try{const p=JSON.parse(localStorage.getItem('pu-profile'));return p?{...DEFAULT,...p}:DEFAULT;}catch{return DEFAULT;}}
+function saveProfileData(p){localStorage.setItem('pu-profile',JSON.stringify(p));}
+function initials(name){const parts=name.trim().split(' ').filter(Boolean);return(parts[0]?.[0]||'')+(parts[1]?.[0]||'');}
+
+function applyProfile(p){
+  document.getElementById('dispName').textContent=p.name;
+  document.getElementById('dispUsername').textContent=`@${p.username} · Member since Jan 2025`;
+  document.getElementById('dispBio').textContent=p.bio;
+  document.getElementById('infoFaculty').textContent=p.faculty||'—';
+  document.getElementById('infoLocation').textContent=p.location||'—';
+  const ini=initials(p.name)||'?';
+  document.getElementById('avatarInitials').textContent=ini;
+  document.getElementById('modalAvatarInitials').textContent=ini;
+  if(p.avatarSrc){
+    document.getElementById('avatarImg').src=p.avatarSrc;
+    document.getElementById('avatarImg').style.display='block';
+    document.getElementById('avatarInitials').style.display='none';
+    document.getElementById('modalAvatarImg').src=p.avatarSrc;
+    document.getElementById('modalAvatarImg').style.display='block';
+    document.getElementById('modalAvatarInitials').style.display='none';
+  } else {
+    document.getElementById('avatarImg').style.display='none';
+    document.getElementById('avatarInitials').style.display='';
+    document.getElementById('modalAvatarImg').style.display='none';
+    document.getElementById('modalAvatarInitials').style.display='';
+  }
+  // Sync tagLocation & tagFaculty
+  if(p.location){const tl=document.getElementById('tagLocation');if(tl)tl.textContent='📍 '+p.location;}
+  if(p.faculty){const tf=document.getElementById('tagFaculty');if(tf)tf.textContent='🎓 '+p.faculty;}
+}
+
+/* ── INLINE NAME EDIT ── */
+function toggleNameEdit(){
+  const row=document.getElementById('nameEditRow');
+  const inp=document.getElementById('inlineNameInput');
+  if(row.style.display!=='none'){cancelNameEdit();return;}
+  inp.value=document.getElementById('dispName').textContent;
+  row.style.display='flex';
+  inp.focus();inp.select();
+}
+function saveInlineName(){
+  const val=document.getElementById('inlineNameInput').value.trim();
+  if(!val){showToast('Name cannot be empty');return;}
+  const p=loadProfile();p.name=val;
+  saveProfileData(p);applyProfile(p);
+  document.getElementById('nameEditRow').style.display='none';
+  localStorage.setItem('pu-profile-updated',Date.now());
+  showToast('Name updated ✅');
+}
+function cancelNameEdit(){document.getElementById('nameEditRow').style.display='none';}
+document.getElementById('inlineNameInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){e.preventDefault();saveInlineName();}
+  if(e.key==='Escape'){cancelNameEdit();}
+});
+
+/* ── DIRECT AVATAR UPLOAD (tap avatar on page) ── */
+function handleDirectAvatarUpload(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>5*1024*1024){showToast('Photo too large — max 5MB');return;}
+  const r=new FileReader();
+  r.onload=e=>{
+    const src=e.target.result;
+    const p=loadProfile();p.avatarSrc=src;
+    saveProfileData(p);applyProfile(p);
+    localStorage.setItem('pu-profile-updated',Date.now());
+    showToast('Profile photo updated 📷');
+  };
+  r.readAsDataURL(file);
+  input.value='';
+}
+
+/* ── ONLINE STATUS ── */
+function setOnlineStatus(on){
+  const p=loadProfile();p.onlineStatus=on;saveProfileData(p);
+  /* Avatar dot */
+  const dot=document.getElementById('onlineDot');
+  if(dot)dot.classList.toggle('offline',!on);
+  /* 🟢 Online tag in bio */
+  const tag=document.getElementById('tagOnline');
+  if(tag)tag.style.display=on?'inline-flex':'none';
+  /* Broadcast to chat.html and other pages via localStorage */
+  localStorage.setItem('pu-online-status',on?'online':'offline');
+  localStorage.setItem('pu-profile-updated',Date.now());
+  showToast(on?'You\'re visible as Online 🟢':'Online status hidden');
+}
+function restoreOnlineStatus(){
+  const p=loadProfile();
+  const on=p.onlineStatus!==false; // default true
+  const tog=document.getElementById('onlineToggle');
+  if(tog)tog.checked=on;
+  const dot=document.getElementById('onlineDot');
+  if(dot)dot.classList.toggle('offline',!on);
+  const tag=document.getElementById('tagOnline');
+  if(tag)tag.style.display=on?'inline-flex':'none';
+  localStorage.setItem('pu-online-status',on?'online':'offline');
+}
+
+/* ── SCROLL TO SETTINGS ── */
+function smoothToSettings(){
+  const el=document.getElementById('settings');
+  if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),50);
+}
+
+/* ── RATING BARS ── */
+function renderRatingBars(){
+  const data=[{star:5,pct:85},{star:4,pct:10},{star:3,pct:3},{star:2,pct:1},{star:1,pct:1}];
+  document.getElementById('ratingBars').innerHTML=data.map(d=>`<div class="rbar-row"><span class="rbar-lbl">${d.star}</span><div class="rbar-track"><div class="rbar-fill" style="width:0%" data-w="${d.pct}%"></div></div><span class="rbar-pct">${d.pct}%</span></div>`).join('');
+  setTimeout(()=>document.querySelectorAll('.rbar-fill').forEach(el=>el.style.width=el.dataset.w),120);
+}
+
+/* ── REVIEWS ── */
+const REVIEWS=[
+  {initials:'AB',avCls:'tl',name:'Abena Boateng',stars:5,time:'2 days ago',text:'Super fast response and the textbook was exactly as described. Great seller, highly recommend!',listing:'Organic Chemistry Vol. 2'},
+  {initials:'EO',avCls:'pu',name:'Esi Owusu',stars:5,time:'1 week ago',text:'Laptop was in perfect condition, met at the library as agreed. Very professional.',listing:'HP Laptop 15.6" Core i7'},
+  {initials:'KM',avCls:'or',name:'Kofi Mensah',stars:5,time:'2 weeks ago',text:'Fair price, nice guy, smooth transaction. Will buy from again.',listing:'Mechanical Keyboard'},
+];
+function renderReviews(){
+  document.getElementById('reviewsList').innerHTML=REVIEWS.map(r=>`<div class="review-item"><div class="rev-header"><div class="rev-av ${r.avCls}">${r.initials}</div><div class="rev-info"><div class="rev-name">${r.name}</div><div class="rev-meta"><span class="rev-stars">${'⭐'.repeat(r.stars)}</span> · ${r.time}</div></div></div><div class="rev-text">${r.text}</div><div class="rev-listing">📦 ${r.listing}</div></div>`).join('');
+}
+
+/* ── LISTINGS ── */
+const LISTINGS=[
+  {emoji:'💻',name:'HP Laptop 15.6"',price:'GH₵ 1,800',views:'124 views',status:'active'},
+  {emoji:'⌨️',name:'Mechanical Keyboard',price:'GH₵ 280',views:'56 views',status:'active'},
+  {emoji:'📚',name:'Organic Chem Vol.2',price:'GH₵ 45',views:'38 views',status:'active'},
+  {emoji:'🎧',name:'Sony WH-1000XM4',price:'GH₵ 650',views:'91 views',status:'active'},
+  {emoji:'📐',name:'Drawing Instruments',price:'GH₵ 35',views:'22 views',status:'sold'},
+];
+function renderListings(){
+  document.getElementById('listingsScroll').innerHTML=LISTINGS.map(l=>`<div class="lcard" onclick="location.href='listings.html'"><div class="lcard-img">${l.emoji}<span class="lcard-badge ${l.status==='active'?'badge-active':'badge-sold'}">${l.status==='active'?'Active':'Sold'}</span></div><div class="lcard-body"><div class="lcard-name">${l.name}</div><div class="lcard-price">${l.price}</div><div class="lcard-views">👁 ${l.views}</div></div></div>`).join('');
+}
+
+/* ── USERNAME VALIDATION ── */
+function isValidUsername(u){
+  if(!u||u.length<3||u.length>30)return false;
+  if(!/^[a-zA-Z0-9]/.test(u))return false;       // must start with letter/number
+  if(!/[a-zA-Z0-9]$/.test(u))return false;        // must end with letter/number
+  if(/\.{2,}/.test(u)||/_{2,}/.test(u))return false; // no consecutive dots/underscores
+  if(!/^[a-zA-Z0-9._]+$/.test(u))return false;    // only allowed chars
+  return true;
+}
+function sanitiseUsernameInput(el){
+  el.value=el.value.replace(/[^a-zA-Z0-9._]/g,'');
+}
+function openEditModal(){
+  const p=loadProfile();
+  document.getElementById('editName').value=p.name;
+  document.getElementById('editUsername').value=p.username;
+  document.getElementById('editBio').value=p.bio;
+  document.getElementById('editFaculty').value=p.faculty||'';
+  document.getElementById('editLocation').value=p.location||'';
+  document.getElementById('editPhone').value=p.phone||'';
+  document.getElementById('bioCount').textContent=`${p.bio.length} / 200`;
+
+  // Username cooldown + lifetime limit check
+  const inp=document.getElementById('editUsername');
+  const notice=document.getElementById('usernameNotice');
+  const changed=parseInt(localStorage.getItem('pu-username-changed')||'0');
+  const changeCount=parseInt(localStorage.getItem('pu-username-count')||'0');
+  const MAX_CHANGES=3;
+  const daysSince=changed?Math.floor((Date.now()-changed)/(1000*60*60*24)):999;
+  const daysLeft=Math.max(0,30-daysSince);
+  const remaining=MAX_CHANGES-changeCount;
+
+  if(changeCount>=MAX_CHANGES){
+    inp.disabled=true;inp.style.opacity='.5';inp.style.cursor='not-allowed';
+    notice.className='username-notice locked';
+    notice.innerHTML=`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span>Username permanently locked — you've used all <strong>3 lifetime changes</strong></span>`;
+  } else if(changed&&daysLeft>0){
+    inp.disabled=true;inp.style.opacity='.5';inp.style.cursor='not-allowed';
+    notice.className='username-notice locked';
+    notice.innerHTML=`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span>Locked for <strong>${daysLeft} more day${daysLeft===1?'':'s'}</strong> · <strong>${remaining}</strong> lifetime change${remaining===1?'':'s'} remaining</span>`;
+  } else {
+    inp.disabled=false;inp.style.opacity='';inp.style.cursor='';
+    notice.className='username-notice free';
+    const usedTxt=changeCount===0?'Never changed':`Changed ${changeCount} time${changeCount===1?'':'s'}`;
+    notice.innerHTML=`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>${usedTxt} · <strong>${remaining} of ${MAX_CHANGES}</strong> lifetime changes remaining</span>`;
+  }
+
+  // Pre-populate modal avatar preview
+  if(p.avatarSrc){
+    document.getElementById('modalAvatarImg').src=p.avatarSrc;
+    document.getElementById('modalAvatarImg').style.display='block';
+    document.getElementById('modalAvatarInitials').style.display='none';
+  } else {
+    document.getElementById('modalAvatarImg').style.display='none';
+    document.getElementById('modalAvatarInitials').style.display='';
+    document.getElementById('modalAvatarInitials').textContent=initials(p.name)||'?';
+  }
+  document.getElementById('editModal').classList.add('open');
+}
+function closeEditModal(e){if(!e||e.target===document.getElementById('editModal'))document.getElementById('editModal').classList.remove('open');}
+function updateBioCount(el){document.getElementById('bioCount').textContent=`${el.value.length} / 200`;}
+
+/* Avatar upload inside modal — live preview on page too */
+function handleAvatarUpload(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>5*1024*1024){showToast('Photo too large — max 5MB');return;}
+  const r=new FileReader();
+  r.onload=e=>{
+    const src=e.target.result;
+    document.getElementById('modalAvatarImg').src=src;
+    document.getElementById('modalAvatarImg').style.display='block';
+    document.getElementById('modalAvatarInitials').style.display='none';
+    document.getElementById('avatarImg').src=src;
+    document.getElementById('avatarImg').style.display='block';
+    document.getElementById('avatarInitials').style.display='none';
+    document.getElementById('editModal').dataset.pendingAvatar=src;
+  };
+  r.readAsDataURL(file);
+}
+
+let _pendingSave=null;
+
+function saveProfile(){
+  const name=document.getElementById('editName').value.trim();
+  const newUsername=document.getElementById('editUsername').value.trim().replace(/^@/,'');
+  if(!name){showToast('Name is required');return;}
+  if(!newUsername){showToast('Username is required');return;}
+
+  // Validate format
+  if(!isValidUsername(newUsername)){
+    showToast('Invalid username — use letters, numbers, dots or underscores only. No spaces or leading/trailing special chars.');
+    document.getElementById('editUsername').focus();
+    return;
+  }
+
+  const p=loadProfile();
+  const usernameChanged=newUsername!==p.username;
+
+  // If username unchanged or field is locked, save directly
+  if(!usernameChanged||document.getElementById('editUsername').disabled){
+    _doSaveProfile(name,newUsername,p);
+    return;
+  }
+
+  // Check lifetime limit before showing confirm modal
+  const changeCount=parseInt(localStorage.getItem('pu-username-count')||'0');
+  if(changeCount>=3){
+    showToast('You have used all 3 lifetime username changes');
+    return;
+  }
+
+  // Show 30-day lock + lifetime warning confirmation
+  _pendingSave={name,newUsername,p};
+  document.getElementById('unFrom').textContent='@'+p.username;
+  document.getElementById('unTo').textContent='@'+newUsername;
+  document.getElementById('unKeep').textContent=p.username;
+  const remaining=3-changeCount;
+  document.getElementById('unChangesLeft').textContent=`This will be change ${changeCount+1} of 3 — you will have ${remaining-1} lifetime change${remaining-1===1?'':'s'} left after this.`;
+  document.getElementById('usernameConfirmModal').classList.add('open');
+}
+
+function commitUsernameChange(){
+  if(!_pendingSave)return;
+  const{name,newUsername,p}=_pendingSave;
+  _pendingSave=null;
+  // Increment lifetime counter and record timestamp
+  const newCount=(parseInt(localStorage.getItem('pu-username-count')||'0')+1);
+  localStorage.setItem('pu-username-count',newCount.toString());
+  localStorage.setItem('pu-username-changed',Date.now().toString());
+  document.getElementById('usernameConfirmModal').classList.remove('open');
+  _doSaveProfile(name,newUsername,p);
+  const left=3-newCount;
+  showToast(left>0?`Username changed ✅ — ${left} lifetime change${left===1?'':'s'} remaining`:'Username changed ✅ — no more lifetime changes allowed');
+}
+
+function closeUsernameConfirm(e){
+  if(!e||e.target===document.getElementById('usernameConfirmModal')){
+    _pendingSave=null;
+    document.getElementById('usernameConfirmModal').classList.remove('open');
+  }
+}
+
+function _doSaveProfile(name,username,p){
+  p.name=name;
+  p.username=username;
+  p.bio=document.getElementById('editBio').value.trim();
+  p.faculty=document.getElementById('editFaculty').value;
+  p.location=document.getElementById('editLocation').value;
+  p.phone=document.getElementById('editPhone').value.trim();
+  const pending=document.getElementById('editModal').dataset.pendingAvatar;
+  if(pending){p.avatarSrc=pending;delete document.getElementById('editModal').dataset.pendingAvatar;}
+  saveProfileData(p);
+  applyProfile(p);
+  document.getElementById('editModal').classList.remove('open');
+  localStorage.setItem('pu-profile-updated',Date.now());
+  showToast('Profile updated ✅');
+}
+
+/* ── LOGOUT ── */
+function confirmLogout(){if(confirm('Log out of PU-Marketplace?'))location.href='auth.html';}
+
+/* ── TOAST ── */
+let toastTimer;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2800);}
+
+/* ── BOTTOM NAV HIDE ON SCROLL ── */
+const BN=document.getElementById('bn');
+let ly=0,tk=false;
+window.addEventListener('scroll',()=>{
+  if(!tk){
+    requestAnimationFrame(()=>{
+      const y=window.scrollY;
+      if(y>ly+10&&y>80) BN.classList.add('hide');
+      else if(y<ly-10) BN.classList.remove('hide');
+      ly=y;tk=false;
+    });
+    tk=true;
+  }
+},{passive:true});
+
+/* ── DEACTIVATE / REACTIVATE ── */
+function deactivateAccount(){
+  if(!confirm('Deactivate your account?\n\nYour listings and profile will be hidden from other users until you reactivate. You can reactivate at any time by logging back in.')) return;
+  // Save deactivated state
+  localStorage.setItem('pu-account-status','deactivated');
+  // Update UI
+  document.getElementById('deactivatedBanner').classList.add('show');
+  document.getElementById('deactivateBtn').textContent='Account Deactivated';
+  document.getElementById('deactivateBtn').disabled=true;
+  document.getElementById('deactivateBtn').style.opacity='.5';
+  document.getElementById('deactivateBtn').style.cursor='not-allowed';
+  // Grey out the avatar and cover visually
+  document.getElementById('avatarEl').style.filter='grayscale(1) opacity(.6)';
+  document.getElementById('onlineDot').classList.add('offline');
+  // Force online status off
+  localStorage.setItem('pu-online-status','offline');
+  const tog=document.getElementById('onlineToggle');
+  if(tog){tog.checked=false;tog.disabled=true;}
+  showToast('Account deactivated — you can reactivate any time');
+}
+
+function reactivateAccount(){
+  localStorage.setItem('pu-account-status','active');
+  document.getElementById('deactivatedBanner').classList.remove('show');
+  document.getElementById('deactivateBtn').textContent='Deactivate Account';
+  document.getElementById('deactivateBtn').disabled=false;
+  document.getElementById('deactivateBtn').style.opacity='';
+  document.getElementById('deactivateBtn').style.cursor='';
+  document.getElementById('avatarEl').style.filter='';
+  const tog=document.getElementById('onlineToggle');
+  if(tog)tog.disabled=false;
+  // Restore online status from profile
+  restoreOnlineStatus();
+  showToast('Account reactivated ✅ — your listings are visible again');
+}
+
+function restoreAccountStatus(){
+  if(localStorage.getItem('pu-account-status')==='deactivated'){
+    document.getElementById('deactivatedBanner').classList.add('show');
+    document.getElementById('deactivateBtn').textContent='Account Deactivated';
+    document.getElementById('deactivateBtn').disabled=true;
+    document.getElementById('deactivateBtn').style.opacity='.5';
+    document.getElementById('deactivateBtn').style.cursor='not-allowed';
+    document.getElementById('avatarEl').style.filter='grayscale(1) opacity(.6)';
+    const tog=document.getElementById('onlineToggle');
+    if(tog)tog.disabled=true;
+  }
+}
+
+/* ── INIT ── */
+(function(){
+  applyProfile(loadProfile());
+  restoreOnlineStatus();
+  restoreAccountStatus();
+  renderRatingBars();
+  renderReviews();
+  renderListings();
+})();
+</script>
+<!-- USERNAME CHANGE CONFIRMATION MODAL -->
+<div class="modal-overlay" id="usernameConfirmModal" onclick="closeUsernameConfirm(event)">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="un-confirm-icon">⚠️</div>
+    <div class="modal-title" style="margin-bottom:.4rem">Change Username?</div>
+    <div class="un-confirm-body">
+      <p>You are about to change your username from <strong id="unFrom">@old</strong> to <strong id="unTo">@new</strong>.</p>
+      <div class="un-warning-box">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>After changing, your username <strong>cannot be changed again for 30 days.</strong> Make sure the new username is exactly what you want.</span>
+      </div>
+      <p class="un-confirm-sub" id="unChangesLeft">This will be change 1 of 3.</p>
+      <p class="un-confirm-sub">Other users who know your old username will not be able to find you until they update their contacts.</p>
+    </div>
+    <button class="save-btn" id="unConfirmBtn" onclick="commitUsernameChange()">Yes, change my username</button>
+    <button class="cancel-btn" onclick="closeUsernameConfirm()">Cancel — keep @<span id="unKeep">old</span></button>
+  </div>
+</div>
+
+</body>
+</html>

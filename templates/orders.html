@@ -1,0 +1,88 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Orders — PU-Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="{% static 'css/orders.css' %}" rel="stylesheet"/>
+  
+</head>
+<body>
+<nav class="tnav">
+  <button class="hbg" id="hbg"><span></span><span></span><span></span></button>
+  <div class="nav-title">🛒 My Orders</div>
+  <button class="notibtn" onclick="location.href='dashboard.html'" title="Notifications">
+    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+    <span class="nbadge">3</span>
+  </button>
+  <button class="thbtn" id="thbtn">🌞</button>
+</nav>
+<div class="ov" id="ov" onclick="closeSb()"></div>
+<aside class="sb" id="sb">
+  <div class="sbh"><div class="sbl">PU-<span>Marketplace</span></div><button class="sbx" onclick="closeSb()">✕</button></div>
+  <div class="sbsec">Navigate</div>
+    {% include 'in_dashboard.html' %}`
+  <div class="sbft">© 2026 PU-Marketplace<br>Built for campus, by students.</div>
+</aside>
+<div class="wrap"><div class="inner">
+  <div class="ph">
+    <div class="ph-eye">Transaction History</div>
+    <div class="ph-title">My Orders</div>
+    <div class="ph-sub">Track your campus meetup transactions</div>
+  </div>
+  <div class="stats">
+    <div class="stat"><span class="stat-num">8</span><div class="stat-lbl">Total Orders</div></div>
+    <div class="stat"><span class="stat-num">5</span><div class="stat-lbl">Delivered</div></div>
+    <div class="stat"><span class="stat-num">8</span><div class="stat-lbl">Campus Meetups</div></div>
+  </div>
+  <div class="otabs">
+    <button class="otab on" onclick="filterOrders(this,'all')">All</button>
+    <button class="otab" onclick="filterOrders(this,'pending')">Pending</button>
+    <button class="otab" onclick="filterOrders(this,'processing')">Processing</button>
+    <button class="otab" onclick="filterOrders(this,'delivered')">Delivered</button>
+    <button class="otab" onclick="filterOrders(this,'cancelled')">Cancelled</button>
+  </div>
+  <div class="olist" id="olist"></div>
+</div></div>
+<nav class="botnav" id="bn">
+  {% include 'bot_nav.html' %}
+1</nav>
+<script>
+const html=document.documentElement,tb=document.getElementById('thbtn');let dark=true;
+function applyTheme(d){html.setAttribute('data-theme',d?'dark':'light');tb.textContent=d?'🌞':'🌙';dark=d;localStorage.setItem('pu-theme',d?'dark':'light')}
+const sv=localStorage.getItem('pu-theme');if(sv)applyTheme(sv==='dark');
+tb.addEventListener('click',()=>applyTheme(!dark));
+const sb=document.getElementById('sb'),ov=document.getElementById('ov');
+document.getElementById('hbg').onclick=()=>{sb.classList.add('on');ov.classList.add('on');document.body.style.overflow='hidden'};
+function closeSb(){sb.classList.remove('on');ov.classList.remove('on');document.body.style.overflow=''}
+if(window.innerWidth>=960)sb.classList.add('on');
+window.addEventListener('resize',()=>{if(window.innerWidth>=960){sb.classList.add('on');ov.classList.remove('on')}});
+const BN=document.getElementById('bn');let ly=0,tk=false;
+window.addEventListener('scroll',()=>{if(!tk){requestAnimationFrame(()=>{const y=window.scrollY;if(y>ly+10&&y>80)BN.classList.add('hide');else if(y<ly-10)BN.classList.remove('hide');ly=y;tk=false});tk=true}},{passive:true});
+
+const ORDERS=[
+  {id:'ORD-001',name:'Dell XPS 13 Laptop',seller:'@kofi_tech',price:2400,status:'delivered',date:'28 Mar 2026',img:'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=200&q=70&auto=format'},
+  {id:'ORD-002',name:'Logo Design Service',seller:'@ama_designs',price:60,status:'delivered',date:'25 Mar 2026',img:'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=200&q=70&auto=format'},
+  {id:'ORD-003',name:'Sony WH-1000XM5',seller:'@abena_sound',price:780,status:'pending',date:'30 Mar 2026',img:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=200&q=70&auto=format'},
+  {id:'ORD-004',name:'Data Structures Book',seller:'@yaw_cs',price:55,status:'delivered',date:'20 Mar 2026',img:'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=200&q=70&auto=format'},
+  {id:'ORD-005',name:'Ergonomic Chair',seller:'@akua_room',price:350,status:'processing',date:'31 Mar 2026',img:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=200&q=70&auto=format'},
+  {id:'ORD-006',name:'North Face Backpack',seller:'@ama_bags',price:70,status:'cancelled',date:'15 Mar 2026',img:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=200&q=70&auto=format'},
+  {id:'ORD-007',name:'STEM Tutoring (3 sessions)',seller:'@yaw_teaches',price:120,status:'delivered',date:'10 Mar 2026',img:'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=200&q=70&auto=format'},
+  {id:'ORD-008',name:'Compact Study Desk',seller:'@esi_dorm',price:130,status:'delivered',date:'5 Mar 2026',img:'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=200&q=70&auto=format'},
+];
+const SMAP={delivered:'s-delivered',pending:'s-pending',cancelled:'s-cancelled',processing:'s-processing'};
+const SLABEL={delivered:'Delivered',pending:'Awaiting Meetup',cancelled:'Cancelled',processing:'Processing'};
+let activeSt='all';
+function renderOrders(){
+  const vis=ORDERS.filter(o=>activeSt==='all'||o.status===activeSt);
+  const list=document.getElementById('olist');
+  if(!vis.length){list.innerHTML='<div class="empty-state"><div class="es-icon">📭</div><p>No orders in this category yet.</p><a href="dashboard.html" class="es-btn">Browse Listings</a></div>';return}
+  list.innerHTML=vis.map(o=>`<div class="ocard"><div class="oth"><img src="${o.img}" alt="${o.name}" loading="lazy"/></div><div class="oinfo"><div class="oname">${o.name}</div><div class="ometa">${o.id} · ${o.seller}</div><div class="obottom"><span class="ostatus ${SMAP[o.status]}">${SLABEL[o.status]}</span><span class="odate">${o.date}</span></div></div></div>`).join('');
+}
+function filterOrders(tab,st){document.querySelectorAll('.otab').forEach(t=>t.classList.remove('on'));tab.classList.add('on');activeSt=st;renderOrders()}
+renderOrders();
+</script>
+</body>
+</html>
