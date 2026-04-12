@@ -1,8 +1,0 @@
-venv/
-db.sqlite3
-.env/
-__pycache__/
-path/
-to/
-
-.vscode
