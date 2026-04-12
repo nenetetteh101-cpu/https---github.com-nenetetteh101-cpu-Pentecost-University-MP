@@ -19,33 +19,8 @@
     <button class="sbx" onclick="closeSb()">✕</button>
   </div>
   <div class="sbsec">Navigate</div>
-  <ul class="sbul">
-    <li><a href="{% url 'home_view' %}"><span class="ico">🏠</span>Home</a></li>
-    <li><a href="{% url 'dashboard_view' %}" class="act"><span class="ico">⚡</span>Dashboard</a></li>
-    <li><a href="{% url 'dashboard_products_view' %}"><span class="ico">📦</span>Products</a></li>
-    <li><a href="{% url 'reels_view' %}"><span class="ico">🛠️</span>Services</a></li>
-    <li><a href="{% url 'wishlist_view' %}"><span class="ico">❤️</span>Wishlist</a></li>
-    <li><a href="{% url 'orders_view' %}"><span class="ico">🛒</span>My Orders</a></li>
-    <li><a href="{% url 'listings_view' %}"><span class="ico">🏷️</span>My Listings</a></li>
-  </ul>
-  <div class="sbd"></div>
-  <div class="sbsec">Account</div>
-  <ul class="sbul">
-    <li><a href="{% url 'profile_view' %}"><span class="ico">👤</span>Profile</a></li>
-  </ul>
-  <div class="sbd"></div>
-  <div class="sbsec">Info</div>
-  <ul class="sbul">
-    <li><a href="{% url 'about_view' %}"><span class="ico">ℹ️</span>About Us</a></li>
-    <li><a href="{% url 'safety_view' %}"><span class="ico">🛡️</span>Safety</a></li>
-    <li><a href="{% url 'help_view' %}"><span class="ico">❓</span>Help Centre</a></li>
-    <li><a href="{% url 'privacy_view' %}"><span class="ico">🔒</span>Privacy Policy</a></li>
-    <li><a href="{% url 'terms_view' %}"><span class="ico">📄</span>Terms &amp; Conditions</a></li>
-  </ul>
-  <div class="sbd"></div>
-  <ul class="sbul">
-    <li><a href="{% url 'Auth_view' %}" style="color:var(--red)"><span class="ico">🚪</span>Log Out</a></li>
-  </ul>
+  
+    {% include 'in_dashboard.html' %}
   <div class="sbft">© 2026 PU-Marketplace<br>Built for campus, by students.</div>
 </aside>
 <nav class="tnav">
@@ -96,25 +71,13 @@
     </div>
     <div class="fdt" id="fd"></div>
   </div>
-  <div class="slbl"><h2>🛒 All Listings</h2><a href="{% url 'dashboard_products_view' %}">View all</a></div>
+  <div class="slbl"><h2>🛒 All Listings</h2><a href="{% url 'listings_view' %}">View all</a></div>
   <div class="grid" id="ag">
-    <div class="lc" data-name="Data Structures Textbook"><div class="lcm"><img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=75&auto=format" alt="Book" loading="lazy"/><span class="lbg" style="background:rgba(91,229,197,.25);color:#5be5c5">Textbook</span></div><div class="lbd"><div class="lnm">Data Structures Textbook</div><div class="lpr">GH₵ 55</div><div class="lrw"><span class="lsl">@yaw_cs</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Full HD Monitor 24"><div class="lcm"><img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&q=75&auto=format" alt="Monitor" loading="lazy"/><span class="lbg" style="background:rgba(232,201,106,.2);color:var(--a)">Electronics</span></div><div class="lbd"><div class="lnm">Full HD Monitor 24"</div><div class="lpr">GH₵ 900</div><div class="lrw"><span class="lsl">@kojo_tech</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Campus Backpack"><div class="lcm"><img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&q=75&auto=format" alt="Backpack" loading="lazy"/><span class="lbg" style="background:rgba(160,120,255,.2);color:#a78bfa">Fashion</span></div><div class="lbd"><div class="lnm">Campus Backpack</div><div class="lpr">GH₵ 70</div><div class="lrw"><span class="lsl">@ama_bags</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Scientific Calculator"><div class="lcm"><img src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=400&q=75&auto=format" alt="Calculator" loading="lazy"/><span class="lbg" style="background:rgba(91,229,197,.2);color:#5be5c5">Tools</span></div><div class="lbd"><div class="lnm">Scientific Calculator</div><div class="lpr">GH₵ 80</div><div class="lrw"><span class="lsl">@abena_maths</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Mechanical Keyboard"><div class="lcm"><img src="https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400&q=75&auto=format" alt="Keyboard" loading="lazy"/><span class="lbg" style="background:rgba(232,201,106,.2);color:var(--a)">Electronics</span></div><div class="lbd"><div class="lnm">Mechanical Keyboard</div><div class="lpr">GH₵ 280</div><div class="lrw"><span class="lsl">@kofi_gear</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Ergonomic Chair"><div class="lcm"><img src="https://images.unsplash.com/photo-1592078615290-033ee584e267?w=400&q=75&auto=format" alt="Chair" loading="lazy"/><span class="lbg" style="background:rgba(255,107,107,.2);color:#ff8c8c">Furniture</span></div><div class="lbd"><div class="lnm">Ergonomic Chair</div><div class="lpr">GH₵ 350</div><div class="lrw"><span class="lsl">@akua_dorm</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Android Smartphone"><div class="lcm"><img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=75&auto=format" alt="Phone" loading="lazy"/><span class="lbg" style="background:rgba(232,201,106,.2);color:var(--a)">Electronics</span></div><div class="lbd"><div class="lnm">Android Smartphone</div><div class="lpr">GH₵ 620</div><div class="lrw"><span class="lsl">@kweku_phones</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Ankara Dress"><div class="lcm"><img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400&q=75&auto=format" alt="Fashion" loading="lazy"/><span class="lbg" style="background:rgba(251,146,60,.2);color:#fb923c">Fashion</span></div><div class="lbd"><div class="lnm">Ankara Dress (M)</div><div class="lpr">GH₵ 45</div><div class="lrw"><span class="lsl">@adwoa_fashion</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Drawing Instruments Set"><div class="lcm"><img src="https://images.unsplash.com/photo-1453928582365-b6ad33cbcf64?w=400&q=75&auto=format" alt="Drawing" loading="lazy"/><span class="lbg" style="background:rgba(91,229,197,.2);color:#5be5c5">Tools</span></div><div class="lbd"><div class="lnm">Drawing Instruments Set</div><div class="lpr">GH₵ 35</div><div class="lrw"><span class="lsl">@abena_arch</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Bluetooth Earbuds"><div class="lcm"><img src="https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400&q=75&auto=format" alt="Earbuds" loading="lazy"/><span class="lbg" style="background:rgba(232,201,106,.2);color:var(--a)">Electronics</span></div><div class="lbd"><div class="lnm">Bluetooth Earbuds</div><div class="lpr">GH₵ 180</div><div class="lrw"><span class="lsl">@esi_audio</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="LED Desk Lamp"><div class="lcm"><img src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&q=75&auto=format" alt="Lamp" loading="lazy"/><span class="lbg" style="background:rgba(255,107,107,.2);color:#ff8c8c">Furniture</span></div><div class="lbd"><div class="lnm">LED Desk Lamp</div><div class="lpr">GH₵ 55</div><div class="lrw"><span class="lsl">@yaw_room</span><button class="lfv">🤍</button></div></div></div>
-    <div class="lc" data-name="Chemistry Textbook"><div class="lcm"><img src="https://images.unsplash.com/photo-1532153975070-2e9ab71f1b14?w=400&q=75&auto=format" alt="Books" loading="lazy"/><span class="lbg" style="background:rgba(91,229,197,.2);color:#5be5c5">Textbook</span></div><div class="lbd"><div class="lnm">Chemistry Textbook</div><div class="lpr">GH₵ 40</div><div class="lrw"><span class="lsl">@kwame_sci</span><button class="lfv">🤍</button></div></div></div>
   </div>
 </div>
 </div>
 <div class="dr" id="dr"><div class="dov" onclick="closeDr()"></div><div class="dsh"><div class="dhn"></div><div class="dh"><span class="dic" id="dico"></span><div class="dtl" id="dttl"></div></div><div class="dsb" id="dsb"></div><div class="dg" id="dg"></div></div></div>
-<div class="mov" id="mv"><div class="modal"><div class="mtl">Post Something 🎉</div><div class="msb">What would you like to list on PU-Marketplace?</div><div class="mop"><div class="mo" onclick="location.href='create-listing.html'"><span class="moic">📦</span><div class="molb">Sell Product</div></div><div class="mo" onclick="location.href='create-listing.html?type=service'"><span class="moic">🛠️</span><div class="molb">Offer Service</div></div><div class="mo" onclick="location.href='profile.html'"><span class="moic">🔍</span><div class="molb">Request Item</div></div><div class="mo" onclick="openBoost()"><span class="moic">🚀</span><div class="molb">Feature Listing</div></div></div><button class="mcl" onclick="closeMod()">Cancel</button></div></div>
+<div class="mov" id="mv"><div class="modal"><div class="mtl">Post Something 🎉</div><div class="msb">What would you like to list on PU-Marketplace?</div><div class="mop"><div class="mo" onclick="location.href='{% url "create_listings_view" %}'"><span class="moic">📦</span><div class="molb">Sell Product</div></div><div class="mo" onclick="location.href='{% url "create_listings_view" %}?type=service'"><span class="moic">🛠️</span><div class="molb">Offer Service</div></div><div class="mo" onclick="location.href='{% url "profile_view" %}'"><span class="moic">🔍</span><div class="molb">Request Item</div></div><div class="mo" onclick="openBoost()"><span class="moic">🚀</span><div class="molb">Feature Listing</div></div></div><button class="mcl" onclick="closeMod()">Cancel</button></div></div>
 
 <!-- NOTIFICATION PANEL -->
 <div class="npanel" id="npanel">
@@ -126,11 +89,7 @@
 </div>
 
 <nav class="botnav" id="bn">
-  <button class="ni on" onclick="setNi(this);location.href='dashboard.html'"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nlbl">Home</span></button>
-  <button class="ni" onclick="setNi(this);location.href='reels.html'"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span class="nlbl">Reels</span></button>
-  <button class="nadd" onclick="openMod()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-  <button class="ni" onclick="setNi(this);location.href='chat.html'"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="nlbl">Chat</span></button>
-  <button class="ni" onclick="setNi(this);location.href='profile.html'"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nlbl">Profile</span></button>
+  {% include 'bot_nav.html' %}
 </nav>
 <script>
 const H=document.documentElement,TB=document.getElementById('thbtn');

@@ -38,6 +38,7 @@ urlpatterns = [
     path('settings/', views.settings_view, name='settings_view'),
     path('wishlist/', views.wishlist_view, name='wishlist_view'),
     path('listings/', views.listings_view, name='listings_view'),
+    path('create-listings/', views.create_listings_view, name='create_listings_view'),
     path('orders/', views.orders_view, name='orders_view'),
     path('payments/', views.payments_view, name='payments_view'),
     path('profile/', views.profile_view, name='profile_view'),

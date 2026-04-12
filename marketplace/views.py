@@ -39,6 +39,9 @@ def safety_view(request):
 def listings_view(request):
     return render(request , 'listings.html')
 
+def create_listings_view(request):
+    return render(request , 'create-listing.html')
+
 def orders_view(request):
     return render(request , 'orders.html')
 

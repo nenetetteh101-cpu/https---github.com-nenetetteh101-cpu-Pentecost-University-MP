@@ -209,9 +209,9 @@
   <div class="suc-i">🎉</div>
   <div class="suc-t">Listing Published!</div>
   <div class="suc-s">Your listing is now live on PU-Marketplace. Buyers will reach you through in-app chat.</div>
-  <a href="listings.html" class="sb">View My Listings</a>
+  <a href="{% url 'listings_view' %}" class="sb">View My Listings</a>
   <button class="sb tl" onclick="resetForm()">Post Another Listing</button>
-  <a href="dashboard.html" class="sb g">Back to Dashboard</a>
+  <a href="{% url 'dashboard_view' %}" class="sb g">Back to Dashboard</a>
 </div>
 
 </div><!-- /wrap -->
@@ -384,7 +384,7 @@ function fmtPh(el){let v=el.value.replace(/\D/g,'');if(v.length>10)v=v.slice(0,1
 /* NAVIGATION */
 function goNext(){if(!validate(cur))return;cur++;if(cur>5){publish();return;}switchS(cur);}
 function goBack(){if(cur<=1)return;cur--;switchS(cur);}
-function handleBack(){if(cur===1){location.href=sessionStorage.getItem('pu-lf')||'dashboard.html';}else goBack();}
+function handleBack(){if(cur===1){location.href=sessionStorage.getItem('pu-lf')||'{% url "dashboard_view" %}';}else goBack();}
 
 function switchS(n){
   for(let i=1;i<=5;i++){const el=document.getElementById('s'+i);if(el)el.style.display=i===n?'block':'none';}
