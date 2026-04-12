@@ -14,9 +14,7 @@
 <nav class="tnav">
   <button class="hbg" id="hbg"><span></span><span></span><span></span></button>
   <div class="tabs">
-    <button class="tab" onclick="location.href='dashboard.html'">All</button>
-    <button class="tab on">Products</button>
-    <button class="tab" onclick="location.href='dashboard-services.html'">Services</button>
+    {%include 'tabs.html'%}
   </div>
   <button class="notibtn" id="notibtn" onclick="toggleNotif()" title="Notifications">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
@@ -29,30 +27,9 @@
   <div class="sbh"><div class="sbl">PU-<span>Marketplace</span></div><button class="sbx" onclick="closeSb()">✕</button></div>
   <div class="sbsec">Navigate</div>
   <ul class="sbul">
-    <li><a href="index.html"><span class="ico">🏠</span>Home</a></li>
-    <li><a href="dashboard.html"><span class="ico">⚡</span>Dashboard</a></li>
-    <li><a href="dashboard-products.html" class="act"><span class="ico">📦</span>Products</a></li>
-    <li><a href="dashboard-services.html"><span class="ico">🛠️</span>Services</a></li>
-    <li><a href="wishlist.html"><span class="ico">❤️</span>Wishlist</a></li>
-    <li><a href="orders.html"><span class="ico">🛒</span>My Orders</a></li>
-    <li><a href="listings.html"><span class="ico">🏷️</span>My Listings</a></li>
+    {% include 'in_dashboard.html' %}
   </ul>
-  <div class="sbd"></div>
-  <div class="sbsec">Account</div>
-  <ul class="sbul">
-    <li><a href="auth.html"><span class="ico">👤</span>Profile</a></li>
-  </ul>
-  <div class="sbd"></div>
-  <div class="sbsec">Info &amp; Legal</div>
-  <ul class="sbul">
-    <li><a href="about.html"><span class="ico">ℹ️</span>About Us</a></li>
-    <li><a href="safety.html"><span class="ico">🛡️</span>Safety</a></li>
-    <li><a href="help.html"><span class="ico">❓</span>Help Centre</a></li>
-    <li><a href="privacy.html"><span class="ico">🔒</span>Privacy Policy</a></li>
-    <li><a href="terms.html"><span class="ico">📄</span>Terms &amp; Conditions</a></li>
-  </ul>
-  <div class="sbd"></div>
-  <ul class="sbul"><li><a href="auth.html" style="color:var(--red)"><span class="ico">🚪</span>Log Out</a></li></ul>
+
   <div class="sbft">© 2026 PU-Marketplace<br>Built for campus, by students.</div>
 </aside>
 
@@ -105,7 +82,7 @@
     </div></div>
     <div class="fdt" id="fd"></div>
   </div>
-  <div class="slbl"><h2>📦 All Products</h2><a href="dashboard-products.html">Refresh</a></div>
+  <div class="slbl"><h2>📦 All Products</h2><a href="{% url 'dashboard_products_view' %}">Refresh</a></div>
   <div class="pgrid" id="ag"></div>
 </div></div>
 
@@ -114,10 +91,7 @@
     <div class="mtl">List a Product 📦</div>
     <div class="msb">Choose what you'd like to do</div>
     <div class="mop">
-      <div class="mo" onclick="location.href='listings.html'"><span class="moic">📦</span><div class="molb">Sell Product</div></div>
-      <div class="mo" onclick="location.href='auth.html'"><span class="moic">🔍</span><div class="molb">Request Item</div></div>
-      <div class="mo" onclick="openBoost()"><span class="moic">🚀</span><div class="molb">Feature Listing</div></div>
-      <div class="mo" onclick="location.href='payments.html'"><span class="moic">💬</span><div class="molb">Arrange Meetup</div></div>
+      {% include 'mop.html' %}
     </div>
     <button class="mcl" onclick="closeMod()">Cancel</button>
   </div>
@@ -130,25 +104,8 @@
 </div>
 
 <nav class="botnav" id="bn">
-  <button class="ni" onclick="location.href='dashboard.html'" title="Home">
-    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    <span class="nlbl">Home</span>
-  </button>
-  <button class="ni" onclick="location.href='dashboard-services.html'" title="Reels">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-    <span class="nlbl">Reels</span>
-  </button>
-  <button class="nadd" onclick="location.href='create-listing.html'" title="Add listing">
-    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-  </button>
-  <button class="ni" onclick="location.href='chat.html'" title="Chat">
-    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-    <span class="nlbl">Chat</span>
-  </button>
-  <button class="ni" onclick="location.href='auth.html'" title="Profile">
-    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    <span class="nlbl">Profile</span>
-  </button>
+  
+  {% include 'bot_nav.html' %}
 </nav>
 
 <script>
