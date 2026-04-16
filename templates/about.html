@@ -1,23 +1,291 @@
-{% load static %}
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>About Us — PU-Marketplace</title>
+  <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
+  <title>About Us — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="{% static 'css/about.css' %}">
- 
+  <style>
+    :root, [data-theme="dark"] {
+      --bg: #0d0e11;
+      --surface: #15171c;
+      --card: #1c1f27;
+      --accent: #e8c96a;
+      --accent2: #5be5c5;
+      --text: #f0eeea;
+      --muted: #7a7e8a;
+      --border: rgba(255,255,255,0.07);
+      --inp: rgba(255,255,255,0.06);
+      --shadow: 0 8px 32px rgba(0,0,0,0.55);
+      --glass: rgba(18,20,28,0.65);
+    }
+    [data-theme="light"] {
+      --bg: #f0ede8;
+      --surface: #e8e4de;
+      --card: #ffffff;
+      --accent: #c9a030;
+      --accent2: #2aab8e;
+      --text: #1a1a1a;
+      --muted: #888888;
+      --border: rgba(0,0,0,0.08);
+      --inp: rgba(0,0,0,0.05);
+      --shadow: 0 8px 32px rgba(0,0,0,0.12);
+      --glass: rgba(255,255,255,0.75);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 2.5rem;
+      background: rgba(13,14,17,.9); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 1.35rem; color: var(--accent); text-decoration: none; letter-spacing: -.5px; }
+    .logo span { color: var(--text); }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--muted); font-size: .88rem; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-theme-btn { width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:rgba(255,255,255,.06);font-size:1rem;flex-shrink:0;transition:transform .3s;color:var(--text); }
+    .nav-theme-btn:hover{transform:rotate(22deg);}
+    .nav-cta { background: var(--accent); color: #0d0e11 !important; padding: .5rem 1.2rem; border-radius: 6px; font-weight: 600 !important; }
+
+    /* HERO */
+    .hero {
+      position: relative; min-height: 92vh;
+      display: flex; align-items: center;
+      padding: 7rem 2.5rem 5rem;
+      overflow: hidden;
+    }
+    .hero-bg-grid {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px; opacity: .3; pointer-events: none;
+    }
+    .glow { position: absolute; border-radius: 50%; pointer-events: none; }
+    .g1 { width: 700px; height: 700px; background: radial-gradient(circle, rgba(232,201,106,.1) 0%, transparent 65%); top: -200px; right: -150px; }
+    .g2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(91,229,197,.08) 0%, transparent 65%); bottom: -100px; left: -80px; }
+
+    .hero-inner { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; width: 100%; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-size: .72rem; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--accent); font-weight: 600; margin-bottom: 1.5rem;
+      animation: fadeUp .6s ease both;
+    }
+    .hero-eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--accent); }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 900; line-height: 1.0; letter-spacing: -2px;
+      margin-bottom: 2rem;
+      animation: fadeUp .7s .1s ease both;
+    }
+    h1 em { font-style: italic; color: var(--accent); }
+    .hero-desc {
+      font-size: 1.1rem; color: var(--muted); line-height: 1.85;
+      max-width: 580px; font-weight: 300; margin-bottom: 3rem;
+      animation: fadeUp .7s .2s ease both;
+    }
+    .hero-stats {
+      display: flex; gap: 3rem; flex-wrap: wrap;
+      animation: fadeUp .7s .3s ease both;
+    }
+    .hero-stat-num { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 900; color: var(--accent); letter-spacing: -1px; display: block; }
+    .hero-stat-label { font-size: .8rem; color: var(--muted); font-weight: 300; letter-spacing: .5px; margin-top: .2rem; }
+
+    /* SCROLL INDICATOR */
+    .scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: .5rem;
+      color: var(--muted); font-size: .72rem; letter-spacing: 2px; text-transform: uppercase;
+      animation: fadeUp .8s .6s ease both;
+    }
+    .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--accent), transparent); animation: scrollPulse 2s ease-in-out infinite; }
+    @keyframes scrollPulse { 0%,100%{opacity:.3;transform:scaleY(1)} 50%{opacity:1;transform:scaleY(1.2)} }
+
+    /* SECTIONS SHARED */
+    section { position: relative; z-index: 1; }
+    .section-inner { max-width: 1200px; margin: 0 auto; padding: 6rem 2.5rem; }
+    .eyebrow { font-size: .72rem; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 600; margin-bottom: .8rem; }
+    .eyebrow.gold { color: var(--accent); }
+    .eyebrow.teal { color: var(--accent2); }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 900; letter-spacing: -.8px; line-height: 1.1; margin-bottom: 1.2rem; }
+    .section-sub { color: var(--muted); font-size: .95rem; font-weight: 300; line-height: 1.8; max-width: 520px; }
+
+    /* STORY */
+    .story { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .story-text p { color: var(--muted); font-size: .95rem; font-weight: 300; line-height: 1.85; margin-bottom: 1.2rem; }
+    .story-text p:last-child { margin-bottom: 0; }
+    .story-text p strong { color: var(--text); font-weight: 500; }
+    .story-visual { position: relative; }
+    .story-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 2.5rem;
+      position: relative; overflow: hidden;
+    }
+    .story-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+    .story-quote {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem; font-style: italic; font-weight: 400;
+      line-height: 1.6; color: var(--text); margin-bottom: 1.5rem;
+    }
+    .story-quote-mark { font-size: 4rem; color: var(--accent); line-height: 0; display: block; margin-bottom: .5rem; font-family: Georgia, serif; }
+    .quote-author { display: flex; align-items: center; gap: 1rem; }
+    .qa-avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: .9rem; font-weight: 700; color: #0d0e11; }
+    .qa-name { font-size: .88rem; font-weight: 600; }
+    .qa-role { font-size: .78rem; color: var(--muted); }
+    .floating-badge {
+      position: absolute; bottom: -15px; right: -15px;
+      background: var(--accent); color: #0d0e11;
+      padding: .7rem 1.2rem; border-radius: 10px;
+      font-size: .78rem; font-weight: 700; letter-spacing: .3px;
+      box-shadow: 0 8px 24px rgba(232,201,106,.3);
+    }
+
+    /* MISSION */
+    .mission-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+    .mcard {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 2rem;
+      position: relative; overflow: hidden;
+      transition: transform .3s, border-color .3s;
+    }
+    .mcard:hover { transform: translateY(-5px); border-color: rgba(255,255,255,.14); }
+    .mcard-icon { font-size: 2.2rem; margin-bottom: 1.2rem; display: block; }
+    .mcard-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; margin-bottom: .7rem; }
+    .mcard-desc { color: var(--muted); font-size: .88rem; font-weight: 300; line-height: 1.75; }
+    .mcard-accent { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transform: scaleX(0); transform-origin: left; transition: transform .4s ease; }
+    .mcard:hover .mcard-accent { transform: scaleX(1); }
+
+    /* TEAM */
+    .team { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 3rem; }
+    .team-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 1.8rem 1.5rem; text-align: center;
+      transition: transform .3s, border-color .3s;
+    }
+    .team-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,.14); }
+    .team-avatar {
+      width: 70px; height: 70px; border-radius: 50%;
+      margin: 0 auto 1.2rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; font-weight: 800;
+      font-family: 'Playfair Display', serif;
+    }
+    .team-name { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; margin-bottom: .3rem; }
+    .team-role { font-size: .78rem; color: var(--accent); font-weight: 500; letter-spacing: .3px; margin-bottom: .7rem; }
+    .team-bio { font-size: .82rem; color: var(--muted); font-weight: 300; line-height: 1.6; }
+
+    /* TIMELINE */
+    .timeline { margin-top: 3rem; position: relative; }
+    .timeline::before { content: ''; position: absolute; left: 120px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+    .tl-item { display: flex; gap: 2.5rem; margin-bottom: 2.5rem; align-items: flex-start; }
+    .tl-year { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--accent); min-width: 80px; text-align: right; padding-top: .15rem; }
+    .tl-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: .3rem; position: relative; z-index: 1; box-shadow: 0 0 0 4px rgba(232,201,106,.15); }
+    .tl-content { flex: 1; }
+    .tl-title { font-weight: 600; margin-bottom: .3rem; font-size: .95rem; }
+    .tl-desc { color: var(--muted); font-size: .88rem; font-weight: 300; line-height: 1.7; }
+
+    /* VALUES */
+    .values-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 3rem; }
+    .value-item {
+      display: flex; gap: 1.2rem; align-items: flex-start;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.5rem;
+      transition: border-color .3s;
+    }
+    .value-item:hover { border-color: rgba(232,201,106,.25); }
+    .value-icon { font-size: 1.6rem; flex-shrink: 0; }
+    .value-title { font-weight: 600; margin-bottom: .3rem; font-size: .95rem; }
+    .value-desc { color: var(--muted); font-size: .85rem; font-weight: 300; line-height: 1.65; }
+
+    /* CTA */
+    .cta-strip {
+      background: linear-gradient(135deg, rgba(232,201,106,.08), rgba(91,229,197,.05));
+      border-top: 1px solid rgba(232,201,106,.15);
+      border-bottom: 1px solid var(--border);
+    }
+    .cta-strip-inner { max-width: 1200px; margin: 0 auto; padding: 5rem 2.5rem; display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
+    .cta-text h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 900; letter-spacing: -.5px; margin-bottom: .5rem; }
+    .cta-text p { color: var(--muted); font-size: .92rem; font-weight: 300; }
+    .btn-primary { display: inline-flex; align-items: center; gap: .5rem; background: var(--accent); color: #0d0e11; padding: .9rem 1.8rem; border-radius: 8px; font-weight: 700; font-size: .95rem; text-decoration: none; transition: transform .2s, box-shadow .2s; box-shadow: 0 4px 20px rgba(232,201,106,.25); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,201,106,.35); }
+    .btn-ghost { display: inline-flex; align-items: center; gap: .5rem; border: 1px solid var(--border); color: var(--text); padding: .9rem 1.8rem; border-radius: 8px; font-weight: 500; font-size: .95rem; text-decoration: none; transition: border-color .2s, background .2s; }
+    .btn-ghost:hover { border-color: rgba(255,255,255,.2); background: rgba(255,255,255,.04); }
+    .cta-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    /* FOOTER */
+    footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 2.5rem; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
+    .footer-logo { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 1.15rem; color: var(--accent); }
+    .footer-logo span { color: var(--text); }
+    .footer-links { display: flex; gap: 1.8rem; flex-wrap: wrap; }
+    .footer-links a { text-decoration: none; color: var(--muted); font-size: .83rem; transition: color .2s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy { color: var(--muted); font-size: .78rem; }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+    .reveal { opacity:0; transform:translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) { .story-grid { grid-template-columns: 1fr; gap: 3rem; } .team-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; } .nav-links { display: none; }
+      .hero { padding: 5rem 1.5rem 4rem; min-height: auto; }
+      .section-inner { padding: 4rem 1.5rem; }
+      .mission-cards { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: repeat(2, 1fr); }
+      .values-grid { grid-template-columns: 1fr; }
+      .timeline::before { left: 70px; }
+      .tl-year { min-width: 50px; font-size: .85rem; }
+      .cta-strip-inner { flex-direction: column; text-align: center; }
+      .cta-actions { justify-content: center; }
+      .footer-inner { flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; }
+    }
+    @media (max-width: 480px) {
+      .team-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+      .hero-stat-num { font-size: 2rem; }
+      h1 { font-size: clamp(2.2rem, 9vw, 3.5rem); letter-spacing: -1.5px; }
+      .timeline::before { left: 48px; }
+      .tl-year { min-width: 38px; font-size: .78rem; }
+      .tl-item { gap: 1.2rem; }
+      .story-card { padding: 1.5rem; }
+      .floating-badge { position: static; margin-top: 1rem; display: inline-block; }
+      .cta-strip-inner { padding: 3rem 1.5rem; }
+      .btn-primary, .btn-ghost { width: 100%; justify-content: center; }
+    }
+    @media (max-width: 380px) {
+      .section-inner { padding: 3rem 1rem; }
+      .hero { padding: 4.5rem 1.2rem 3rem; }
+      .hero-stat-num { font-size: 1.8rem; }
+      .tl-year { display: none; }
+      .timeline::before { display: none; }
+      .tl-item { padding-left: 0; }
+      .mcard-title, .feat-title { font-size: 1.05rem; }
+    }
+  </style>
 </head>
 <body>
 
 <!-- NAV -->
 <nav>
-  <a href="{% url 'home' %}" class="logo">PU-<span>Marketplace</span></a>
-  <ul class="nav-links">
-    {%include 'footer.html'%}
-  </ul>
+  {% include 'nav.html' %}
 </nav>
 
 <!-- HERO -->
@@ -28,7 +296,7 @@
   <div class="hero-inner">
     <div class="hero-eyebrow">Our Story</div>
     <h1>Built on Campus,<br>Built for <em>You.</em></h1>
-    <p class="hero-desc">PU-Marketplace was born from a simple frustration — students had no safe, easy way to trade within their own campus. We set out to fix that, and haven't looked back since.</p>
+    <p class="hero-desc">PU-Connect was born from a simple frustration — students had no safe, easy way to trade within their own campus. We set out to fix that, and haven't looked back since.</p>
     <div class="hero-stats">
       <div>
         <span class="hero-stat-num">2024</span>
@@ -61,9 +329,9 @@
       <div class="story-text reveal">
         <div class="eyebrow gold">How We Started</div>
         <h2 class="section-title">A Dorm Room Idea That Grew Into a Movement</h2>
-        <p>It started in 2024 when two final-year engineering students — Kwame and Abena — tried to sell their old textbooks before graduating. They posted on WhatsApp groups, got buried in noise, and eventually gave the books away for free out of frustration.</p>
-        <p>That weekend, they sketched out what would become PU-Marketplace: <strong>a dedicated, trusted space for campus commerce</strong>. No strangers, no spam — just students helping students.</p>
-        <p>Within three months of launching, over 800 students had signed up. Within a year, PU-Marketplace had processed more than GH₵ 500,000 in campus trades. Today, it's the go-to platform for everything from textbooks to tech, services to furniture — all within the university gates.</p>
+        <p>It started when final-year students tried to sell their old textbooks before graduating. They posted on WhatsApp groups, got buried in noise, and eventually gave the books away for free out of frustration.</p>
+        <p>That weekend, the idea took shape: <strong>a dedicated, trusted space for campus commerce</strong>. No strangers, no spam — just students helping students.</p>
+        <p>Within three months of launching, over 800 students had signed up. Within a year, PU-Connect had processed more than GH₵ 500,000 in campus trades. Today, it's the go-to platform for everything from textbooks to tech, services to furniture — all within the university gates.</p>
       </div>
       <div class="story-visual reveal">
         <div class="story-card">
@@ -72,8 +340,8 @@
           <div class="quote-author">
             <div class="qa-avatar">KA</div>
             <div>
-              <div class="qa-name">Kwame Asante</div>
-              <div class="qa-role">Co-Founder & CEO</div>
+              <div class="qa-name">PU-Connect Student</div>
+              <div class="qa-role">Verified Student</div>
             </div>
           </div>
           <div class="floating-badge">🎓 Founded by Students</div>
@@ -88,7 +356,7 @@
   <div class="section-inner">
     <div class="reveal">
       <div class="eyebrow teal">Our Purpose</div>
-      <h2 class="section-title">Why PU-Marketplace Exists</h2>
+      <h2 class="section-title">Why PU-Connect Exists</h2>
       <p class="section-sub">Three core beliefs drive every decision we make — from the features we build to the policies we set.</p>
     </div>
     <div class="mission-cards">
@@ -107,7 +375,7 @@
       <div class="mcard reveal">
         <span class="mcard-icon">💡</span>
         <div class="mcard-title">Student Empowerment</div>
-        <p class="mcard-desc">We believe every student has something of value to offer. PU-Marketplace is the stage — whether you're selling lecture notes or offering graphic design services.</p>
+        <p class="mcard-desc">We believe every student has something of value to offer. PU-Connect is the stage — whether you're selling lecture notes or offering graphic design services.</p>
         <div class="mcard-accent"></div>
       </div>
     </div>
@@ -164,7 +432,7 @@
         <div class="tl-dot"></div>
         <div class="tl-content">
           <div class="tl-title">First Launch</div>
-          <p class="tl-desc">PU-Marketplace launches in beta to 50 hand-picked students. First transaction: a used mechanical engineering textbook sold for GH₵ 40.</p>
+          <p class="tl-desc">PU-Connect launches in beta to 50 hand-picked students. First transaction: a used mechanical engineering textbook sold for GH₵ 40.</p>
         </div>
       </div>
       <div class="tl-item">
@@ -188,7 +456,7 @@
         <div class="tl-dot"></div>
         <div class="tl-content">
           <div class="tl-title">University Recognition</div>
-          <p class="tl-desc">The university officially endorses PU-Marketplace as a supported student initiative and integrates it into the student onboarding pack.</p>
+          <p class="tl-desc">The university officially endorses PU-Connect as a supported student initiative and integrates it into the student onboarding pack.</p>
         </div>
       </div>
       <div class="tl-item">
@@ -214,25 +482,25 @@
     <div class="team-grid">
       <div class="team-card reveal">
         <div class="team-avatar" style="background:linear-gradient(135deg,#e8c96a,#f5a623);color:#0d0e11">KA</div>
-        <div class="team-name">Kwame Asante</div>
+        <div class="team-name">Team Member</div>
         <div class="team-role">Co-Founder & CEO</div>
-        <p class="team-bio">BSc Computer Engineering. Built the first version of PU-Marketplace in a single weekend. Obsessed with user experience and campus community building.</p>
+        <p class="team-bio">Core member of the PU-Connect founding team.</p>
       </div>
       <div class="team-card reveal">
         <div class="team-avatar" style="background:linear-gradient(135deg,#5be5c5,#2dd4bf);color:#0d0e11">AB</div>
-        <div class="team-name">Abena Boateng</div>
+        <div class="team-name">Team Member</div>
         <div class="team-role">Co-Founder & COO</div>
         <p class="team-bio">BSc Business Administration. Runs day-to-day operations and student partnerships. The reason the platform actually works in practice, not just on paper.</p>
       </div>
       <div class="team-card reveal">
         <div class="team-avatar" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff">EO</div>
-        <div class="team-name">Esi Owusu</div>
+        <div class="team-name">Team Member</div>
         <div class="team-role">Head of Design</div>
-        <p class="team-bio">MFA Interaction Design. Crafts every pixel of the PU-Marketplace experience. Believes that good design is invisible — it just feels right.</p>
+        <p class="team-bio">Leads design and user experience at PU-Connect.</p>
       </div>
       <div class="team-card reveal">
         <div class="team-avatar" style="background:linear-gradient(135deg,#fb923c,#ea580c);color:#fff">KM</div>
-        <div class="team-name">Kofi Mensah</div>
+        <div class="team-name">Team Member</div>
         <div class="team-role">Lead Engineer</div>
         <p class="team-bio">BSc Software Engineering. Keeps the platform fast, secure, and running 24/7. If something breaks at 2am, he's already fixing it.</p>
       </div>
@@ -245,7 +513,7 @@
   <div class="cta-strip-inner">
     <div class="cta-text reveal">
       <h2>Ready to be Part of the Story?</h2>
-      <p>Join thousands of students already trading smarter on PU-Marketplace.</p>
+      <p>Join thousands of students already trading smarter on PU-Connect.</p>
     </div>
     <div class="cta-actions reveal">
       <a href="{% url 'Auth_view' %}#signup" class="btn-primary">Create Free Account</a>
@@ -259,9 +527,9 @@
   <div class="footer-inner">
     <div class="footer-logo">PU-<span>Marketplace</span></div>
     <div class="footer-links">
-      {% include 'footer.html'%}
+      {% include 'footer.html' %}
     </div>
-    <div class="footer-copy">© 2026 PU-Marketplace. All rights reserved.</div>
+    <div class="footer-copy">© 2026 PU-Connect. All rights reserved.</div>
   </div>
 </footer>
 
@@ -271,6 +539,12 @@
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.1 });
   reveals.forEach(el => obs.observe(el));
+</script>
+<script>
+const htmlEl=document.documentElement,themeB=document.getElementById("themeBtn");let isDark=true;
+function setTheme(d){htmlEl.setAttribute("data-theme",d?"dark":"light");if(themeB)themeB.textContent=d?"🌞":"🌙";isDark=d;localStorage.setItem("pu-theme",d?"dark":"light");const tm=document.getElementById("themeColorMeta");if(tm)tm.setAttribute("content",d?"#0d0e11":"#f0ede8");}
+const savedT=localStorage.getItem("pu-theme");if(savedT)setTheme(savedT==="dark");else setTheme(true);
+if(themeB)themeB.addEventListener("click",()=>setTheme(!isDark));
 </script>
 </body>
 </html>

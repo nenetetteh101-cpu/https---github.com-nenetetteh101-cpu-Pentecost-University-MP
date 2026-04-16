@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
+<title>Search — PU-Connect</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ── TOKENS (identical to app design system) ── */
+:root{--a:#e8c96a;--a2:#5be5c5;--red:#ff6b6b;--r:14px;--nh:60px;--bh:78px}
+[data-theme="dark"]{--bg:#0d0e11;--card:#1c1f27;--t:#f0eeea;--m:#7a7e8a;--b:rgba(255,255,255,.07);--g:rgba(18,20,28,.72);--gb:rgba(255,255,255,.12);--sh:0 8px 32px rgba(0,0,0,.55);--inp:rgba(255,255,255,.07)}
+[data-theme="light"]{--bg:#f0ede8;--card:#fff;--t:#1a1a1a;--m:#888;--b:rgba(0,0,0,.08);--g:rgba(255,255,255,.78);--gb:rgba(0,0,0,.1);--sh:0 8px 32px rgba(0,0,0,.1);--inp:rgba(0,0,0,.05)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t);overflow-x:hidden;min-height:100vh;padding-bottom:calc(var(--bh)+24px);transition:background .3s,color .3s}
+
+/* ── TOP NAV ── */
+.tnav{position:sticky;top:0;z-index:300;height:var(--nh);display:flex;align-items:center;gap:.6rem;padding:0 1rem;background:var(--g);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border-bottom:1px solid var(--gb);box-shadow:var(--sh)}
+.back-btn{width:38px;height:38px;border-radius:9px;background:var(--inp);border:none;color:var(--m);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:color .2s,background .2s}
+.back-btn:hover{color:var(--t);background:rgba(255,255,255,.1)}
+.back-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── SEARCH BAR ── */
+.search-wrap{position:relative;flex:1}
+.search-input{width:100%;height:40px;background:var(--inp);border:1.5px solid var(--b);border-radius:10px;padding:0 2.6rem 0 2.6rem;color:var(--t);font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:400;outline:none;transition:border-color .25s,box-shadow .25s}
+.search-input:focus{border-color:rgba(232,201,106,.45);box-shadow:0 0 0 3px rgba(232,201,106,.08)}
+.search-input::placeholder{color:var(--m)}
+.s-ico{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);pointer-events:none}
+.s-ico svg{width:16px;height:16px;stroke:var(--m);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.s-clear{position:absolute;right:.6rem;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:var(--m);border:none;color:var(--bg);cursor:pointer;font-size:.65rem;display:none;align-items:center;justify-content:center}
+.search-input:not(:placeholder-shown)~.s-clear{display:flex}
+.thbtn{width:38px;height:38px;border-radius:9px;background:var(--inp);border:none;font-size:1rem;cursor:pointer;flex-shrink:0;transition:transform .3s;color:var(--t)}
+.thbtn:hover{transform:rotate(22deg)}
+
+/* ── SUGGESTIONS DROPDOWN ── */
+.suggestions-drop{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--card);border:1px solid var(--b);border-radius:12px;box-shadow:var(--sh);z-index:200;overflow:hidden;display:none}
+.suggestions-drop.open{display:block}
+.sug-item{display:flex;align-items:center;gap:.65rem;padding:.65rem .9rem;cursor:pointer;transition:background .15s;font-size:.86rem}
+.sug-item:hover{background:var(--inp)}
+.sug-item svg{width:14px;height:14px;stroke:var(--m);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.sug-text mark{background:rgba(232,201,106,.25);border-radius:2px;color:var(--a)}
+
+/* ── CONTENT ── */
+.wrap{max-width:900px;margin:0 auto;padding:1.2rem 1rem 0}
+
+/* ── TYPE TABS ── */
+.type-tabs{display:flex;gap:.4rem;margin-bottom:1.1rem;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
+.type-tabs::-webkit-scrollbar{display:none}
+.ttab{padding:.38rem .9rem;border-radius:99px;border:1.5px solid var(--b);background:var(--inp);font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;color:var(--m);cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.ttab.on{background:var(--a);border-color:var(--a);color:#0d0e11}
+.ttab:hover:not(.on){border-color:rgba(232,201,106,.3);color:var(--t)}
+.ttab .cnt{background:rgba(255,255,255,.15);border-radius:99px;padding:.08rem .42rem;font-size:.66rem;margin-left:.35rem;font-weight:700}
+.ttab.on .cnt{background:rgba(0,0,0,.18)}
+
+/* ── SECTION HEADER ── */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem;margin-top:1.1rem}
+.sec-head h2{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;letter-spacing:-.15px}
+.sec-head a{font-size:.76rem;color:var(--a);text-decoration:none;font-weight:500}
+.sec-head a:hover{text-decoration:underline}
+
+/* ── RESULT COUNTS ── */
+.result-meta{font-size:.78rem;color:var(--m);margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.result-meta strong{color:var(--t)}
+.result-meta .sep{color:var(--b)}
+
+/* ── PRODUCT / SERVICE CARDS ── */
+.listing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;margin-bottom:1.2rem}
+@media(max-width:480px){.listing-grid{grid-template-columns:repeat(2,1fr)}}
+.lcard{background:var(--card);border:1px solid var(--b);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:transform .25s,border-color .25s}
+.lcard:hover{transform:translateY(-3px);border-color:rgba(232,201,106,.22)}
+.lcard-img{width:100%;aspect-ratio:1;overflow:hidden;position:relative;background:var(--inp)}
+.lcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.lcard:hover .lcard-img img{transform:scale(1.05)}
+.lcard-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+.lcard-badge{position:absolute;top:.45rem;left:.45rem;font-size:.58rem;font-weight:700;padding:.15rem .45rem;border-radius:5px;backdrop-filter:blur(8px)}
+.lcard-sold{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.78rem;font-weight:700}
+.lcard-body{padding:.7rem .8rem}
+.lcard-title{font-size:.82rem;font-weight:600;margin-bottom:.18rem;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.lcard-price{font-size:.85rem;font-weight:700;color:var(--a);margin-bottom:.15rem}
+.lcard-seller{font-size:.68rem;color:var(--m)}
+.lcard-type{font-size:.6rem;font-weight:700;padding:.12rem .42rem;border-radius:4px;display:inline-block;margin-bottom:.25rem}
+
+/* ── USER CARDS ── */
+.user-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.75rem;margin-bottom:1.2rem}
+@media(max-width:480px){.user-grid{grid-template-columns:1fr}}
+.ucard{background:var(--card);border:1px solid var(--b);border-radius:var(--r);padding:.9rem 1rem;display:flex;gap:.75rem;align-items:flex-start;cursor:pointer;transition:transform .25s,border-color .25s}
+.ucard:hover{transform:translateY(-2px);border-color:rgba(91,229,197,.22)}
+.ucard-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--a),#f5c842);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:#0d0e11;flex-shrink:0;overflow:hidden}
+.ucard-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.ucard-body{flex:1;min-width:0}
+.ucard-name{font-size:.88rem;font-weight:600;margin-bottom:.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ucard-username{font-size:.72rem;color:var(--m);margin-bottom:.25rem}
+.ucard-faculty{font-size:.72rem;color:var(--m)}
+.ucard-bio{font-size:.75rem;color:var(--m);margin-top:.3rem;line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.ucard-badge{font-size:.62rem;font-weight:700;padding:.12rem .45rem;border-radius:4px;background:rgba(91,229,197,.12);color:var(--a2);margin-top:.35rem;display:inline-block}
+
+/* ── TRENDING SECTION ── */
+.trending-wrap{margin-bottom:1.3rem}
+.trending-title{font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--m);font-weight:600;margin-bottom:.65rem}
+.trending-pills{display:flex;flex-wrap:wrap;gap:.4rem}
+.trend-pill{padding:.35rem .85rem;border-radius:99px;background:var(--inp);border:1.5px solid var(--b);font-size:.78rem;color:var(--m);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.35rem}
+.trend-pill:hover{border-color:rgba(232,201,106,.3);color:var(--t);background:rgba(232,201,106,.05)}
+.trend-pill svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ── SKELETON LOADER ── */
+.skeleton{background:linear-gradient(90deg,var(--inp) 25%,rgba(255,255,255,.08) 50%,var(--inp) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--r)}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-card{height:220px}
+.skel-line{height:14px;margin-bottom:.5rem;border-radius:4px}
+.skel-line.short{width:60%}
+
+/* ── EMPTY / ERROR STATES ── */
+.empty-state{text-align:center;padding:3.5rem 1rem}
+.empty-ico{font-size:3rem;margin-bottom:.75rem;opacity:.4}
+.empty-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin-bottom:.35rem}
+.empty-sub{font-size:.84rem;color:var(--m);line-height:1.65;max-width:320px;margin:0 auto .9rem}
+.empty-cta{background:var(--a);color:#0d0e11;padding:.65rem 1.5rem;border-radius:9px;border:none;font-family:'DM Sans',sans-serif;font-size:.84rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.empty-cta:hover{opacity:.88}
+
+/* ── BOTTOM NAV ── */
+.botnav{position:fixed;bottom:13px;left:50%;transform:translateX(-50%);z-index:400;display:flex;align-items:center;justify-content:space-around;width:min(500px,calc(100vw - 26px));height:var(--bh);padding:0 .7rem;background:var(--g);backdrop-filter:blur(36px) saturate(200%) brightness(1.08);-webkit-backdrop-filter:blur(36px) saturate(200%) brightness(1.08);border:1px solid var(--gb);border-radius:40px;box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.18);transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s}
+.botnav.hide{transform:translateX(-50%) translateY(120px);opacity:0}
+.ni{display:flex;flex-direction:column;align-items:center;gap:.18rem;flex:1;padding:.4rem 0;background:none;border:none;cursor:pointer;color:var(--m);font-family:'DM Sans',sans-serif;transition:color .2s;-webkit-tap-highlight-color:transparent}
+.ni.on{color:var(--a)}
+.ni svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ni.on::after{content:'';position:absolute;bottom:.1rem;width:4px;height:4px;border-radius:50%;background:var(--a)}
+.nlbl{font-size:.57rem;font-weight:500}
+.nadd{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--a),#f5c440);border:3px solid var(--g);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;box-shadow:0 6px 18px rgba(232,201,106,.5);transition:transform .2s}
+.nadd:hover{transform:scale(1.1)}
+.nadd svg{width:20px;height:20px;stroke:#0d0e11;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--b);border-radius:4px}
+@media(max-width:480px){.wrap{padding:1rem .85rem 0}}
+</style>
+</head>
+<body>
+
+<!-- ── TOP NAV ── -->
+<nav class="tnav">
+  <button class="back-btn" onclick="history.back()" title="Back">
+    <svg viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 5l-7 7 7 7"/></svg>
+  </button>
+
+  <div class="search-wrap" id="searchWrap">
+    <span class="s-ico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+    <input
+      type="text"
+      id="searchInput"
+      class="search-input"
+      placeholder="Search products, services, people…"
+      autocomplete="off"
+      autocorrect="off"
+      spellcheck="false"
+      autofocus
+    />
+    <button class="s-clear" id="clearBtn" onclick="clearSearch()" title="Clear">✕</button>
+    <!-- Suggestions dropdown -->
+    <div class="suggestions-drop" id="sugDrop"></div>
+  </div>
+
+  <button class="thbtn" id="thbtn">🌞</button>
+</nav>
+
+<!-- ── MAIN CONTENT ── -->
+<div class="wrap">
+
+  <!-- ── TRENDING (shown when no query) ── -->
+  <div id="trendingSection">
+    <div class="trending-wrap">
+      <div class="trending-title">🔥 Trending on Campus</div>
+      <div class="trending-pills" id="trendingPills">
+        <!-- populated by JS -->
+      </div>
+    </div>
+    <div class="trending-wrap">
+      <div class="trending-title">💡 Browse Categories</div>
+      <div class="trending-pills" id="categoryPills">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SEARCH RESULTS (shown when query active) ── -->
+  <div id="resultsSection" style="display:none">
+
+    <!-- Type tabs -->
+    <div class="type-tabs" id="typeTabs">
+      <button class="ttab on" data-type="all"      onclick="switchType('all',this)">All</button>
+      <button class="ttab"    data-type="products"  onclick="switchType('products',this)">Products<span class="cnt" id="cnt-products">0</span></button>
+      <button class="ttab"    data-type="services"  onclick="switchType('services',this)">Services<span class="cnt" id="cnt-services">0</span></button>
+      <button class="ttab"    data-type="users"     onclick="switchType('users',this)">People<span class="cnt" id="cnt-users">0</span></button>
+    </div>
+
+    <!-- Result meta -->
+    <div class="result-meta" id="resultMeta"></div>
+
+    <!-- Results container -->
+    <div id="resultsContainer"></div>
+
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- ── BOTTOM NAV ── -->
+<nav class="botnav" id="bn">
+  <button class="ni" onclick="location.href='dashboard.html'">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span class="nlbl">Home</span>
+  </button>
+  <button class="ni" onclick="location.href='reels.html'">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+    <span class="nlbl">Reels</span>
+  </button>
+  <button class="nadd" onclick="location.href='create-listing.html'">
+    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </button>
+  <button class="ni" onclick="location.href='chat.html'">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    <span class="nlbl">Chat</span>
+  </button>
+  <button class="ni" onclick="location.href='profile.html'">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span class="nlbl">Profile</span>
+  </button>
+</nav>
+
+<script>
+'use strict';
+
+/* ════════════════════════════════════════════════
+   CONFIG
+════════════════════════════════════════════════ */
+const API_BASE = '/api/search';   // Django base URL — no trailing slash
+
+/* ════════════════════════════════════════════════
+   THEME
+════════════════════════════════════════════════ */
+const H=document.documentElement, TB=document.getElementById('thbtn');
+let dark=localStorage.getItem('pu-theme')!=='light';
+function applyTheme(d){H.setAttribute('data-theme',d?'dark':'light');TB.textContent=d?'🌞':'🌙';dark=d;localStorage.setItem('pu-theme',d?'dark':'light');const m=document.getElementById('themeColorMeta');if(m)m.setAttribute('content',d?'#0d0e11':'#f0ede8');}
+applyTheme(dark);
+TB.addEventListener('click',()=>applyTheme(!dark));
+
+/* ════════════════════════════════════════════════
+   SCROLL HIDE NAV
+════════════════════════════════════════════════ */
+const BN=document.getElementById('bn');let ly=0,tk=false;
+window.addEventListener('scroll',()=>{if(!tk){requestAnimationFrame(()=>{const y=window.scrollY;if(y>ly+10&&y>80)BN.classList.add('hide');else if(y<ly-10)BN.classList.remove('hide');ly=y;tk=false});tk=true}},{passive:true});
+
+/* ════════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════════ */
+let state = {
+  query:      '',
+  activeType: 'all',
+  results:    { products:[], services:[], users:[], total:0 },
+  loading:    false,
+  error:      null,
+};
+
+/* ════════════════════════════════════════════════
+   CATEGORIES (static — categories the platform supports)
+════════════════════════════════════════════════ */
+const CATEGORIES = [
+  {label:'💻 Electronics', cat:'electronics'},
+  {label:'📚 Textbooks',   cat:'textbooks'},
+  {label:'👗 Fashion',     cat:'fashion'},
+  {label:'🍱 Food',        cat:'food'},
+  {label:'🎨 Design',      cat:'design'},
+  {label:'📖 Tutoring',    cat:'tutoring'},
+  {label:'💻 Tech & Dev',  cat:'tech'},
+  {label:'📸 Photography', cat:'photo'},
+  {label:'✍️ Writing',     cat:'writing'},
+  {label:'🏃 Delivery',    cat:'delivery'},
+];
+
+/* ════════════════════════════════════════════════
+   INIT — pre-load trending + read URL param
+════════════════════════════════════════════════ */
+(async function init(){
+  renderCategories();
+  await loadTrending();
+
+  // Pre-fill from URL: search.html?q=laptop
+  const urlQ = new URLSearchParams(location.search).get('q');
+  if(urlQ && urlQ.trim()){
+    const inp = document.getElementById('searchInput');
+    inp.value = urlQ.trim();
+    await runSearch(urlQ.trim());
+  }
+
+  // Wire up search input
+  document.getElementById('searchInput').addEventListener('input', onInput);
+  document.getElementById('searchInput').addEventListener('keydown', e=>{
+    if(e.key==='Enter'){ closeSuggestions(); runSearch(e.target.value.trim()); }
+    if(e.key==='Escape'){ closeSuggestions(); }
+  });
+  document.addEventListener('click', e=>{
+    if(!document.getElementById('searchWrap').contains(e.target)) closeSuggestions();
+  });
+})();
+
+/* ════════════════════════════════════════════════
+   SEARCH INPUT HANDLING
+════════════════════════════════════════════════ */
+let inputTimer, sugTimer;
+
+function onInput(e){
+  const q = e.target.value.trim();
+  state.query = q;
+
+  // Update URL without navigation
+  const url = new URL(location.href);
+  if(q) url.searchParams.set('q', q);
+  else url.searchParams.delete('q');
+  history.replaceState(null,'',url);
+
+  clearTimeout(inputTimer);
+  clearTimeout(sugTimer);
+
+  if(!q){
+    showTrending();
+    closeSuggestions();
+    return;
+  }
+
+  // Suggestions after 200ms
+  sugTimer = setTimeout(()=>loadSuggestions(q), 200);
+  // Full search after 400ms
+  inputTimer = setTimeout(()=>runSearch(q), 400);
+}
+
+function clearSearch(){
+  document.getElementById('searchInput').value='';
+  state.query='';
+  history.replaceState(null,'',location.pathname);
+  closeSuggestions();
+  showTrending();
+}
+
+/* ════════════════════════════════════════════════
+   SUGGESTIONS AUTOCOMPLETE
+════════════════════════════════════════════════ */
+async function loadSuggestions(q){
+  if(q.length < 1) return;
+  try{
+    const res = await apiFetch(`${API_BASE}/suggestions/?q=${encodeURIComponent(q)}`);
+    if(!res || !res.suggestions) return;
+    renderSuggestions(res.suggestions, q);
+  }catch(e){
+    // Silently ignore suggestion errors — not critical
+  }
+}
+
+function renderSuggestions(suggestions, query){
+  const drop = document.getElementById('sugDrop');
+  if(!suggestions.length){ closeSuggestions(); return; }
+
+  drop.innerHTML = suggestions.map(s=>{
+    const highlighted = s.replace(new RegExp(`(${escRegex(query)})`, 'gi'), '<mark>$1</mark>');
+    return `<div class="sug-item" onclick="selectSuggestion('${escH(s)}')">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span class="sug-text">${highlighted}</span>
+    </div>`;
+  }).join('');
+
+  drop.classList.add('open');
+}
+
+function selectSuggestion(q){
+  document.getElementById('searchInput').value = q;
+  closeSuggestions();
+  runSearch(q);
+}
+
+function closeSuggestions(){
+  document.getElementById('sugDrop').classList.remove('open');
+}
+
+/* ════════════════════════════════════════════════
+   MAIN SEARCH
+════════════════════════════════════════════════ */
+async function runSearch(q){
+  if(!q || q.length < 2) return;
+  q = q.trim();
+
+  state.query   = q;
+  state.loading = true;
+  state.error   = null;
+
+  showResultsSection();
+  renderSkeleton();
+
+  try{
+    const data = await apiFetch(
+      `${API_BASE}/?q=${encodeURIComponent(q)}&type=${state.activeType}`
+    );
+    state.results  = data;
+    state.loading  = false;
+    renderResults();
+    updateTabCounts();
+  }catch(err){
+    state.loading = false;
+    state.error   = err.message || 'Search failed. Please try again.';
+    renderError();
+  }
+}
+
+/* ════════════════════════════════════════════════
+   TYPE TAB SWITCHING
+════════════════════════════════════════════════ */
+function switchType(type, btn){
+  document.querySelectorAll('.ttab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  state.activeType = type;
+  if(state.query) runSearch(state.query);
+}
+
+function updateTabCounts(){
+  const {products=[], services=[], users=[]} = state.results;
+  const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
+  set('cnt-products', products.length);
+  set('cnt-services', services.length);
+  set('cnt-users',    users.length);
+}
+
+/* ════════════════════════════════════════════════
+   RENDER RESULTS
+════════════════════════════════════════════════ */
+function renderResults(){
+  const {products=[], services=[], users=[], total=0} = state.results;
+  const type = state.activeType;
+
+  // Result meta line
+  const meta = document.getElementById('resultMeta');
+  meta.innerHTML = `<strong>${total.toLocaleString()}</strong> result${total!==1?'s':''} for
+    "<strong>${escH(state.query)}</strong>"`;
+
+  const container = document.getElementById('resultsContainer');
+  container.innerHTML = '';
+
+  const showProducts = (type==='all'||type==='products') && products.length>0;
+  const showServices = (type==='all'||type==='services') && services.length>0;
+  const showUsers    = (type==='all'||type==='users')    && users.length>0;
+
+  if(!showProducts && !showServices && !showUsers){
+    container.innerHTML = emptyStateHTML(
+      '🔍',
+      `No results for "${escH(state.query)}"`,
+      'Try different keywords, or browse categories below.',
+      'Browse Listings',
+      "location.href='dashboard.html'"
+    );
+    return;
+  }
+
+  if(showProducts){
+    container.innerHTML += `
+      <div class="sec-head">
+        <h2>📦 Products <span style="font-family:'DM Sans';font-size:.8rem;font-weight:400;color:var(--m)">(${products.length})</span></h2>
+        ${products.length>=5?`<a href="dashboard-products.html?q=${encodeURIComponent(state.query)}">See all →</a>`:''}
+      </div>
+      <div class="listing-grid">${products.slice(0,8).map(listingCardHTML).join('')}</div>`;
+  }
+
+  if(showServices){
+    container.innerHTML += `
+      <div class="sec-head" style="margin-top:${showProducts?'0':'0'}">
+        <h2>🛠️ Services <span style="font-family:'DM Sans';font-size:.8rem;font-weight:400;color:var(--m)">(${services.length})</span></h2>
+        ${services.length>=5?`<a href="dashboard-services.html?q=${encodeURIComponent(state.query)}">See all →</a>`:''}
+      </div>
+      <div class="listing-grid">${services.slice(0,8).map(listingCardHTML).join('')}</div>`;
+  }
+
+  if(showUsers){
+    container.innerHTML += `
+      <div class="sec-head">
+        <h2>👤 People <span style="font-family:'DM Sans';font-size:.8rem;font-weight:400;color:var(--m)">(${users.length})</span></h2>
+      </div>
+      <div class="user-grid">${users.slice(0,6).map(userCardHTML).join('')}</div>`;
+  }
+}
+
+/* ════════════════════════════════════════════════
+   CARD HTML BUILDERS
+════════════════════════════════════════════════ */
+function listingCardHTML(l){
+  const isService = l.type === 'service';
+  const typeClr   = isService ? '#5be5c5'  : 'var(--a)';
+  const typeBg    = isService ? 'rgba(91,229,197,.14)' : 'rgba(232,201,106,.14)';
+  const typeLbl   = isService ? 'Service' : 'Product';
+  const isSold    = l.status === 'sold';
+  const price     = l.contact_for_price ? 'Contact' :
+                    (l.price_label || (l.price ? 'GH₵ '+Number(l.price).toLocaleString() : '—'));
+  const img       = l.img || '';
+
+  return `
+  <div class="lcard" onclick="openListing('${escH(String(l.id))}')" title="${escH(l.title)}">
+    <div class="lcard-img">
+      ${img
+        ? `<img src="${escH(img)}" alt="${escH(l.title)}" loading="lazy"/>`
+        : `<div class="lcard-img-placeholder">${isService?'🛠️':'📦'}</div>`
+      }
+      <span class="lcard-badge" style="background:${typeBg};color:${typeClr}">${typeLbl}</span>
+      ${isSold?'<div class="lcard-sold">Sold</div>':''}
+    </div>
+    <div class="lcard-body">
+      <div class="lcard-title">${highlightQuery(escH(l.title))}</div>
+      <div class="lcard-price">${escH(price)}</div>
+      <div class="lcard-seller">@${escH(l.seller_username||l.seller||'')}</div>
+    </div>
+  </div>`;
+}
+
+function userCardHTML(u){
+  const av = u.avatar_url
+    ? `<img src="${escH(u.avatar_url)}" alt="${escH(u.full_name||u.username)}" loading="lazy"/>`
+    : `${initials(u.full_name||u.username)}`;
+
+  return `
+  <div class="ucard" onclick="openUserProfile('${escH(String(u.id))}','${escH(u.username)}')">
+    <div class="ucard-av">${av}</div>
+    <div class="ucard-body">
+      <div class="ucard-name">${highlightQuery(escH(u.full_name||u.username))}</div>
+      <div class="ucard-username">@${escH(u.username)}</div>
+      ${u.faculty?`<div class="ucard-faculty">🎓 ${escH(u.faculty)}</div>`:''}
+      ${u.bio?`<div class="ucard-bio">${escH(u.bio)}</div>`:''}
+      ${u.is_verified?'<span class="ucard-badge">✓ Verified</span>':''}
+    </div>
+  </div>`;
+}
+
+/* ════════════════════════════════════════════════
+   CLICK HANDLERS
+════════════════════════════════════════════════ */
+function openListing(id){
+  // If the listing detail sheet is available (injected by dashboard pages),
+  // use it. Otherwise navigate to dashboard with the listing pre-selected.
+  if(typeof window.openListingDetail === 'function'){
+    window.openListingDetail(id);
+  } else {
+    // Store the ID and navigate — dashboard will open the sheet on load
+    try{ localStorage.setItem('pu-open-listing', id); }catch(e){}
+    location.href = 'dashboard.html';
+  }
+}
+
+function openUserProfile(id, username){
+  // Navigate to a user's public profile
+  // For now: store context and navigate to profile page
+  try{ localStorage.setItem('pu-view-profile', JSON.stringify({id, username})); }catch(e){}
+  location.href = `profile.html?u=${encodeURIComponent(username)}`;
+}
+
+/* ════════════════════════════════════════════════
+   TRENDING + CATEGORIES
+════════════════════════════════════════════════ */
+async function loadTrending(){
+  try{
+    const data = await apiFetch(`${API_BASE}/trending/`);
+    const pills = document.getElementById('trendingPills');
+    if(!data || !data.trending || !data.trending.length){
+      pills.innerHTML = '<span style="font-size:.82rem;color:var(--m)">No trending searches yet</span>';
+      return;
+    }
+    pills.innerHTML = data.trending.map(t=>`
+      <button class="trend-pill" onclick="selectSuggestion('${escH(t.query)}')">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        ${escH(t.query)}
+      </button>`).join('');
+  }catch(e){
+    document.getElementById('trendingPills').innerHTML =
+      '<span style="font-size:.82rem;color:var(--m)">Could not load trending searches</span>';
+  }
+}
+
+function renderCategories(){
+  document.getElementById('categoryPills').innerHTML = CATEGORIES.map(c=>`
+    <button class="trend-pill" onclick="selectSuggestion('${escH(c.label.split(' ').slice(1).join(' '))}')">
+      ${escH(c.label)}
+    </button>`).join('');
+}
+
+/* ════════════════════════════════════════════════
+   VIEW TOGGLE HELPERS
+════════════════════════════════════════════════ */
+function showTrending(){
+  document.getElementById('trendingSection').style.display='block';
+  document.getElementById('resultsSection').style.display='none';
+}
+
+function showResultsSection(){
+  document.getElementById('trendingSection').style.display='none';
+  document.getElementById('resultsSection').style.display='block';
+}
+
+/* ════════════════════════════════════════════════
+   SKELETON LOADER
+════════════════════════════════════════════════ */
+function renderSkeleton(){
+  document.getElementById('resultMeta').innerHTML = '<span style="color:var(--m)">Searching…</span>';
+  document.getElementById('resultsContainer').innerHTML = `
+    <div class="listing-grid">
+      ${Array(6).fill('<div class="lcard"><div class="lcard-img skeleton skel-card"></div><div class="lcard-body"><div class="skel-line skeleton"></div><div class="skel-line short skeleton"></div></div></div>').join('')}
+    </div>`;
+}
+
+/* ════════════════════════════════════════════════
+   ERROR STATE
+════════════════════════════════════════════════ */
+function renderError(){
+  document.getElementById('resultMeta').innerHTML='';
+  document.getElementById('resultsContainer').innerHTML = emptyStateHTML(
+    '⚠️',
+    'Something went wrong',
+    state.error || 'Please check your connection and try again.',
+    'Try Again',
+    `runSearch('${escH(state.query)}')`
+  );
+}
+
+function emptyStateHTML(ico, title, sub, ctaLabel, ctaAction){
+  return `
+  <div class="empty-state">
+    <div class="empty-ico">${ico}</div>
+    <div class="empty-title">${title}</div>
+    <div class="empty-sub">${sub}</div>
+    <button class="empty-cta" onclick="${ctaAction}">${ctaLabel}</button>
+  </div>`;
+}
+
+/* ════════════════════════════════════════════════
+   API HELPER — falls back to localStorage when
+   Django backend is not yet connected
+════════════════════════════════════════════════ */
+async function apiFetch(url){
+  try{
+    const headers = {'Content-Type':'application/json','Accept':'application/json'};
+    // Attach CSRF token if available (Django requirement for non-GET requests)
+    const csrf = getCookie('csrftoken');
+    if(csrf) headers['X-CSRFToken'] = csrf;
+
+    const res = await fetch(url, {headers, credentials:'include'});
+
+    if(!res.ok){
+      // If backend not available, fall back to localStorage
+      if(res.status === 404 || res.status === 0){
+        return localStorageFallback(url);
+      }
+      const err = await res.json().catch(()=>({}));
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+
+    return await res.json();
+  }catch(e){
+    // Network error — fall back to localStorage search
+    if(e.message === 'Failed to fetch' || e.name === 'TypeError'){
+      return localStorageFallback(url);
+    }
+    throw e;
+  }
+}
+
+/* ── localStorage fallback ─────────────────────────────────────────
+   Allows the search page to work in the current localStorage-based
+   frontend BEFORE the Django backend is wired up.
+   Once the API is live, this branch is never reached.
+────────────────────────────────────────────────────────────────── */
+function localStorageFallback(url){
+  const params = new URLSearchParams(url.split('?')[1]||'');
+  const q      = (params.get('q')||'').toLowerCase().trim();
+  const type   = params.get('type')||'all';
+
+  if(url.includes('/suggestions/')){
+    const all = JSON.parse(localStorage.getItem('pu-listings')||'[]');
+    const titles = all
+      .filter(l=>l.title&&l.title.toLowerCase().includes(q))
+      .map(l=>l.title)
+      .slice(0,8);
+    return {query:q, suggestions:titles};
+  }
+
+  if(url.includes('/trending/')){
+    return {trending:[]};
+  }
+
+  // Unified search fallback
+  const all = JSON.parse(localStorage.getItem('pu-listings')||'[]');
+  const score = l => {
+    const t  = (l.title||'').toLowerCase();
+    const d  = (l.description||'').toLowerCase();
+    const tg = (l.tags||'').toLowerCase();
+    const c  = (l.category||l.cat||'').toLowerCase();
+    if(t.includes(q)) return 3;
+    if(tg.includes(q)||c.includes(q)) return 2;
+    if(d.includes(q)) return 1;
+    return 0;
+  };
+  const matches = all
+    .filter(l=>!q||score(l)>0)
+    .sort((a,b)=>score(b)-score(a));
+
+  // Shape local listing into API-compatible object
+  const toApiShape = l => ({
+    id:               l.id,
+    title:            l.title||l.name||'',
+    type:             l.type||'product',
+    category:         l.category||l.cat||'',
+    subcategory:      l.subcategory||'',
+    cat_slug:         l.cat||l.catSlug||'',
+    brand:            l.brand||'',
+    condition:        l.condition||'',
+    availability:     l.availability||'',
+    status:           l.status||'active',
+    price:            l.price,
+    price_label:      l.priceLabel||l.price_label||'',
+    negotiable:       l.negotiable||false,
+    contact_for_price:l.contactForPrice||l.contact_for_price||false,
+    img:              l.img||'',
+    images:           l.images||[],
+    tags:             l.tags||'',
+    tags_list:        (l.tags||'').split(',').filter(Boolean),
+    seller:           null,
+    seller_username:  l.sellerUsername||l.seller||'',
+    seller_name:      l.seller||'',
+    meetup:           l.meetup||'',
+    views:            l.views||0,
+    posted_at:        l.postedAt ? new Date(l.postedAt).toISOString() : null,
+    posted_at_ts:     l.postedAt||Date.now(),
+  });
+
+  const products = (type==='all'||type==='products')
+    ? matches.filter(l=>l.type==='product'||!l.type).map(toApiShape) : [];
+  const services = (type==='all'||type==='services')
+    ? matches.filter(l=>l.type==='service').map(toApiShape) : [];
+
+  // User search from profile
+  const users = [];
+  if(type==='all'||type==='users'){
+    const p = JSON.parse(localStorage.getItem('pu-profile')||'{}');
+    if(p.name && q && (
+      p.name.toLowerCase().includes(q) ||
+      (p.username||'').toLowerCase().includes(q) ||
+      (p.faculty||'').toLowerCase().includes(q)
+    )){
+      users.push({
+        id:1, username:p.username||'', full_name:p.name||'',
+        bio:p.bio||'', faculty:p.faculty||'', avatar_url:p.avatarSrc||'',
+        listing_count:0, is_verified:false,
+      });
+    }
+  }
+
+  return {
+    query: q,
+    total: products.length + services.length + users.length,
+    products,
+    services,
+    users,
+    suggestions: [],
+  };
+}
+
+/* ════════════════════════════════════════════════
+   UTILITIES
+════════════════════════════════════════════════ */
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escRegex(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+function initials(name){return String(name||'?').split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();}
+
+function highlightQuery(text){
+  if(!state.query) return text;
+  const re = new RegExp(`(${escRegex(state.query)})`, 'gi');
+  return text.replace(re, '<mark style="background:rgba(232,201,106,.28);border-radius:2px;color:var(--a)">$1</mark>');
+}
+
+function getCookie(name){
+  const v = document.cookie.match('(^|;)\\s*'+name+'\\s*=\\s*([^;]+)');
+  return v ? v.pop() : '';
+}
+</script>
+</body>
+</html>

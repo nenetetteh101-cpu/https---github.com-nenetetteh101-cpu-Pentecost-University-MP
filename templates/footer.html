@@ -1,6 +1,10 @@
-
-    <li><a href="{%url 'about_view' %}"><span class="ico">ℹ️</span>About Us</a></li>
-    <li><a href="{%url 'safety_view' %}"><span class="ico">🛡️</span>Safety</a></li>
-    <li><a href="{%url 'help_view' %}"><span class="ico">❓</span>Help Centre</a></li>
-    <li><a href="{%url 'privacy_view' %}"><span class="ico">🔒</span>Privacy Policy</a></li>
-    <li><a href="{%url 'terms_view' %}"><span class="ico">📄</span>Terms &amp; Conditions</a></li>
+<div class="footer-logo">PU-<span>Marketplace</span></div>
+    <div class="footer-links">
+      <a href="{% url 'home_view' %}">Home</a>
+    <a href="{% url 'dashboard_view' %}">Dashboard</a>
+      <a href="{% url 'about_view' %}">About</a>
+      <a href="{% url 'safety_view' %}">Safety</a>
+      <a href="{% url 'help_view' %}">Help Centre</a>
+      <a href="{% url 'privacy_view' %}">Privacy</a>
+      <a href="{% url 'terms_view' %}">Terms</a>
+    </div>

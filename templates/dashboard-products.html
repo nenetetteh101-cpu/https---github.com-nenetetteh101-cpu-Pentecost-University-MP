@@ -1,20 +1,205 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
-  <title>Products — PU-Marketplace</title>
+  <title>Products — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-  <link href="{% static 'css/dashboard-product.css' %}" rel="stylesheet"/>
+  <style>
+    :root{--a:#e8c96a;--a2:#5be5c5;--red:#ff6b6b;--r:16px;--nh:60px;--bh:78px;--sw:228px}
+    [data-theme="dark"]{--bg:#0d0e11;--card:#1c1f27;--t:#f0eeea;--m:#7a7e8a;--b:rgba(255,255,255,.07);--g:rgba(18,20,28,.65);--gb:rgba(255,255,255,.13);--sh:0 8px 32px rgba(0,0,0,.55);--inp:rgba(255,255,255,.06)}
+    [data-theme="light"]{--bg:#f0ede8;--card:#fff;--t:#1a1a1a;--m:#888;--b:rgba(0,0,0,.08);--g:rgba(255,255,255,.7);--gb:rgba(255,255,255,.92);--sh:0 8px 32px rgba(0,0,0,.1);--inp:rgba(0,0,0,.05)}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t);overflow-x:hidden;transition:background .3s,color .3s;padding-bottom:calc(var(--bh) + 20px)}
+    img{display:block;width:100%;height:100%;object-fit:cover}
+    .tnav{position:sticky;top:0;z-index:500;height:var(--nh);display:flex;align-items:center;gap:.5rem;padding:0 1rem;background:var(--g);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border-bottom:1px solid var(--gb);box-shadow:var(--sh);transition:background .3s}
+    .hbg{width:40px;height:40px;border-radius:10px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;cursor:pointer;border:none;background:var(--inp);flex-shrink:0}
+    .hbg span{width:18px;height:2px;background:var(--t);border-radius:2px}
+    .tabs{display:flex;flex:1;justify-content:center;gap:.2rem}
+    .tab{padding:.38rem .9rem;border-radius:9px;border:none;background:transparent;color:var(--m);font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:600;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap}
+    .tab.on{background:var(--a);color:#0d0e11}
+    .tab:hover:not(.on){color:var(--t);background:var(--inp)}
+    .thbtn{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:var(--inp);font-size:1.1rem;flex-shrink:0;transition:background .2s,transform .3s}
+    .thbtn:hover{transform:rotate(22deg)}
+    .ov{position:fixed;inset:0;z-index:550;background:rgba(0,0,0,.45);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .3s}
+    .ov.on{opacity:1;pointer-events:all}
+    .sb{position:fixed;top:0;left:-100%;bottom:0;width:var(--sw);z-index:600;background:var(--g);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border-right:1px solid var(--gb);transition:left .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto}
+    .sb.on{left:0}
+    .sbh{padding:1.1rem 1.3rem .8rem;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--g);z-index:1}
+    .sbl{font-family:'Playfair Display',serif;font-weight:900;font-size:1.1rem;color:var(--a)}
+    .sbl span{color:var(--t)}
+    .sbx{background:none;border:none;color:var(--m);font-size:1.2rem;cursor:pointer}
+    .sbsec{font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--a2);font-weight:600;padding:.85rem 1.3rem .35rem}
+    .sbul{list-style:none;padding:0 .55rem .3rem}
+    .sbul li a{display:flex;align-items:center;gap:.7rem;padding:.55rem .75rem;border-radius:10px;color:var(--m);font-size:.86rem;font-weight:400;text-decoration:none;transition:all .18s}
+    .sbul li a:hover{color:var(--t);background:var(--inp)}
+    .sbul li a.act{color:var(--a);background:rgba(232,201,106,.08)}
+    .ico{font-size:.95rem;width:18px;text-align:center;flex-shrink:0}
+    .sbd{height:1px;background:var(--b);margin:.35rem 1.3rem}
+    .sbft{padding:.9rem 1.3rem;margin-top:auto;font-size:.7rem;color:var(--m);line-height:1.6}
+    @media(min-width:960px){.sb{left:0;top:var(--nh);border-top:none}.ov{display:none!important}.hbg{display:none!important}.wrap{margin-left:var(--sw)}.botnav{left:calc(50% + var(--sw)/2)}}
+    .wrap{position:relative;z-index:1}
+    .inner{max-width:960px;margin:0 auto;padding:1rem 1rem 0}
+    .srch{position:relative;margin-bottom:.9rem}
+    .srch input{width:100%;background:var(--inp);border:1.5px solid var(--b);border-radius:13px;padding:.78rem 2.4rem;color:var(--t);font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:300;outline:none;transition:border-color .25s,box-shadow .25s}
+    .srch input::placeholder{color:var(--m)}
+    .srch input:focus{border-color:rgba(232,201,106,.4);box-shadow:0 0 0 3px rgba(232,201,106,.07)}
+    .sico{position:absolute;left:.88rem;top:50%;transform:translateY(-50%);font-size:.9rem;opacity:.45;pointer-events:none}
+    .sclr{position:absolute;right:.88rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--m);cursor:pointer;font-size:.82rem;display:none}
+    .srch input:not(:placeholder-shown)~.sclr{display:block}
+    .filters{display:flex;gap:.5rem;overflow-x:auto;padding-bottom:.3rem;margin-bottom:.8rem;-ms-overflow-style:none;scrollbar-width:none}
+    .filters::-webkit-scrollbar{display:none}
+    .fpill{display:flex;align-items:center;gap:.3rem;padding:.36rem .82rem;border-radius:99px;border:1.5px solid var(--b);background:var(--card);font-size:.74rem;font-weight:500;color:var(--m);cursor:pointer;flex-shrink:0;white-space:nowrap;transition:all .2s}
+    .fpill.on{background:var(--a);border-color:var(--a);color:#0d0e11;font-weight:600}
+    .fpill:hover:not(.on){border-color:rgba(232,201,106,.3);color:var(--t)}
+    .sort-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;gap:.5rem;flex-wrap:wrap}
+    .res-count{font-size:.76rem;color:var(--m);font-weight:300}
+    .sort-sel{background:var(--inp);border:1.5px solid var(--b);border-radius:9px;padding:.34rem .72rem;color:var(--t);font-family:'DM Sans',sans-serif;font-size:.74rem;outline:none;cursor:pointer;transition:border-color .2s}
+    .sort-sel:focus{border-color:rgba(232,201,106,.4)}
+    .boost{position:relative;overflow:hidden;border-radius:var(--r);background:linear-gradient(120deg,#1a150a,#2d2005 60%,#1a150a);border:1px solid rgba(232,201,106,.28);padding:1rem 1.2rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+    [data-theme="light"] .boost{background:linear-gradient(120deg,#fdf3d0,#fce8a0,#fdf3d0)}
+    .bgw{position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(232,201,106,.22) 0%,transparent 70%);right:-20px;top:-60px;pointer-events:none}
+    .bdt{position:absolute;inset:0;background-image:radial-gradient(rgba(232,201,106,.11) 1px,transparent 1px);background-size:20px 20px;pointer-events:none}
+    .btx{position:relative;z-index:1}
+    .be{font-size:.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--a);font-weight:700;margin-bottom:.2rem}
+    .bh2{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;line-height:1.2;margin-bottom:.15rem}
+    [data-theme="light"] .bh2{color:#4a3200}
+    .bs{font-size:.7rem;color:var(--m);font-weight:300}
+    .bac{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:.3rem;flex-shrink:0}
+    .brk{font-size:1.4rem;animation:bob 2.2s ease-in-out infinite}
+    @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+    .bct{background:var(--a);color:#0d0e11;padding:.45rem .9rem;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;font-size:.74rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(232,201,106,.3);transition:transform .2s,box-shadow .2s;white-space:nowrap}
+    .bct:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(232,201,106,.42)}
+    .slbl{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem}
+    .slbl h2{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;letter-spacing:-.2px}
+    .slbl a{font-size:.74rem;color:var(--a);font-weight:500;text-decoration:none}
+    .btag{font-size:.57rem;background:linear-gradient(90deg,var(--a),#f5c842);color:#0d0e11;padding:.15rem .42rem;border-radius:99px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-left:.4rem;vertical-align:middle}
+    /* Featured slider */
+    .fw{position:relative;margin-bottom:1.1rem}
+    .fwo{overflow:hidden;border-radius:var(--r)}
+    .ftr{display:flex;transition:transform .55s cubic-bezier(.4,0,.2,1);will-change:transform}
+    .fsl{min-width:100%;position:relative;aspect-ratio:16/7;cursor:pointer;overflow:hidden}
+    @media(max-width:540px){.fsl{aspect-ratio:4/3}}
+    .fsl img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s}
+    .fsl:hover img{transform:scale(1.03)}
+    .fov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.78) 0%,rgba(0,0,0,.1) 55%,transparent 100%)}
+    .fin{position:absolute;bottom:0;left:0;right:0;padding:.9rem 1rem}
+    .ftg{display:inline-flex;align-items:center;gap:.3rem;background:var(--a);color:#0d0e11;font-size:.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:.18rem .5rem;border-radius:99px;margin-bottom:.35rem}
+    .fnm{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#fff;line-height:1.2;margin-bottom:.18rem}
+    @media(max-width:440px){.fnm{font-size:.88rem}}
+    .fmeta{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+    .fpr{font-size:.86rem;color:var(--a);font-weight:700}
+    .fse{font-size:.68rem;color:rgba(255,255,255,.72)}
+    .fca{font-size:.62rem;background:rgba(255,255,255,.18);color:#fff;padding:.14rem .45rem;border-radius:5px;font-weight:500}
+    .far{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:var(--g);backdrop-filter:blur(10px);border:1px solid var(--gb);color:#fff;font-size:.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:5;opacity:0;transition:background .2s,opacity .2s}
+    .fw:hover .far{opacity:1}
+    @media(hover:none){.far{opacity:.7}}
+    .far.p{left:.6rem}.far.n{right:.6rem}
+    .far:hover{background:rgba(232,201,106,.3)}
+    .fdt{display:flex;gap:.38rem;justify-content:center;margin-top:.5rem}
+    .fd{width:7px;height:7px;border-radius:99px;background:var(--b);cursor:pointer;transition:all .3s}
+    .fd.on{background:var(--a);width:18px}
+    /* Products grid */
+    .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:.85rem;margin-bottom:2rem}
+    @media(min-width:1100px){.pgrid{grid-template-columns:repeat(5,1fr)}}
+    @media(max-width:380px){.pgrid{grid-template-columns:repeat(2,1fr)}}
+    .pc{background:var(--card);border:1px solid var(--b);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:transform .3s,border-color .3s;position:relative}
+    .pc:hover{transform:translateY(-4px);border-color:rgba(232,201,106,.25)}
+    .pcimg{width:100%;aspect-ratio:1;overflow:hidden;position:relative}
+    .pcimg img{width:100%;height:100%;object-fit:cover;transition:transform .45s}
+    .pc:hover .pcimg img{transform:scale(1.08)}
+    .pcbg{position:absolute;top:.45rem;left:.45rem;font-size:.57rem;padding:.17rem .42rem;border-radius:5px;font-weight:700;backdrop-filter:blur(8px);letter-spacing:.2px}
+    .pcbd{padding:.72rem .76rem}
+    .pcnm{font-size:.8rem;font-weight:600;margin-bottom:.18rem;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .pcpr{font-size:.88rem;color:var(--a);font-weight:700}
+    .pcrw{display:flex;justify-content:space-between;align-items:center;margin-top:.25rem}
+    .pcsl{font-size:.65rem;color:var(--m)}
+    .pcfv{background:none;border:none;cursor:pointer;font-size:.85rem;transition:transform .2s;padding:0}
+    .pcfv:hover{transform:scale(1.25)}
+    .sold-ov{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;letter-spacing:.5px;text-transform:uppercase}
+    /* Bottom nav */
+    .botnav{position:fixed;bottom:13px;left:50%;transform:translateX(-50%);z-index:400;display:flex;align-items:center;justify-content:space-around;width:min(500px,calc(100vw - 26px));height:var(--bh);padding:0 .7rem;background:var(--g);backdrop-filter:blur(36px) saturate(200%) brightness(1.08);-webkit-backdrop-filter:blur(36px) saturate(200%) brightness(1.08);border:1px solid var(--gb);border-radius:40px;box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.1);transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s}
+    .botnav::before{content:'';position:absolute;top:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.38),transparent);border-radius:99px}
+    .botnav.hide{transform:translateX(-50%) translateY(120px);opacity:0}
+    .ni{display:flex;flex-direction:column;align-items:center;gap:.18rem;flex:1;padding:.4rem 0;background:none;border:none;cursor:pointer;color:var(--m);font-family:'DM Sans',sans-serif;transition:color .2s;-webkit-tap-highlight-color:transparent;position:relative}
+    .ni:hover{color:var(--t)}.ni.on{color:var(--a)}
+    .ni svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+    .ni:hover svg,.ni.on svg{transform:scale(1.1)}
+    .ni.on::after{content:'';position:absolute;bottom:.1rem;width:4px;height:4px;border-radius:50%;background:var(--a)}
+    .nlbl{font-size:.57rem;font-weight:500;letter-spacing:.25px}
+    .nadd{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--a),#f5c440);border:3px solid var(--g);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;box-shadow:0 6px 18px rgba(232,201,106,.5),inset 0 1px 0 rgba(255,255,255,.3);transition:transform .2s,box-shadow .2s;position:relative}
+    .nadd:hover{transform:scale(1.1);box-shadow:0 10px 26px rgba(232,201,106,.6)}
+    .nadd:active{transform:scale(.95)}
+    .nadd svg{width:20px;height:20px;stroke:#0d0e11;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;fill:none}
+    /* Modal */
+    .mov{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;justify-content:center;padding:1rem}
+    .mov.on{opacity:1;pointer-events:all}
+    .modal{background:var(--g);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid var(--gb);border-radius:22px;padding:1.6rem;width:100%;max-width:380px;transform:scale(.92) translateY(16px);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+    .mov.on .modal{transform:scale(1) translateY(0)}
+    .mtl{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;margin-bottom:.2rem}
+    .msb{color:var(--m);font-size:.81rem;margin-bottom:1.2rem;font-weight:300}
+    .mop{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:.9rem}
+    .mo{background:var(--card);border:1.5px solid var(--b);border-radius:13px;padding:1rem .85rem;text-align:center;cursor:pointer;transition:border-color .2s,transform .2s}
+    .mo:hover{border-color:rgba(232,201,106,.4);transform:translateY(-2px)}
+    .moic{font-size:1.6rem;display:block;margin-bottom:.4rem}
+    .molb{font-size:.8rem;font-weight:600}
+    .mcl{width:100%;padding:.65rem;background:var(--inp);border:1px solid var(--b);border-radius:11px;color:var(--m);font-family:'DM Sans',sans-serif;font-size:.86rem;cursor:pointer;transition:background .2s}
+    .mcl:hover{color:var(--t);background:rgba(255,255,255,.08)}
+    ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--b);border-radius:4px}
+    /* ── NOTIF BELL ── */
+    .notibtn{position:relative;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:var(--inp);color:var(--t);flex-shrink:0;transition:background .2s}
+    .notibtn:hover{background:rgba(232,201,106,.15)}
+    .notibtn svg{width:20px;height:20px}
+    .nbadge{position:absolute;top:5px;right:5px;width:16px;height:16px;border-radius:50%;background:var(--red);color:#fff;font-size:.56rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);pointer-events:none}
+    .nbadge.hidden{display:none}
+    .npanel{position:fixed;top:calc(var(--nh) + 8px);right:1rem;width:min(340px,calc(100vw - 2rem));z-index:600;background:var(--g);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid var(--gb);border-radius:18px;box-shadow:var(--sh);transform:translateY(-10px) scale(.96);opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s;overflow:hidden;max-height:80vh}
+    .npanel.open{transform:translateY(0) scale(1);opacity:1;pointer-events:all}
+    .nph{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.1rem .7rem;border-bottom:1px solid var(--b)}
+    .nptitle{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700}
+    .npmrk{font-size:.72rem;color:var(--a);cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif;padding:0}
+    .npmrk:hover{text-decoration:underline}
+    .nplist{overflow-y:auto;max-height:60vh}
+    .nitem{display:flex;gap:.8rem;padding:.85rem 1.1rem;border-bottom:1px solid var(--b);cursor:pointer;transition:background .18s;position:relative}
+    .nitem:last-child{border-bottom:none}
+    .nitem:hover{background:var(--inp)}
+    .nitem.unread::before{content:'';position:absolute;left:.5rem;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;background:var(--a)}
+    .nico2{width:38px;height:38px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+    .ntxt{flex:1;min-width:0}
+    .ntitle2{font-size:.82rem;font-weight:600;margin-bottom:.18rem;line-height:1.35}
+    .ndesc{font-size:.74rem;color:var(--m);font-weight:300;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ntime{font-size:.66rem;color:var(--m);flex-shrink:0;margin-top:.15rem}
+    .npempty{padding:2rem 1rem;text-align:center;color:var(--m);font-size:.85rem}
+    @media(max-width:600px){
+      .boost{flex-direction:column;text-align:center;gap:.75rem}
+      .bac{flex-direction:row;justify-content:center}
+      .filters{flex-wrap:nowrap;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
+      .sort-row{flex-direction:column;align-items:flex-start;gap:.4rem}
+      .sort-sel{width:100%}
+      .inner{padding:.85rem .85rem 0}
+      .npanel{width:calc(100vw - 1.5rem);right:.75rem}
+      .modal{padding:1.3rem}
+      .mop{gap:.5rem}
+    }
+    @media(max-width:400px){
+      .tabs{gap:.1rem}
+      .tab{font-size:.7rem;padding:.34rem .65rem}
+      .pgrid{gap:.7rem}
+      .pcbd{padding:.6rem}
+      .pcnm{font-size:.76rem}
+      .pcpr{font-size:.82rem}
+      .fsl{aspect-ratio:4/3}
+    }
+  </style>
 </head>
 <body>
 <nav class="tnav">
   <button class="hbg" id="hbg"><span></span><span></span><span></span></button>
   <div class="tabs">
-    {%include 'tabs.html'%}
+    <button class="tab" onclick="location.href='{% url 'dashboard_view' %}'">All</button>
+    <button class="tab on">Products</button>
+    <button class="tab" onclick="location.href='{% url 'dashboard_services_view' %}'">Services</button>
   </div>
   <button class="notibtn" id="notibtn" onclick="toggleNotif()" title="Notifications">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
@@ -24,13 +209,28 @@
 </nav>
 <div class="ov" id="ov" onclick="closeSb()"></div>
 <aside class="sb" id="sb">
-  <div class="sbh"><div class="sbl">PU-<span>Marketplace</span></div><button class="sbx" onclick="closeSb()">✕</button></div>
+  <div class="sbh"><div class="sbl">PU-<span>Connect</span></div><button class="sbx" onclick="closeSb()">✕</button></div>
   <div class="sbsec">Navigate</div>
   <ul class="sbul">
-    {% include 'in_dashboard.html' %}
+    {% include 'side_nav.html' %}
   </ul>
-
-  <div class="sbft">© 2026 PU-Marketplace<br>Built for campus, by students.</div>
+  <div class="sbd"></div>
+  <div class="sbsec">Account</div>
+  <ul class="sbul">
+    <li><a href="{% url 'profile_view' %}"><span class="ico">👤</span>Profile</a></li>
+  </ul>
+  <div class="sbd"></div>
+  <div class="sbsec">Info &amp; Legal</div>
+  <ul class="sbul">
+    <li><a href="{% url 'about_view' %}"><span class="ico">ℹ️</span>About Us</a></li>
+    <li><a href="{% url 'safety_view' %}"><span class="ico">🛡️</span>Safety</a></li>
+    <li><a href="{% url 'help_view' %}"><span class="ico">❓</span>Help Centre</a></li>
+    <li><a href="{% url 'privacy_view' %}"><span class="ico">🔒</span>Privacy Policy</a></li>
+    <li><a href="{% url 'terms_view' %}"><span class="ico">📄</span>Terms &amp; Conditions</a></li>
+  </ul>
+  <div class="sbd"></div>
+  <ul class="sbul"><li><a href="{% url 'Auth_view' %}" style="color:var(--red)"><span class="ico">🚪</span>Log Out</a></li></ul>
+  <div class="sbft">© 2026 PU-Connect<br>Built for campus, by students.</div>
 </aside>
 
 <div class="wrap"><div class="inner">
@@ -69,16 +269,16 @@
   </div>
   <div class="slbl">
     <h2>🚀 Boosted Products<span class="btag">Sponsored</span></h2>
-    <a href="dashboard.html">← Back to All</a>
+    <a href="{% url 'dashboard_products_view' %}">← Back to All</a>
   </div>
   <div class="fw" id="fw">
     <button class="far p" onclick="fmv(-1)">&#8592;</button>
     <button class="far n" onclick="fmv(1)">&#8594;</button>
     <div class="fwo"><div class="ftr" id="ft">
-      <div class="fsl"><img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=900&q=80&auto=format" alt="Laptop" loading="lazy"/><div class="fov"></div><div class="fin"><div class="ftg">🚀 Boosted</div><div class="fnm">Dell XPS 13 — Core i7, 16GB RAM</div><div class="fmeta"><span class="fpr">GH₵ 2,400</span><span class="fse">@kofi_tech</span><span class="fca">Electronics</span></div></div></div>
-      <div class="fsl"><img src="https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=900&q=80&auto=format" alt="MacBook" loading="lazy"/><div class="fov"></div><div class="fin"><div class="ftg">🚀 Boosted</div><div class="fnm">MacBook Air M1 — 256GB, Like New</div><div class="fmeta"><span class="fpr">GH₵ 4,200</span><span class="fse">@kweku_apple</span><span class="fca">Electronics</span></div></div></div>
-      <div class="fsl"><img src="https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=900&q=80&auto=format" alt="Headphones" loading="lazy"/><div class="fov"></div><div class="fin"><div class="ftg">🚀 Boosted</div><div class="fnm">Sony WH-1000XM5 Wireless Headphones</div><div class="fmeta"><span class="fpr">GH₵ 780</span><span class="fse">@abena_sound</span><span class="fca">Electronics</span></div></div></div>
-      <div class="fsl"><img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=900&q=80&auto=format" alt="Chair" loading="lazy"/><div class="fov"></div><div class="fin"><div class="ftg">🚀 Boosted</div><div class="fnm">Ergonomic Study Chair — Like New</div><div class="fmeta"><span class="fpr">GH₵ 520</span><span class="fse">@akua_room</span><span class="fca">Furniture</span></div></div></div>
+      <!-- Boosted listing slide will appear here -->
+      <!-- Boosted listing slide will appear here -->
+      <!-- Boosted listing slide will appear here -->
+      <!-- Boosted listing slide will appear here -->
     </div></div>
     <div class="fdt" id="fd"></div>
   </div>
@@ -92,6 +292,7 @@
     <div class="msb">Choose what you'd like to do</div>
     <div class="mop">
       {% include 'mop.html' %}
+      
     </div>
     <button class="mcl" onclick="closeMod()">Cancel</button>
   </div>
@@ -104,8 +305,8 @@
 </div>
 
 <nav class="botnav" id="bn">
-  
   {% include 'bot_nav.html' %}
+  </button>
 </nav>
 
 <script>
@@ -119,42 +320,96 @@ function closeSb(){sb.classList.remove('on');ov.classList.remove('on');document.
 if(window.innerWidth>=960)sb.classList.add('on');
 window.addEventListener('resize',()=>{if(window.innerWidth>=960){sb.classList.add('on');ov.classList.remove('on')}else{sb.classList.remove('on');}});
 
-const PRODS=[
-  {id:1,name:'Dell XPS 13 Laptop',price:2400,cat:'electronics',seller:'@kofi_tech',img:'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&q=75&auto=format',badge:'Electronics',bc:'rgba(232,201,106,.18)',bt:'var(--a)',sold:false},
-  {id:2,name:'Data Structures Textbook',price:55,cat:'textbooks',seller:'@yaw_cs',img:'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=75&auto=format',badge:'Textbook',bc:'rgba(91,229,197,.18)',bt:'#5be5c5',sold:false},
-  {id:3,name:'LG 24" Full HD Monitor',price:900,cat:'electronics',seller:'@kojo_tech',img:'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&q=75&auto=format',badge:'Electronics',bc:'rgba(232,201,106,.18)',bt:'var(--a)',sold:false},
-  {id:4,name:'North Face Backpack',price:70,cat:'fashion',seller:'@ama_bags',img:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&q=75&auto=format',badge:'Fashion',bc:'rgba(160,120,255,.18)',bt:'#a78bfa',sold:false},
-  {id:5,name:'Mechanical Keyboard RGB',price:280,cat:'electronics',seller:'@kofi_gear',img:'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&q=75&auto=format',badge:'Electronics',bc:'rgba(232,201,106,.18)',bt:'var(--a)',sold:false},
-  {id:6,name:'Compact Study Desk',price:130,cat:'furniture',seller:'@esi_dorm',img:'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=400&q=75&auto=format',badge:'Furniture',bc:'rgba(91,229,197,.18)',bt:'#5be5c5',sold:false},
-  {id:7,name:'Samsung Galaxy A52',price:620,cat:'electronics',seller:'@kweku_phones',img:'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&q=75&auto=format',badge:'Electronics',bc:'rgba(232,201,106,.18)',bt:'var(--a)',sold:false},
-  {id:8,name:'Ergonomic Office Chair',price:350,cat:'furniture',seller:'@akua_room',img:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&q=75&auto=format',badge:'Furniture',bc:'rgba(91,229,197,.18)',bt:'#5be5c5',sold:false},
-  {id:9,name:'Casio FX-991EX Calculator',price:85,cat:'tools',seller:'@maths_queen',img:'https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=400&q=75&auto=format',badge:'Tools',bc:'rgba(160,120,255,.18)',bt:'#a78bfa',sold:false},
-  {id:10,name:'Nike Air Max — Size 42',price:210,cat:'fashion',seller:'@sneaker_ato',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=75&auto=format',badge:'Fashion',bc:'rgba(251,146,60,.18)',bt:'#fb923c',sold:false},
-  {id:11,name:'iPad 9th Gen 64GB WiFi',price:1650,cat:'electronics',seller:'@tab_kojo',img:'https://images.unsplash.com/photo-1612831455359-970e23a1e4e9?w=400&q=75&auto=format',badge:'Electronics',bc:'rgba(232,201,106,.18)',bt:'var(--a)',sold:false},
-  {id:12,name:'Engineering Drawing Set',price:35,cat:'tools',seller:'@abena_arch',img:'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=400&q=75&auto=format',badge:'Tools',bc:'rgba(251,146,60,.18)',bt:'#fb923c',sold:false},
-  {id:13,name:'Adidas Running Shoes',price:95,cat:'sports',seller:'@gym_adjoa',img:'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=400&q=75&auto=format',badge:'Sports',bc:'rgba(255,107,107,.18)',bt:'#ff6b6b',sold:false},
-  {id:14,name:'MacBook Air M1 256GB',price:4200,cat:'electronics',seller:'@kweku_apple',img:'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=400&q=75&auto=format',badge:'Electronics',bc:'rgba(232,201,106,.18)',bt:'var(--a)',sold:false},
-  {id:15,name:'Organic Chemistry Vol. 2',price:35,cat:'textbooks',seller:'@kwame_sci',img:'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400&q=75&auto=format',badge:'Textbook',bc:'rgba(91,229,197,.18)',bt:'#5be5c5',sold:true},
-  {id:16,name:'Sony WH-1000XM5',price:780,cat:'electronics',seller:'@abena_sound',img:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=400&q=75&auto=format',badge:'Electronics',bc:'rgba(232,201,106,.18)',bt:'var(--a)',sold:false},
-  {id:17,name:'Hostel Mini Fridge',price:420,cat:'furniture',seller:'@kofi_dorm',img:'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=400&q=75&auto=format',badge:'Furniture',bc:'rgba(91,229,197,.18)',bt:'#5be5c5',sold:false},
-  {id:18,name:'Business Law Textbook',price:45,cat:'textbooks',seller:'@law_ama',img:'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=400&q=75&auto=format',badge:'Textbook',bc:'rgba(91,229,197,.18)',bt:'#5be5c5',sold:false},
-];
+/* ── Load products from localStorage ── */
+function loadProducts(){
+  try{
+    const all=JSON.parse(localStorage.getItem('pu-listings')||'[]');
+    return all.filter(l=>l.type==='product'||(!l.type&&l.price!=null));
+  }catch(e){return [];}
+}
 
-let filtered=[...PRODS],favs=new Set();
+let ALL_PRODS=loadProducts();
+let filtered=[...ALL_PRODS];
+let favs=new Set(JSON.parse(localStorage.getItem('pu-fav-ids')||'[]'));
+
+function catSlugOf(l){return l.cat||l.category||'other';}
+
 function renderGrid(data){
   const g=document.getElementById('ag');
   document.getElementById('resCount').textContent='Showing '+data.length+' product'+(data.length!==1?'s':'');
-  if(!data.length){g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--m);font-size:.9rem">No products found.</div>';return}
-  g.innerHTML=data.map(p=>`<div class="pc"><div class="pcimg"><img src="${p.img}" alt="${p.name}" loading="lazy"/><span class="pcbg" style="background:${p.bc};color:${p.bt}">${p.badge}</span>${p.sold?'<div class="sold-ov">Sold</div>':''}</div><div class="pcbd"><div class="pcnm">${p.name}</div><div class="pcpr">GH₵ ${p.price.toLocaleString()}</div><div class="pcrw"><span class="pcsl">${p.seller}</span><button class="pcfv" onclick="event.stopPropagation();tFav(this,${p.id})">${favs.has(p.id)?'❤️':'🤍'}</button></div></div></div>`).join('');
+  if(!data.length){
+    g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:3.5rem 1rem">
+      <div style="font-size:2.5rem;margin-bottom:.65rem;opacity:.4">📦</div>
+      <div style="font-size:.92rem;font-weight:600;margin-bottom:.35rem">No products yet</div>
+      <div style="font-size:.8rem;color:var(--m);margin-bottom:1.1rem">Be the first to list something for sale</div>
+      <button onclick="location.href='{% url 'create_listings_view'}'" style="background:var(--a);color:#0d0e11;padding:.6rem 1.3rem;border-radius:9px;border:none;font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:700;cursor:pointer">+ Post a Product</button>
+    </div>`;
+    return;
+  }
+  g.innerHTML=data.map(l=>{
+    const price=l.contactForPrice?'Contact':(l.priceLabel||(l.price!=null?'GH₵ '+Number(l.price).toLocaleString():''));
+    const cat=l.category||l.cat||'';
+    const badge=cat;
+    const isSold=l.status==='sold';
+    return `<div class="pc" onclick="openListingDetail('${l.id}')" style="cursor:pointer">
+      <div class="pcimg">
+        ${l.img?`<img src="${l.img}" alt="${(l.title||l.name||'').replace(/"/g,'')}" loading="lazy"/>`:`<div style="width:100%;height:100%;background:var(--inp);display:flex;align-items:center;justify-content:center;font-size:2.5rem">📦</div>`}
+        ${badge?`<span class="pcbg" style="background:rgba(232,201,106,.14);color:var(--a)">${badge}</span>`:''}
+        ${isSold?'<div class="sold-ov">Sold</div>':''}
+      </div>
+      <div class="pcbd">
+        <div class="pcnm">${(l.title||l.name||'Untitled').substring(0,40)}</div>
+        <div class="pcpr">${price}</div>
+        <div class="pcrw">
+          <span class="pcsl">@${l.sellerUsername||l.seller||''}</span>
+          <button class="pcfv" onclick="event.stopPropagation();tFav(this,'${l.id}')">${favs.has(l.id)?'❤️':'🤍'}</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
-function tFav(b,id){if(favs.has(id)){favs.delete(id);b.textContent='🤍'}else{favs.add(id);b.textContent='❤️'}}
-function fcat(pill,cat){document.querySelectorAll('.fpill').forEach(p=>p.classList.remove('on'));pill.classList.add('on');const q=document.getElementById('si').value.toLowerCase();filtered=cat==='all'?PRODS.filter(p=>p.name.toLowerCase().includes(q)):PRODS.filter(p=>p.cat===cat&&p.name.toLowerCase().includes(q));renderGrid(filtered)}
-function doSearch(inp){const v=inp.value.toLowerCase();const ac=document.querySelector('.fpill.on').onclick.toString().match(/'([^']+)'/)?.[1]||'all';filtered=PRODS.filter(p=>(ac==='all'||p.cat===ac)&&(p.name.toLowerCase().includes(v)||p.seller.toLowerCase().includes(v)||p.badge.toLowerCase().includes(v)));renderGrid(filtered)}
-function clearS(){const i=document.getElementById('si');i.value='';doSearch(i)}
-function doSort(val){const d=[...filtered];if(val==='price-asc')d.sort((a,b)=>a.price-b.price);else if(val==='price-desc')d.sort((a,b)=>b.price-a.price);else if(val==='popular')d.sort(()=>Math.random()-.5);renderGrid(d)}
-renderGrid(PRODS);
-// Auto-filter from URL hash (e.g. #electronics from homepage categories)
-const urlHash=location.hash.replace("#","");
+
+function tFav(b,id){
+  if(favs.has(id)){favs.delete(id);b.textContent='🤍';}
+  else{favs.add(id);b.textContent='❤️';}
+  try{localStorage.setItem('pu-fav-ids',JSON.stringify([...favs]));}catch(e){}
+}
+
+function fcat(pill,cat){
+  document.querySelectorAll('.fpill').forEach(p=>p.classList.remove('on'));
+  pill.classList.add('on');
+  const q=document.getElementById('si').value.toLowerCase().trim();
+  filtered=cat==='all'
+    ? ALL_PRODS.filter(l=>!q||(l.title||l.name||'').toLowerCase().includes(q))
+    : ALL_PRODS.filter(l=>catSlugOf(l)===cat&&(!q||(l.title||l.name||'').toLowerCase().includes(q)));
+  renderGrid(filtered);
+}
+
+function doSearch(inp){
+  const v=inp.value.toLowerCase().trim();
+  const ac=document.querySelector('.fpill.on')?.dataset?.cat||'all';
+  filtered=ALL_PRODS.filter(l=>{
+    const matchCat=ac==='all'||catSlugOf(l)===ac;
+    const matchQ=!v||(l.title||l.name||'').toLowerCase().includes(v)||(l.sellerUsername||l.seller||'').toLowerCase().includes(v)||(l.category||l.cat||'').toLowerCase().includes(v);
+    return matchCat&&matchQ;
+  });
+  renderGrid(filtered);
+}
+function clearS(){const i=document.getElementById('si');i.value='';doSearch(i);}
+
+function doSort(val){
+  const d=[...filtered];
+  if(val==='price-asc')d.sort((a,b)=>(a.price||0)-(b.price||0));
+  else if(val==='price-desc')d.sort((a,b)=>(b.price||0)-(a.price||0));
+  else if(val==='popular')d.sort((a,b)=>(b.views||0)-(a.views||0));
+  renderGrid(d);
+}
+
+renderGrid(ALL_PRODS);
+window.addEventListener('focus',()=>{ALL_PRODS=loadProducts();filtered=[...ALL_PRODS];renderGrid(filtered);});
+
+// Auto-filter from URL hash
+const urlHash=location.hash.replace('#','');
 if(urlHash){const pill=document.querySelector(`.fpill[onclick*="${urlHash}"]`);if(pill){fcat(pill,urlHash);}}
 
 
@@ -176,13 +431,7 @@ function closeMod(){MV.classList.remove('on');document.body.style.overflow=''}
 const BN=document.getElementById('bn');let ly=0,tk=false;
 window.addEventListener('scroll',()=>{if(!tk){requestAnimationFrame(()=>{const y=window.scrollY;if(y>ly+10&&y>80)BN.classList.add('hide');else if(y<ly-10)BN.classList.remove('hide');ly=y;tk=false});tk=true}},{passive:true});
 /* NOTIFICATIONS */
-const NOTIFS=[
-  {id:1,icon:'🚀',bg:'rgba(232,201,106,.12)',title:'Your listing is now Boosted!',desc:'Dell XPS 13 is live in Featured. Est. 10× more views today.',time:'Just now',unread:true},
-  {id:2,icon:'💬',bg:'rgba(91,229,197,.12)',title:'New message from @kofi_tech',desc:'Hey, is the MacBook still available?',time:'5 min ago',unread:true},
-  {id:3,icon:'❤️',bg:'rgba(255,107,107,.12)',title:'@ama_bags liked your listing',desc:'North Face Backpack got a new like.',time:'12 min ago',unread:true},
-  {id:4,icon:'🏷️',bg:'rgba(160,120,255,.12)',title:'Price drop alert',desc:'Sony WH-1000XM5 you wished just dropped to GH₵ 650.',time:'1 hr ago',unread:false},
-  {id:5,icon:'⭐',bg:'rgba(232,201,106,.12)',title:'New review received',desc:'@yaw_cs left you a 5-star review.',time:'2 hrs ago',unread:false},
-];
+const NOTIFS=[];
 let notifs=[...NOTIFS];
 function renderNotifs(){const list=document.getElementById('nlist');const unread=notifs.filter(n=>n.unread).length;const badge=document.getElementById('nbadge');if(unread>0){badge.textContent=unread>9?'9+':unread;badge.classList.remove('hidden')}else{badge.classList.add('hidden')}list.innerHTML=notifs.map(n=>`<div class="nitem${n.unread?' unread':''}" onclick="markRead(${n.id})"><div class="nico2" style="background:${n.bg}">${n.icon}</div><div class="ntxt"><div class="ntitle2">${n.title}</div><div class="ndesc">${n.desc}</div></div><div class="ntime">${n.time}</div></div>`).join('')}
 function markRead(id){const n=notifs.find(x=>x.id===id);if(n)n.unread=false;renderNotifs()}
@@ -191,7 +440,263 @@ const NP=document.getElementById('npanel');
 function toggleNotif(){NP.classList.toggle('open')}
 document.addEventListener('click',e=>{if(!e.target.closest('#notibtn')&&!e.target.closest('#npanel'))NP.classList.remove('open')});
 renderNotifs();
-function openBoost(){alert("To boost your listing, message our support team via in-app chat. Boosted listings appear in Featured — free during campus beta.");}
+function openBoost(){
+  // Navigate to chat with support context
+  try{localStorage.setItem('pu-chat-open',JSON.stringify({username:'support',listing:'Boost Request'}));}catch(e){}
+  location.href='{% url 'chat_view'}';
+}
+
+/* ════════════════════════════════════════════
+   LISTING DETAIL SHEET — shared across dashboards
+════════════════════════════════════════════ */
+(function(){
+  const ldOv  = document.getElementById('ldOv');
+  const ldSh  = document.getElementById('ldSheet');
+  let   curId = null;
+  let   gIdx  = 0;
+  let   gImgs = [];
+  let   wishSet = new Set(JSON.parse(localStorage.getItem('pu-wish-ids')||'[]'));
+
+  function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+  function fmtPrice(l){
+    if(l.contactForPrice)return 'Contact for Price';
+    if(l.priceLabel)return l.priceLabel;
+    if(l.price!=null&&l.price!=='')return 'GH₵ '+Number(l.price).toLocaleString()+(l.negotiable?' (Negotiable)':'');
+    return '—';
+  }
+
+  function timeAgo(ts){
+    if(!ts)return '';
+    const s=Math.floor((Date.now()-ts)/1000);
+    if(s<60)return 'Just now';
+    if(s<3600)return Math.floor(s/60)+'m ago';
+    if(s<86400)return Math.floor(s/3600)+'h ago';
+    if(s<604800)return Math.floor(s/86400)+'d ago';
+    return new Date(ts).toLocaleDateString('en-GH',{day:'numeric',month:'short',year:'numeric'});
+  }
+
+  function initials(name){
+    return String(name||'?').split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();
+  }
+
+  /* Build gallery */
+  function buildGallery(imgs){
+    const gal = document.getElementById('ldGallery');
+    const dots = document.getElementById('ldDots');
+    gImgs = imgs.length ? imgs : [];
+    gIdx  = 0;
+    if(!gImgs.length){
+      gal.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;background:var(--inp)">🏷️</div>';
+      dots.innerHTML = '';
+      return;
+    }
+    function showImg(i){
+      gIdx = i;
+      gal.innerHTML = `<img src="${escH(gImgs[i])}" alt="" style="width:100%;height:100%;object-fit:cover;display:block"/>`;
+      dots.innerHTML = gImgs.length > 1
+        ? gImgs.map((_,j)=>`<div onclick="window._ldGo(${j})" style="width:${j===i?18:7}px;height:7px;border-radius:99px;background:${j===i?'var(--a)':'rgba(255,255,255,.25)'};cursor:pointer;transition:all .3s"></div>`).join('')
+        : '';
+    }
+    window._ldGo = function(i){ showImg(((i%gImgs.length)+gImgs.length)%gImgs.length); };
+    showImg(0);
+    /* Swipe */
+    let tx=0;
+    gal.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+    gal.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)window._ldGo(gIdx+(dx<0?1:-1));});
+    gal.style.cursor='pointer';
+    gal.onclick=()=>{ if(gImgs.length>1) window._ldGo(gIdx+1); };
+  }
+
+  /* Row helper */
+  function row(label,value){
+    return `<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:.38rem 0;border-bottom:1px solid rgba(255,255,255,.05);gap:.75rem">
+      <span style="font-size:.75rem;color:var(--m);flex-shrink:0;min-width:90px">${escH(label)}</span>
+      <span style="font-size:.78rem;font-weight:500;text-align:right;word-break:break-word">${escH(value)}</span>
+    </div>`;
+  }
+
+  /* Open */
+  window.openListingDetail = function(id){
+    const all = JSON.parse(localStorage.getItem('pu-listings')||'[]');
+    const l   = all.find(x=>x.id===id);
+    if(!l) return;
+    curId = id;
+
+    /* Increment view count */
+    l.views = (l.views||0)+1;
+    try{ localStorage.setItem('pu-listings',JSON.stringify(all)); }catch(e){}
+
+    /* Gallery */
+    const imgs = Array.isArray(l.images)&&l.images.length ? l.images : (l.img ? [l.img] : []);
+    buildGallery(imgs);
+
+    /* Badges */
+    const isService = l.type==='service';
+    const typeBg    = isService?'rgba(91,229,197,.14)':'rgba(232,201,106,.14)';
+    const typeClr   = isService?'#5be5c5':'var(--a)';
+    document.getElementById('ldBadges').innerHTML =
+      `<span style="background:${typeBg};color:${typeClr};font-size:.65rem;font-weight:700;padding:.2rem .6rem;border-radius:5px">${isService?'Service':'Product'}</span>`+
+      (l.category||l.cat?`<span style="background:rgba(255,255,255,.07);color:var(--m);font-size:.65rem;padding:.2rem .6rem;border-radius:5px">${escH(l.category||l.cat)}</span>`:'')+
+      (l.subcategory?`<span style="background:rgba(255,255,255,.05);color:var(--m);font-size:.65rem;padding:.2rem .6rem;border-radius:5px">${escH(l.subcategory)}</span>`:'');
+
+    /* Title */
+    document.getElementById('ldTitle').textContent = l.title||l.name||'Untitled';
+
+    /* Price */
+    document.getElementById('ldPrice').textContent = fmtPrice(l);
+
+    /* Seller */
+    const sName = l.seller||'Anonymous';
+    document.getElementById('ldAv').textContent   = initials(sName);
+    document.getElementById('ldSellerName').textContent = sName;
+    document.getElementById('ldSellerMeta').textContent =
+      ('@'+(l.sellerUsername||'')) + (l.postedAt ? ' · '+timeAgo(l.postedAt) : '') +
+      (l.meetup ? ' · 📍 '+l.meetup : '');
+
+    /* Status badge */
+    const st = l.status||'active';
+    const stMap = {active:['rgba(91,229,197,.12)','#5be5c5','Active'],sold:['rgba(255,107,107,.12)','#ff6b6b','Sold'],paused:['rgba(160,120,255,.12)','#a78bfa','Paused'],boosted:['rgba(232,201,106,.15)','var(--a)','🚀 Boosted']};
+    const [sbg,sclr,slbl] = stMap[st]||stMap.active;
+    const stEl = document.getElementById('ldStatus');
+    stEl.style.background = sbg; stEl.style.color = sclr; stEl.textContent = slbl;
+
+    /* Detail rows */
+    const rows = [];
+    if(l.condition)          rows.push(row('Condition', l.condition));
+    if(l.availability)       rows.push(row('Availability', l.availability));
+    if(l.brand)              rows.push(row('Brand', l.brand));
+    if(l.meetup)             rows.push(row('Meetup Spot', '📍 '+l.meetup));
+    if(l.phone)              rows.push(row('Contact', l.phone));
+    document.getElementById('ldRows').innerHTML = rows.join('');
+
+    /* Description */
+    const descWrap = document.getElementById('ldDescWrap');
+    if(l.description){
+      document.getElementById('ldDesc').textContent = l.description;
+      descWrap.style.display='block';
+    } else { descWrap.style.display='none'; }
+
+    /* Tags */
+    const tagsWrap = document.getElementById('ldTagsWrap');
+    if(Array.isArray(l.tags)&&l.tags.length){
+      document.getElementById('ldTags').innerHTML = l.tags.map(t=>`<span style="background:rgba(91,229,197,.1);border:1px solid rgba(91,229,197,.2);border-radius:99px;padding:.18rem .6rem;font-size:.72rem;font-weight:500;color:#5be5c5">${escH(t)}</span>`).join('');
+      tagsWrap.style.display='block';
+    } else { tagsWrap.style.display='none'; }
+
+    /* Message seller */
+    document.getElementById('ldChatBtn').onclick = function(){
+      try{ localStorage.setItem('pu-chat-open', JSON.stringify({username:l.sellerUsername||l.seller,listing:l.title||l.name})); }catch(e){}
+      location.href='{% url 'chat_view'%}';
+    };
+
+    /* Wishlist / save */
+    const wishBtn = document.getElementById('ldWishBtn');
+    wishBtn.textContent = wishSet.has(id) ? '❤️ Saved' : '🤍 Save';
+    wishBtn.onclick = function(){
+      if(wishSet.has(id)){ wishSet.delete(id); wishBtn.textContent='🤍 Save'; }
+      else { wishSet.add(id); wishBtn.textContent='❤️ Saved'; }
+      try{ localStorage.setItem('pu-wish-ids',JSON.stringify([...wishSet])); }catch(e){}
+    };
+
+    /* Share */
+    document.getElementById('ldShareBtn').onclick = function(){
+      const text = (l.title||l.name||'Listing')+' — '+(fmtPrice(l))+' on PU-Connect';
+      if(navigator.share){ navigator.share({title:l.title||l.name||'',text,url:location.href}).catch(()=>{}); }
+      else { navigator.clipboard?.writeText(text).then(()=>ldToast('Link copied!')).catch(()=>ldToast('Copied!')); }
+    };
+
+    /* Show overlay */
+    ldOv.style.pointerEvents='all';
+    ldOv.style.opacity='1';
+    requestAnimationFrame(()=>ldSh.style.transform='translateY(0)');
+    document.body.style.overflow='hidden';
+  };
+
+  /* Close */
+  function closeLD(){
+    ldSh.style.transform='translateY(100%)';
+    ldOv.style.opacity='0';
+    setTimeout(()=>{ ldOv.style.pointerEvents='none'; },380);
+    document.body.style.overflow='';
+    curId=null;
+  }
+
+  document.getElementById('ldClose').onclick = closeLD;
+  ldOv.addEventListener('click',e=>{ if(e.target===ldOv) closeLD(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&curId) closeLD(); });
+
+  /* Swipe down to dismiss */
+  let sy=0;
+  ldSh.addEventListener('touchstart',e=>{ sy=e.touches[0].clientY; },{passive:true});
+  ldSh.addEventListener('touchend',e=>{
+    const dy=e.changedTouches[0].clientY-sy;
+    if(dy>80&&ldSh.scrollTop===0) closeLD();
+  },{passive:true});
+
+  /* Toast */
+  window.ldToast = function(msg){
+    let t=document.getElementById('ld-toast');
+    if(!t){t=document.createElement('div');t.id='ld-toast';t.style.cssText='position:fixed;bottom:calc(var(--bh,78px)+18px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--card);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:.6rem 1.2rem;font-size:.82rem;font-weight:500;color:var(--t);box-shadow:0 8px 32px rgba(0,0,0,.6);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;z-index:999;white-space:nowrap';document.body.appendChild(t);}
+    t.textContent=msg;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
+    clearTimeout(window._ldToastT);window._ldToastT=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(20px)';},2600);
+  };
+})();
+
 </script>
+
+<!-- ── LISTING DETAIL SHEET ── -->
+<div id="ldOv" style="position:fixed;inset:0;z-index:750;background:rgba(0,0,0,.65);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:flex-end;justify-content:center">
+  <div id="ldSheet" style="width:100%;max-width:580px;background:var(--card);border-radius:24px 24px 0 0;border-top:1px solid rgba(255,255,255,.1);max-height:88dvh;overflow-y:auto;transform:translateY(100%);transition:transform .38s cubic-bezier(.4,0,.2,1)">
+    <!-- Handle + close -->
+    <div style="position:sticky;top:0;z-index:2;background:var(--card);padding:.75rem 1.1rem .4rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.06)">
+      <div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.15);margin:0 auto;flex:1;max-width:36px"></div>
+      <button id="ldClose" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:var(--m);cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">✕</button>
+    </div>
+    <!-- Photo gallery -->
+    <div id="ldGallery" style="width:100%;aspect-ratio:4/3;background:var(--inp);overflow:hidden;position:relative;max-height:280px"></div>
+    <!-- Photo dots -->
+    <div id="ldDots" style="display:flex;justify-content:center;gap:.35rem;padding:.5rem 0 0"></div>
+    <!-- Body -->
+    <div style="padding:1.1rem 1.2rem 1.4rem">
+      <!-- Type + category badges -->
+      <div id="ldBadges" style="display:flex;gap:.4rem;margin-bottom:.6rem;flex-wrap:wrap"></div>
+      <!-- Title -->
+      <div id="ldTitle" style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:900;letter-spacing:-.3px;line-height:1.25;margin-bottom:.4rem"></div>
+      <!-- Price -->
+      <div id="ldPrice" style="font-size:1.25rem;font-weight:800;color:var(--a);font-family:'Playfair Display',serif;margin-bottom:.5rem"></div>
+      <!-- Seller row -->
+      <div style="display:flex;align-items:center;gap:.6rem;padding:.6rem 0;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:.85rem">
+        <div id="ldAv" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--a),#f5c842);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#0d0e11;flex-shrink:0;font-family:'Playfair Display',serif"></div>
+        <div style="flex:1;min-width:0">
+          <div id="ldSellerName" style="font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+          <div id="ldSellerMeta" style="font-size:.7rem;color:var(--m)"></div>
+        </div>
+        <div id="ldStatus" style="font-size:.65rem;font-weight:700;padding:.2rem .55rem;border-radius:5px"></div>
+      </div>
+      <!-- Detail rows -->
+      <div id="ldRows" style="display:flex;flex-direction:column;gap:.45rem;margin-bottom:.9rem"></div>
+      <!-- Description -->
+      <div id="ldDescWrap" style="display:none;margin-bottom:.9rem">
+        <div style="font-size:.7rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--m);margin-bottom:.4rem">Description</div>
+        <div id="ldDesc" style="font-size:.85rem;line-height:1.7;color:var(--t)"></div>
+      </div>
+      <!-- Tags -->
+      <div id="ldTagsWrap" style="display:none;margin-bottom:1rem">
+        <div style="font-size:.7rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--m);margin-bottom:.4rem">Tags</div>
+        <div id="ldTags" style="display:flex;flex-wrap:wrap;gap:.35rem"></div>
+      </div>
+      <!-- Actions -->
+      <div style="display:flex;flex-direction:column;gap:.5rem">
+        <button id="ldChatBtn" style="width:100%;padding:.85rem;border-radius:12px;background:var(--a);color:#0d0e11;border:none;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:opacity .2s">💬 Message Seller</button>
+        <div style="display:flex;gap:.5rem">
+          <button id="ldWishBtn" style="flex:1;padding:.7rem;border-radius:12px;background:rgba(255,255,255,.06);color:var(--t);border:1px solid rgba(255,255,255,.1);font-family:'DM Sans',sans-serif;font-size:.84rem;cursor:pointer">🤍 Save</button>
+          <button id="ldShareBtn" style="flex:1;padding:.7rem;border-radius:12px;background:rgba(255,255,255,.06);color:var(--t);border:1px solid rgba(255,255,255,.1);font-family:'DM Sans',sans-serif;font-size:.84rem;cursor:pointer">🔗 Share</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
