@@ -1,0 +1,116 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Contact Us - PU-Marketplace{% endblock %}
+
+{% block extra_css %}
+<style>
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  textarea {
+    width: 100%;
+    padding: 0.85rem;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    transition: border-color .2s;
+  }
+
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  textarea:focus {
+    outline: none;
+    border-color: rgba(232,201,106,.5);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 150px;
+  }
+
+  .submit-btn {
+    background: var(--accent);
+    color: #0d0e11;
+    padding: 0.85rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+
+  .submit-btn:hover {
+    opacity: 0.85;
+  }
+
+  .success-msg {
+    background: rgba(91,229,197,.1);
+    border: 1px solid rgba(91,229,197,.3);
+    color: var(--accent2);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .contact-form-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <h1>Contact Us</h1>
+  <p>Get in touch with our support team</p>
+</div>
+
+<div class="contact-form-wrapper">
+  {% if success %}
+  <div class="success-msg">
+    ✅ {{ success_message }} We'll respond within 24 hours.
+  </div>
+  {% endif %}
+
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="name">Your Name</label>
+      <input type="text" id="name" name="name" required>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+
+    <div class="form-group">
+      <label for="subject">Subject</label>
+      <input type="text" id="subject" name="subject" required>
+    </div>
+
+    <div class="form-group">
+      <label for="message">Message</label>
+      <textarea id="message" name="message" required></textarea>
+    </div>
+
+    <button type="submit" class="submit-btn">Send Message</button>
+  </form>
+</div>
+
+{% endblock %}

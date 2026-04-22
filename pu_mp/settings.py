@@ -40,8 +40,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'marketplace',
-    'profiles',
+    'Auth_app',
+    'dash_app',
+    'Reels_app',
+    'Base_app',
+    'Orders_app',
+    'Profile_app',
+    'search_app',
+    'chat_app',
+    'Listings_app',
+    
+
 ]
 
 MIDDLEWARE = [

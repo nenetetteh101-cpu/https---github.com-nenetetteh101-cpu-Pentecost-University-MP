@@ -1,0 +1,124 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Privacy Policy - PU-Marketplace{% endblock %}
+
+{% block extra_css %}
+<style>
+  .content-section {
+    margin-bottom: 3rem;
+  }
+
+  .content-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .content-section p {
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+
+  .content-section ul {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .content-section li {
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<nav>
+  <a href="{% url 'base:home' %}" class="logo">PU-<span>Marketplace</span></a>
+  <ul>
+    <li><a href="{% url 'base:home' %}">Home</a></li>
+    <li><a href="{% url 'base:about' %}">About</a></li>
+    <li><a href="{% url 'base:safety' %}">Safety</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <h1>Privacy Policy</h1>
+  <p style="color: var(--muted);">Last updated: January 2026</p>
+</div>
+
+<div class="content-section">
+  <h2>1. Introduction</h2>
+  <p>
+    PU-Marketplace ("we" or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, 
+    use, disclose, and safeguard your information when you use our Platform.
+  </p>
+</div>
+
+<div class="content-section">
+  <h2>2. Information We Collect</h2>
+  <p><strong>Account Information:</strong> When you sign up, we collect your name, email, university, phone number (optional), and profile information.</p>
+  <p><strong>Transaction Data:</strong> We collect information about your listings and purchases, including descriptions, prices, and payment methods.</p>
+  <p><strong>Communication Data:</strong> Messages you send through our in-app chat system.</p>
+  <p><strong>Device Information:</strong> IP address, browser type, operating system, and device identifiers.</p>
+  <p><strong>Usage Data:</strong> How you interact with the Platform, including pages viewed, clicks, and search queries.</p>
+</div>
+
+<div class="content-section">
+  <h2>3. How We Use Your Information</h2>
+  <p>We use your information to:</p>
+  <ul>
+    <li>Verify your student status and age</li>
+    <li>Process transactions and prevent fraud</li>
+    <li>Improve our service and user experience</li>
+    <li>Send important notifications and updates</li>
+    <li>Respond to your inquiries and support requests</li>
+    <li>Comply with legal obligations</li>
+  </ul>
+</div>
+
+<div class="content-section">
+  <h2>4. Data Sharing</h2>
+  <p>We do NOT sell your data. We may share information with:</p>
+  <ul>
+    <li>Other users (limited to what's necessary for transactions)</li>
+    <li>Payment processors and banks</li>
+    <li>Law enforcement (if legally required)</li>
+    <li>Service providers under strict confidentiality agreements</li>
+  </ul>
+</div>
+
+<div class="content-section">
+  <h2>5. Security</h2>
+  <p>
+    We use industry-standard encryption and security measures to protect your data. However, no system is 100% secure. 
+    We recommend using strong passwords and not sharing your account credentials.
+  </p>
+</div>
+
+<div class="content-section">
+  <h2>6. Your Rights</h2>
+  <p>
+    You have the right to access, update, or delete your personal information at any time. Contact us at privacy@pu-marketplace.com 
+    to exercise these rights.
+  </p>
+</div>
+
+<div class="content-section">
+  <h2>7. Cookies</h2>
+  <p>
+    We use cookies to improve your experience. You can disable cookies in your browser settings, but some features may not work properly.
+  </p>
+</div>
+
+<div class="content-section">
+  <h2>8. Contact Us</h2>
+  <p>
+    If you have privacy concerns, contact us at <strong>privacy@pu-marketplace.com</strong>
+  </p>
+</div>
+
+{% endblock %}

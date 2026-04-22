@@ -1,0 +1,227 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}About PU-Marketplace{% endblock %}
+
+{% block extra_css %}
+<style>
+  .section {
+    margin-bottom: 4rem;
+  }
+
+  .section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--accent);
+  }
+
+  .section p {
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+  }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .team-member {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: border-color .3s;
+  }
+
+  .team-member:hover {
+    border-color: rgba(232,201,106,.3);
+  }
+
+  .member-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    margin: 0 auto 1rem;
+    font-size: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .member-name {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+
+  .member-role {
+    color: var(--accent);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .member-bio {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .value-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+  }
+
+  .value-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .value-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+  }
+
+  .value-desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .milestone {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .milestone:last-child {
+    border-bottom: none;
+  }
+
+  .milestone strong {
+    color: var(--accent);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <h1>About PU-Marketplace</h1>
+  <p>We're reimagining campus commerce — making it safe, simple, and social for every student.</p>
+</div>
+
+<!-- Mission Section -->
+<section class="section">
+  <h2>🎯 Our Mission</h2>
+  <p>
+    PU-Marketplace connects university students in a trusted community to buy, sell, and trade everything they need for campus life. 
+    From textbooks to electronics, from furniture to services — we make campus commerce frictionless and safe.
+  </p>
+  <p>
+    We believe that students deserve a marketplace built by students, for students. One where verification happens automatically, 
+    where meetings are on campus, and where every transaction is protected.
+  </p>
+</section>
+
+<!-- Why We Started -->
+<section class="section">
+  <h2>💡 Why We Started</h2>
+  <p>
+    Our founder, after frustrating experiences selling textbooks on sketchy websites and buying furniture from strangers, 
+    realized there had to be a better way. A platform exclusively for campus students — where you know everyone is real, 
+    nearby, and trustworthy.
+  </p>
+  <p>
+    Today, thousands of students use PU-Marketplace every day to make smarter trades and build their campus community.
+  </p>
+</section>
+
+<!-- Team Section -->
+<section class="section">
+  <h2>👥 Meet the Team</h2>
+  <div class="team-grid">
+    <div class="team-member">
+      <div class="member-avatar">👨‍💼</div>
+      <div class="member-name">Kwame Owusu</div>
+      <div class="member-role">Founder & CEO</div>
+      <div class="member-bio">Former Commerce student. Built PU-Marketplace to solve a real problem on campus.</div>
+    </div>
+    <div class="team-member">
+      <div class="member-avatar">👩‍💻</div>
+      <div class="member-name">Ama Boateng</div>
+      <div class="member-role">Head of Product</div>
+      <div class="member-bio">Designs experiences that students actually love using.</div>
+    </div>
+    <div class="team-member">
+      <div class="member-avatar">👨‍💻</div>
+      <div class="member-name">Kofi Mensah</div>
+      <div class="member-role">Lead Engineer</div>
+      <div class="member-bio">Builds the platform that keeps millions of transactions safe.</div>
+    </div>
+    <div class="team-member">
+      <div class="member-avatar">👩‍⚖️</div>
+      <div class="member-name">Esi Appiah</div>
+      <div class="member-role">Trust & Safety</div>
+      <div class="member-bio">Ensures every student can buy and sell with confidence.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Core Values -->
+<section class="section">
+  <h2>💎 Our Core Values</h2>
+  <div class="values-grid">
+    <div class="value-card">
+      <div class="value-icon">🛡️</div>
+      <div class="value-title">Trust First</div>
+      <div class="value-desc">Every feature we build prioritizes your safety and security. Verification, ratings, and secure payments come standard.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-icon">👥</div>
+      <div class="value-title">Community Driven</div>
+      <div class="value-desc">This platform is built for students, by students. Your feedback shapes our roadmap.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-icon">⚡</div>
+      <div class="value-title">Simple & Fast</div>
+      <div class="value-desc">No friction. List in 60 seconds. Find what you need in minutes. Trade same-day.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-icon">🌱</div>
+      <div class="value-title">Sustainable</div>
+      <div class="value-desc">We encourage the reuse and sharing of goods. Good for students, good for the planet.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Milestones -->
+<section class="section">
+  <h2>📍 Milestones</h2>
+  <div class="milestone">
+    <strong style="color: var(--accent);">2024</strong> — PU-Marketplace launches with 50+ pilot listings. First week: 500+ signups.
+  </div>
+  <div class="milestone">
+    <strong style="color: var(--accent);">2025</strong> — Expanded to 5,000+ registered students, 12,000+ active listings.
+  </div>
+  <div class="milestone">
+    <strong style="color: var(--accent);">2026</strong> — Serving 8 faculties, 98%+ safe transaction rate, expanding to other universities.
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{{ page_title }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root, [data-theme="dark"] {
+      --bg: #0d0e11;
+      --surface: #15171c;
+      --card: #1c1f27;
+      --accent: #e8c96a;
+      --accent2: #5be5c5;
+      --text: #f0eeea;
+      --muted: #7a7e8a;
+      --border: rgba(255,255,255,0.07);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 2.5rem;
+      background: rgba(13,14,17,.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900; font-size: 1.4rem;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .logo span { color: var(--text); }
+
+    nav ul {
+      list-style: none;
+      display: flex; gap: 2rem;
+    }
+    nav ul a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: .9rem;
+      transition: color .2s;
+    }
+
+    main {
+      margin-top: 80px;
+      padding: 4rem 2.5rem;
+      max-width: 900px;
+      margin: 80px auto 0;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 1rem;
+    }
+
+    .last-updated {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .content-section {
+      margin-bottom: 3rem;
+    }
+
+    .content-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .content-section h3 {
+      font-size: 1.1rem;
+      margin-top: 1.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .content-section p, .content-section li {
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+
+    .content-section ul, .content-section ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 2.5rem;
+      text-align: center;
+      color: var(--muted);
+      margin-top: 4rem;
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      nav ul { display: none; }
+      main { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="{% url 'base:home' %}" class="logo">PU-<span>Marketplace</span></a>
+  <ul>
+    <li><a href="{% url 'base:home' %}">Home</a></li>
+    <li><a href="{% url 'base:about' %}">About</a></li>
+    <li><a href="{% url 'base:safety' %}">Safety</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="page-header">
+    <h1>Terms & Conditions</h1>
+    <p class="last-updated">Last updated: January 2026</p>
+  </div>
+
+  <div class="content-section">
+    <h2>1. Agreement to Terms</h2>
+    <p>
+      By accessing and using PU-Marketplace ("the Platform"), you agree to be bound by these Terms & Conditions. 
+      If you do not agree to these terms, please do not use this Platform.
+    </p>
+  </div>
+
+  <div class="content-section">
+    <h2>2. Eligibility</h2>
+    <p>To use PU-Marketplace, you must:</p>
+    <ul>
+      <li>Be a verified student of a participating university</li>
+      <li>Be at least 18 years old (or have parental consent if younger)</li>
+      <li>Have a valid university email address</li>
+      <li>Comply with all local, state, and national laws</li>
+    </ul>
+  </div>
+
+  <div class="content-section">
+    <h2>3. User Accounts</h2>
+    <p>
+      You are responsible for maintaining the confidentiality of your account credentials. You agree not to share your password 
+      with anyone and to notify us immediately of any unauthorized use of your account.
+    </p>
+  </div>
+
+  <div class="content-section">
+    <h2>4. Prohibited Items & Activities</h2>
+    <p>You may NOT buy, sell, or trade:</p>
+    <ul>
+      <li>Weapons, ammunition, or explosive devices</li>
+      <li>Drugs, alcohol, or controlled substances</li>
+      <li>Counterfeit or stolen goods</li>
+      <li>Adult content or services</li>
+      <li>Services that are illegal or unethical</li>
+      <li>Items obtained illegally</li>
+    </ul>
+  </div>
+
+  <div class="content-section">
+    <h2>5. Listing Guidelines</h2>
+    <p>When posting listings, you agree to:</p>
+    <ul>
+      <li>Provide accurate descriptions and honest pricing</li>
+      <li>Include clear photos of items</li>
+      <li>Disclose any damage, wear, or defects</li>
+      <li>Not post misleading or fraudulent listings</li>
+      <li>Not post copyrighted material without permission</li>
+    </ul>
+  </div>
+
+  <div class="content-section">
+    <h2>6. Payment & Transactions</h2>
+    <p>
+      All payments on PU-Marketplace go through our secure payment system or escrow service. We are not responsible for 
+      transactions completed outside the Platform. Cash or direct bank transfers at your own risk.
+    </p>
+  </div>
+
+  <div class="content-section">
+    <h2>7. Disputes & Refunds</h2>
+    <p>
+      In case of disputes, both parties agree to use our in-app dispute resolution system. Refunds are processed according 
+      to our refund policy. The Platform reserves the right to freeze accounts pending investigation.
+    </p>
+  </div>
+
+  <div class="content-section">
+    <h2>8. Limitation of Liability</h2>
+    <p>
+      PU-Marketplace is provided "as is" without any warranties. We are not responsible for losses, damages, or disputes 
+      between buyers and sellers. The Platform's maximum liability is limited to the transaction amount.
+    </p>
+  </div>
+
+  <div class="content-section">
+    <h2>9. Changes to Terms</h2>
+    <p>
+      We reserve the right to update these Terms & Conditions at any time. Continued use of the Platform constitutes 
+      acceptance of any changes.
+    </p>
+  </div>
+
+  <div class="content-section">
+    <h2>10. Governing Law</h2>
+    <p>
+      These Terms & Conditions are governed by the laws of Ghana. Any disputes shall be resolved through arbitration 
+      or in the courts of Ghana.
+    </p>
+  </div>
+
+</main>
+
+<footer>
+  <p>&copy; 2026 PU-Marketplace. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
