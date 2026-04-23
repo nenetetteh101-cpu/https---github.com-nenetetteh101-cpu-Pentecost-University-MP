@@ -103,7 +103,7 @@
 <nav class="tnav">
   <button class="hbg" id="hbg"><span></span><span></span><span></span></button>
   <div class="nav-title">🏷️ My Listings</div>
-  <button class="notibtn" onclick="location.href='dashboard.html'" title="Notifications">
+  <button class="notibtn" onclick="location.href='{% url 'Dash_app:dashboard' %}'" title="Notifications">
     <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
     <span class="nbadge" id="notifBadge" style="display:none"></span>
   </button>
@@ -298,7 +298,7 @@ function renderListings(){
         <div style="font-size:3rem;margin-bottom:.75rem;opacity:.4">🏷️</div>
         <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin-bottom:.4rem">No listings yet</div>
         <div style="font-size:.84rem;color:var(--m);margin-bottom:1.3rem;line-height:1.6">Post your first item or service and start earning on campus</div>
-        <button onclick="location.href='create-listing.html'"
+        <button onclick="location.href='{% url 'listings:create' %}'"
           style="background:var(--a);color:#0d0e11;padding:.72rem 1.6rem;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;font-size:.86rem;font-weight:700;cursor:pointer">
           + Post Your First Listing
         </button>

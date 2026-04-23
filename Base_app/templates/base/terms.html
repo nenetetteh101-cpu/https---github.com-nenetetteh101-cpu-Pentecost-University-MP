@@ -282,11 +282,11 @@
 <body>
 
 <nav>
-  <a href="index.html" class="logo">PU-<span>Marketplace</span></a>
+  <a href="{% url 'base:home' %}" class="logo">PU-<span>Marketplace</span></a>
   <div class="nav-right">
-    <a href="privacy.html" class="nav-link">Privacy Policy</a>
+    <a href="{% url 'base:privacy' %}" class="nav-link">Privacy Policy</a>
     <button class="nav-theme-btn" id="themeBtn">🌞</button>
-    <a href="auth.html" class="nav-btn">Get Started</a>
+    <a href="{% url 'auth:auth_view' %}" class="nav-btn">Get Started</a>
   </div>
 </nav>
 
@@ -324,8 +324,8 @@
       <li><a href="#s12">12. Contact Us</a></li>
     </ul>
     <div class="toc-divider"></div>
-    <a href="privacy.html" class="toc-back">🔒 Privacy Policy →</a>
-    <a href="auth.html" class="toc-back">← Back to Sign Up</a>
+    <a href="{% url 'base:privacy' %}" class="toc-back">🔒 Privacy Policy →</a>
+    <a href="{% url 'auth:auth_view' %}" class="toc-back">← Back to Sign Up</a>
   </aside>
 
   <!-- MAIN CONTENT -->
@@ -495,17 +495,9 @@
   </main>
 </div>
 
-<footer class="page-footer">
-  <div class="footer-logo">PU-<span>Marketplace</span></div>
-  <div class="footer-links">
-    <a href="index.html">Home</a>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="terms.html">Terms &amp; Conditions</a>
-    <a href="privacy.html">Privacy Policy</a>
-    <a href="auth.html">Sign Up</a>
-  </div>
-  <div class="footer-copy">© 2026 PU-Connect. All rights reserved.</div>
-</footer>
+<!-- FOOTER -->
+{% include 'base/footer.html' %}
+
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ── THEME ── */

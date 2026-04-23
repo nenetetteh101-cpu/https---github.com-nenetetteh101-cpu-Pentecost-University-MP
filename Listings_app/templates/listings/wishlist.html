@@ -290,7 +290,7 @@ function render() {
     g.innerHTML = '<div class="empty-state">'
       + '<div class="es-icon">\u2764\uFE0F</div>'
       + '<p>' + (activeCat === 'all' ? 'No saved items yet.<br>Browse listings and tap \u2764\uFE0F to save.' : 'No saved items in this category.') + '</p>'
-      + '<a href="dashboard.html" class="es-btn">Browse Listings</a>'
+      + '<a href="{% url 'Dash_app:dashboard' %}" class="es-btn">Browse Listings</a>'
       + '</div>';
     return;
   }

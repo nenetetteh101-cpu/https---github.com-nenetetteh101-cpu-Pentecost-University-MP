@@ -357,7 +357,7 @@
       <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="handleDirectAvatarUpload(this)"/>
     </div>
     <div class="avatar-actions">
-      <a href="create-listing.html" class="btn-primary" id="newListingBtn">+ New Listing</a>
+      <a href="{% url 'listings:create' %}" class="btn-primary" id="newListingBtn">+ New Listing</a>
       <button class="btn-ghost" id="editProfileBtn" onclick="openEditModal()">
         <svg viewBox="0 0 24 24" width="14" height="14"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         Edit
@@ -396,15 +396,15 @@
 
   <!-- STATS -->
   <div class="stats-row">
-    <div class="stat-box" onclick="location.href='listings.html'">
+    <div class="stat-box" onclick="location.href='{% url 'listings:listings' %}'">
       <span class="stat-num" id="profStatListings">—</span>
       <span class="stat-lbl">Listings</span>
     </div>
-    <div class="stat-box" onclick="location.href='orders.html'">
+    <div class="stat-box" onclick="location.href='{% url 'orders:orders' %}'">
       <span class="stat-num" id="profStatTrades">—</span>
       <span class="stat-lbl">Sold</span>
     </div>
-    <div class="stat-box" onclick="location.href='reels.html'" title="People you follow">
+    <div class="stat-box" onclick="location.href='{% url 'reels:reels' %}'" title="People you follow">
       <span class="stat-num" id="profStatFollowing">—</span>
       <span class="stat-lbl">Following</span>
     </div>
@@ -416,15 +416,15 @@
 
   <!-- QUICK ACTIONS -->
   <div class="quick-actions">
-    <a class="qa-btn" href="listings.html">
+    <a class="qa-btn" href="{% url 'listings:listings' %}">
       <span class="qa-icon">🏷️</span>
       <span class="qa-lbl">Listings</span>
     </a>
-    <a class="qa-btn" href="orders.html">
+    <a class="qa-btn" href="{% url 'orders:orders' %}">
       <span class="qa-icon">📦</span>
       <span class="qa-lbl">Orders</span>
     </a>
-    <a class="qa-btn" href="wishlist.html">
+    <a class="qa-btn" href="{% url 'listings:wishlist' %}">
       <span class="qa-icon">❤️</span>
       <span class="qa-lbl">Saved</span>
     </a>
@@ -458,7 +458,7 @@
   <!-- ACTIVE LISTINGS -->
   <div class="slbl">
     <h2>Active Listings</h2>
-    <a href="listings.html">View all →</a>
+    <a href="{% url 'listings:listings' %}">View all →</a>
   </div>
   <div class="listings-scroll" id="listingsScroll"></div>
 
@@ -580,7 +580,7 @@
     <div class="dz-desc">Deactivating hides your listings and profile. Deleting is permanent — all data removed within 90 days.</div>
     <div style="display:flex;gap:.6rem;flex-wrap:wrap">
       <button class="dz-btn" id="deactivateBtn" onclick="deactivateAccount()">Deactivate Account</button>
-      <button class="dz-btn" onclick="if(confirm('Are you sure? This cannot be undone.'))location.href='auth.html'">Delete Account</button>
+      <button class="dz-btn" onclick="if(confirm('Are you sure? This cannot be undone.'))location.href='{% url 'auth:auth_view' %}'">Delete Account</button>
     </div>
   </div>
 
@@ -594,18 +594,18 @@
 
 <!-- BOTTOM NAV -->
 <nav class="botnav" id="bn">
-  <button class="ni" onclick="location.href='dashboard.html'">
+  <button class="ni" onclick="location.href='{% url 'Dash_app:dashboard' %}'">
     <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     <span class="nlbl">Home</span>
   </button>
-  <button class="ni" onclick="location.href='reels.html'">
+  <button class="ni" onclick="location.href='{% url 'reels:reels' %}'">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
     <span class="nlbl">Reels</span>
   </button>
-  <button class="nadd" onclick="location.href='create-listing.html'">
+  <button class="nadd" onclick="location.href='{% url 'listings:create' %}'">
     <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
   </button>
-  <button class="ni" onclick="location.href='chat.html'">
+  <button class="ni" onclick="location.href='{% url 'chat:chat' %}'">
     <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
     <span class="nlbl">Chat</span>
   </button>

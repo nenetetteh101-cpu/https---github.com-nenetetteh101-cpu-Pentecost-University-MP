@@ -243,8 +243,8 @@
 <nav class="tnav">
   <button class="hbg" id="hbg"><span></span><span></span><span></span></button>
   <div class="tabs">
-    <button class="tab" onclick="location.href='dashboard.html'">All</button>
-    <button class="tab" onclick="location.href='dashboard-products.html'">Products</button>
+    <button class="tab" onclick="location.href='{% url 'Dash_app:dashboard' %}'">All</button>
+    <button class="tab" onclick="location.href='#'">Products</button>
     <button class="tab on">Services</button>
   </div>
   <button class="notibtn" id="notibtn" onclick="toggleNotif()" title="Notifications">
@@ -330,7 +330,7 @@
   <!-- Boosted services slider -->
   <div class="slbl">
     <h2>🚀 Featured Services<span class="btag">Boosted</span></h2>
-    <a href="dashboard.html">← Back to All</a>
+    <a href="{% url 'Dash_app:dashboard' %}">← Back to All</a>
   </div>
   <div class="fw" id="fw">
     <button class="far p" onclick="fmv(-1)">&#8592;</button>
@@ -344,7 +344,7 @@
     <div class="fdt" id="fd"></div>
   </div>
   <!-- Service category grid with slider -->
-  <div class="slbl"><h2>🗂️ Browse Categories</h2><a href="dashboard-services.html">View all</a></div>
+  <div class="slbl"><h2>🗂️ Browse Categories</h2><a href="#">View all</a></div>
   <div class="svo">
     <div class="svw" id="sw"><div class="svt" id="st"></div></div>
     <div class="svnv">
@@ -354,7 +354,7 @@
     </div>
   </div>
   <!-- All Service Providers -->
-  <div class="slbl" style="margin-top:.4rem"><h2>🛠️ All Service Providers</h2><a href="dashboard-services.html">Refresh</a></div>
+  <div class="slbl" style="margin-top:.4rem"><h2>🛠️ All Service Providers</h2><a href="#">Refresh</a></div>
   <div class="pvgrid" id="pvg"></div>
 </div></div>
 
@@ -375,10 +375,10 @@
     <div class="mtl">Offer a Service 🛠️</div>
     <div class="msb">What would you like to do?</div>
     <div class="mop">
-      <div class="mo" onclick="location.href='create-listing.html?type=service'"><span class="moic">🛠️</span><div class="molb">List Service</div></div>
-      <div class="mo" onclick="location.href='profile.html'"><span class="moic">🚀</span><div class="molb">Boost Service</div></div>
-      <div class="mo" onclick="location.href='payments.html'"><span class="moic">💬</span><div class="molb">Arrange Meetup</div></div>
-      <div class="mo" onclick="location.href='help.html'"><span class="moic">❓</span><div class="molb">Help Centre</div></div>
+      <div class="mo" onclick="location.href='{% url 'listings:create' %}?type=service'"><span class="moic">🛠️</span><div class="molb">List Service</div></div>
+      <div class="mo" onclick="location.href='{% url 'profile:profile' %}'"><span class="moic">🚀</span><div class="molb">Boost Service</div></div>
+      <div class="mo" onclick="location.href='#'"><span class="moic">💬</span><div class="molb">Arrange Meetup</div></div>
+      <div class="mo" onclick="location.href='{% url 'base:help' %}'"><span class="moic">❓</span><div class="molb">Help Centre</div></div>
     </div>
     <button class="mcl" onclick="closeMod()">Cancel</button>
   </div>
@@ -391,22 +391,22 @@
 </div>
 
 <nav class="botnav" id="bn">
-  <button class="ni" onclick="location.href='dashboard.html'" title="Home">
+  <button class="ni" onclick="location.href='{% url 'Dash_app:dashboard' %}'" title="Home">
     <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     <span class="nlbl">Home</span>
   </button>
-  <button class="ni" onclick="location.href='reels.html'" title="Reels">
+  <button class="ni" onclick="location.href='{% url 'reels:reels' %}'" title="Reels">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
     <span class="nlbl">Reels</span>
   </button>
-  <button class="nadd" onclick="location.href='create-listing.html'" title="Add listing">
+  <button class="nadd" onclick="location.href='{% url 'listings:create' %}'" title="Add listing">
     <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
   </button>
-  <button class="ni" onclick="location.href='chat.html'" title="Chat">
+  <button class="ni" onclick="location.href='{% url 'chat:chat' %}'" title="Chat">
     <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
     <span class="nlbl">Chat</span>
   </button>
-  <button class="ni" onclick="location.href='profile.html'" title="Profile">
+  <button class="ni" onclick="location.href='{% url 'profile:profile' %}'" title="Profile">
     <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     <span class="nlbl">Profile</span>
   </button>
@@ -565,7 +565,7 @@ function renderProviders(data){
         <div style="font-size:2.5rem;margin-bottom:.75rem;opacity:.4">🛠️</div>
         <div style="font-size:.95rem;font-weight:600;color:var(--t);margin-bottom:.35rem">No services posted yet</div>
         <div style="font-size:.8rem;color:var(--m);margin-bottom:1.25rem">Be the first to offer a campus service in this category</div>
-        <button onclick="location.href='create-listing.html'"
+        <button onclick="location.href='{% url 'listings:create' %}'"
           style="background:var(--a2);color:#0d0e11;border:none;border-radius:10px;padding:.6rem 1.4rem;font-family:'DM Sans',sans-serif;font-size:.84rem;font-weight:700;cursor:pointer">
           + Post a Service
         </button>
@@ -706,7 +706,7 @@ function openDr(id){
         </div>`).join('')
     :`<div style="grid-column:1/-1;text-align:center;padding:1.5rem;color:var(--m);font-size:.84rem">
         No services posted yet in this category.<br>
-        <button onclick="closeDr();location.href='create-listing.html'"
+        <button onclick="closeDr();location.href='{% url 'listings:create' %}'"
           style="margin-top:.75rem;background:var(--a2);color:#0d0e11;border:none;border-radius:9px;padding:.5rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">
           + Post a Service
         </button>
@@ -760,7 +760,7 @@ renderNotifs();
 function openBoost(){
   // Navigate to chat with support context
   try{localStorage.setItem('pu-chat-open',JSON.stringify({username:'support',listing:'Boost Request'}));}catch(e){}
-  location.href='chat.html';
+  location.href='{% url 'chat:chat' %}';
 }
 
 /* ════════════════════════════════════════════
@@ -904,7 +904,7 @@ function openBoost(){
     /* Message seller */
     document.getElementById('ldChatBtn').onclick = function(){
       try{ localStorage.setItem('pu-chat-open', JSON.stringify({username:l.sellerUsername||l.seller,listing:l.title||l.name})); }catch(e){}
-      location.href='chat.html';
+      location.href='{% url 'chat:chat' %}';
     };
 
     /* Wishlist / save */

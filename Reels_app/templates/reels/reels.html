@@ -205,11 +205,11 @@ html,body{height:100%;height:100dvh;background:#000;font-family:'DM Sans',sans-s
 <div class="feed" id="feed"></div>
 
 <nav class="botnav" id="bn">
-  <button class="ni" onclick="location.href='dashboard.html'"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nlbl">Home</span></button>
+  <button class="ni" onclick="location.href='{% url 'Dash_app:dashboard' %}'"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nlbl">Home</span></button>
   <button class="ni on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span class="nlbl">Reels</span></button>
   <button class="nadd" onclick="openUpload()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-  <button class="ni" onclick="location.href='chat.html'"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="nlbl">Chat</span></button>
-  <button class="ni" onclick="location.href='profile.html'"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nlbl">Profile</span></button>
+  <button class="ni" onclick="location.href='{% url 'chat:chat' %}'"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="nlbl">Chat</span></button>
+  <button class="ni" onclick="location.href='{% url 'profile:profile' %}'"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nlbl">Profile</span></button>
 </nav>
 
 <!-- UPLOAD SHEET -->
@@ -473,7 +473,7 @@ function viewProf(u){try{localStorage.setItem('pu-view-profile',JSON.stringify({
 /* ── PRODUCT ── */
 function openProd(i){const r=ALL[i];if(!r||!r.product)return;const p=r.product;const imgEl=document.getElementById('psImg');imgEl.innerHTML='';if(p.img){const im=document.createElement('img');im.src=p.img;im.alt=p.name||'';im.onerror=()=>{imgEl.textContent=p.emoji||'📦';};imgEl.appendChild(im);}else{imgEl.textContent=p.emoji||'📦';}document.getElementById('psBdg').textContent=p.status||'Available';document.getElementById('psNm').textContent=p.name||'—';document.getElementById('psPr').textContent=p.price||'Contact for price';document.getElementById('psSl').textContent='Listed by @'+(r.seller&&r.seller.handle||'').replace('@','');document.getElementById('psDs').textContent=p.desc||'Tap "Message Seller" to get more details.';prodCtx={username:(r.seller&&r.seller.handle||'').replace('@',''),listing:p.name||''};openS('prodOv');pauseAt(curIdx);}
 function closeProd(e){if(!e||e.target===document.getElementById('prodOv')){closeS('prodOv');playAt(curIdx);}}
-function msgSeller(){if(prodCtx){try{localStorage.setItem('pu-chat-open',JSON.stringify(prodCtx));}catch(e){}}location.href='chat.html';}
+function msgSeller(){if(prodCtx){try{localStorage.setItem('pu-chat-open',JSON.stringify(prodCtx));}catch(e){}}location.href='{% url 'chat:chat' %}';}
 
 /* ── COMMENTS ── */
 const CMTD={};
@@ -489,7 +489,7 @@ function getShrData(i){const r=ALL[i]||{};const id=r.id||('reel-'+i);const url=`
 function openShr(i){shrIdx=i;const d=getShrData(i);document.getElementById('shrLnk').textContent=d.url;document.getElementById('cpbtn').textContent='Copy';document.getElementById('cpbtn').classList.remove('copied');const r=ALL[i];if(r){r.shares=(r.shares||0)+1;const el=document.getElementById('sc-'+i);if(el)el.textContent=fmtN(r.shares);}openS('shrOv');pauseAt(curIdx);}
 function closeShr(e){if(!e||e.target===document.getElementById('shrOv')){closeS('shrOv');playAt(curIdx);}}
 
-function shareChat(){if(shrIdx===null)return;const d=getShrData(shrIdx);const r=ALL[shrIdx];try{localStorage.setItem('pu-chat-open',JSON.stringify({username:'',message:`Check out this reel by ${r&&r.seller&&r.seller.name||'a seller'} on PU-Connect: ${d.url}`,type:'reel_share'}));}catch(e){}closeS('shrOv');setTimeout(()=>location.href='chat.html',250);}
+function shareChat(){if(shrIdx===null)return;const d=getShrData(shrIdx);const r=ALL[shrIdx];try{localStorage.setItem('pu-chat-open',JSON.stringify({username:'',message:`Check out this reel by ${r&&r.seller&&r.seller.name||'a seller'} on PU-Connect: ${d.url}`,type:'reel_share'}));}catch(e){}closeS('shrOv');setTimeout(()=>location.href='{% url 'chat:chat' %}',250);}
 
 function shareWA(){if(shrIdx===null)return;const d=getShrData(shrIdx);const msg=encodeURIComponent(d.text+d.url);window.open(`https://wa.me/?text=${msg}`,'_blank','noopener,noreferrer');closeS('shrOv');toast('Opening WhatsApp…');}
 

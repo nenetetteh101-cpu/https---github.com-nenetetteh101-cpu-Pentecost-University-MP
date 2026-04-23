@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
+  <a href="{% url 'base:home' %}" class="logo">PU-<span>Connect</span></a>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
   <title>PU-Connect — Campus Commerce, Reimagined</title>
@@ -552,8 +552,8 @@
   <ul>
     <li><a href="#features">Features</a></li>
     <li><a href="#how">How it Works</a></li>
-    <li><a href="{% url 'base:dashboard' %}">Browse</a></li>
-    <li><a href="{% url 'base:auth_view' %}" class="nav-cta">Get Started</a></li>
+    <li><a href="{% url 'Dash_app:dashboard' %}">Browse</a></li>
+    <li><a href="{% url 'auth:auth_view' %}" class="nav-cta">Get Started</a></li>
   </ul>
   <button class="idx-theme" id="idxTheme">🌞</button>
   <button class="hamburger" id="hamburger" aria-label="Menu">
@@ -565,8 +565,8 @@
 <div class="mobile-menu" id="mobileMenu">
   <a href="#features">Features</a>
   <a href="#how">How it Works</a>
-  <a href="{% url 'base:dashboard' %}">Browse</a>
-  <a href="{% url 'base:auth_view' %}#signup">Get Started →</a>
+  <a href="{% url 'Dash_app:dashboard' %}">Browse</a>
+  <a href="{% url 'auth:auth_view' %}#signup">Get Started →</a>
 </div>
 
 <!-- HERO -->
@@ -584,7 +584,7 @@
         PU-Connect is the go-to platform for Pentecost University students to buy, sell, and trade — textbooks, electronics, services, and more. Safe, local, and built for campus life.
       </p>
       <div class="hero-actions">
-        <a href="{% url 'base:auth_view' %}#signup" class="btn-primary">Start Selling ↗</a>
+        <a href="{% url 'auth:auth_view' %}#signup" class="btn-primary">Start Selling ↗</a>
         <a href="#features" class="btn-ghost">Explore Features</a>
       </div>
     </div>
@@ -719,27 +719,14 @@
     <h2>Ready to Join Your Campus Marketplace?</h2>
     <p>Thousands of students are already buying and selling smart on PU-Connect. Don't miss out on the easiest way to trade on campus.</p>
     <div class="cta-actions">
-      <a href="auth.html#signup" class="btn-primary">Create Free Account</a>
-      <a href="dashboard.html" class="btn-ghost">Browse Listings</a>
+      <a href="{% url 'auth:auth_view' %}#signup" class="btn-primary">Create Free Account</a>
+      <a href="{% url 'Dash_app:dashboard' %}" class="btn-ghost">Browse Listings</a>
     </div>
   </div>
 </section>
 
 <!-- FOOTER -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-logo">PU-<span>Connect</span></div>
-    <div class="footer-links">
-      <a href="dashboard.html">Dashboard</a>
-      <a href="about.html">About</a>
-      <a href="safety.html">Safety</a>
-      <a href="help.html">Help Centre</a>
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
-    </div>
-    <div class="footer-copy">© 2026 PU-Connect. All rights reserved.</div>
-  </div>
-</footer>
+{% include 'base/footer.html' %}
 
 <script>
   // Scroll reveal
@@ -841,7 +828,7 @@
           (function(id) {
             el.onclick = function() {
               localStorage.setItem('pu-open-listing', id);
-              location.href = 'dashboard.html';
+              location.href = '{% url "listings:listings" %}';
             };
           })(listings[i].id);
         }

@@ -917,7 +917,7 @@ async function handleLogin() {
         // SUCCESS: Show toast and redirect via JS
         showToast('Welcome back! Redirecting...', '🎉');
         setTimeout(() => { 
-            window.location.href = '/dashboard/'; 
+            window.location.href = '{% url "Dash_app:dashboard" %}'; 
         }, 1500);
       } else {
         // SERVER-SIDE ERROR: Wrong password or account issues
@@ -993,7 +993,7 @@ async function handleLogin() {
         // SUCCESS: Show toast and redirect via JS
         showToast('Welcome back! Redirecting...', '🎉');
         setTimeout(() => { 
-            window.location.href = '/dashboard/'; 
+            window.location.href = '{% url "Dash_app:dashboard" %}'; 
         }, 1500);
       } else {
         // SERVER-SIDE ERROR: Wrong password or account issues

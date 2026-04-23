@@ -287,7 +287,7 @@
   </div>
   <div class="slbl">
     <h2>🌟 Featured <span class="btag">Boosted</span></h2>
-    <a href="dashboard-products.html">See all</a>
+    <a href="#">See all</a>
   </div>
   <div class="fw" id="fw">
     <button class="far p" onclick="fmv(-1)">‹</button>
@@ -302,7 +302,7 @@
   <div class="svo">
     <div class="slbl">
       <h2>🛠️ Campus Services</h2>
-      <a href="dashboard-services.html">See all</a>
+      <a href="#">See all</a>
     </div>
     <!-- Category filter pills -->
     <div class="cr">
@@ -328,17 +328,17 @@
   </div>
 
   <div id="listingsSection">
-    <div class="slbl" id="slblProducts" style="display:none"><h2>📦 Products</h2><a href="dashboard-products.html">View all →</a></div>
+    <div class="slbl" id="slblProducts" style="display:none"><h2>📦 Products</h2><a href="#">View all →</a></div>
     <div class="grid" id="agProducts" style="display:none"></div>
-    <div class="slbl" id="slblServices" style="margin-top:.2rem;display:none"><h2>🛠️ Services</h2><a href="dashboard-services.html">View all →</a></div>
+    <div class="slbl" id="slblServices" style="margin-top:.2rem;display:none"><h2>🛠️ Services</h2><a href="#">View all →</a></div>
     <div class="grid" id="agServices" style="display:none"></div>
-    <div class="slbl" id="slblAll"><h2>🛒 All Listings</h2><a href="dashboard-products.html">View all →</a></div>
+    <div class="slbl" id="slblAll"><h2>🛒 All Listings</h2><a href="#">View all →</a></div>
     <div class="grid" id="ag"></div>
   </div>
 </div>
 </div>
 <div class="dr" id="dr"><div class="dov" onclick="closeDr()"></div><div class="dsh"><div class="dhn"></div><div class="dh"><span class="dic" id="dico"></span><div class="dtl" id="dttl"></div></div><div class="dsb" id="dsb"></div><div class="dg" id="dg"></div></div></div>
-<div class="mov" id="mv"><div class="modal"><div class="mtl">Post Something 🎉</div><div class="msb">What would you like to list on PU-Connect?</div><div class="mop"><div class="mo" onclick="location.href='create-listing.html'"><span class="moic">📦</span><div class="molb">Sell Product</div></div><div class="mo" onclick="location.href='create-listing.html?type=service'"><span class="moic">🛠️</span><div class="molb">Offer Service</div></div><div class="mo" onclick="location.href='profile.html'"><span class="moic">🔍</span><div class="molb">Request Item</div></div><div class="mo" onclick="openBoost()"><span class="moic">🚀</span><div class="molb">Feature Listing</div></div></div><button class="mcl" onclick="closeMod()">Cancel</button></div></div>
+<div class="mov" id="mv"><div class="modal"><div class="mtl">Post Something 🎉</div><div class="msb">What would you like to list on PU-Connect?</div><div class="mop"><div class="mo" onclick="location.href='{% url 'listings:create' %}'"><span class="moic">📦</span><div class="molb">Sell Product</div></div><div class="mo" onclick="location.href='{% url 'listings:create' %}?type=service'"><span class="moic">🛠️</span><div class="molb">Offer Service</div></div><div class="mo" onclick="location.href='{% url 'profile:profile' %}'"><span class="moic">🔍</span><div class="molb">Request Item</div></div><div class="mo" onclick="openBoost()"><span class="moic">🚀</span><div class="molb">Feature Listing</div></div></div><button class="mcl" onclick="closeMod()">Cancel</button></div></div>
 
 <!-- NOTIFICATION PANEL -->
 <div class="npanel" id="npanel">
@@ -350,11 +350,11 @@
 </div>
 
 <nav class="botnav" id="bn">
-  <button class="ni on" onclick="setNi(this);location.href='dashboard.html'"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nlbl">Home</span></button>
-  <button class="ni" onclick="setNi(this);location.href='reels.html'"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span class="nlbl">Reels</span></button>
+  <button class="ni on" onclick="setNi(this);location.href='{% url 'Dash_app:dashboard' %}'"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nlbl">Home</span></button>
+  <button class="ni" onclick="setNi(this);location.href='{% url 'reels:reels' %}'"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span class="nlbl">Reels</span></button>
   <button class="nadd" onclick="openMod()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-  <button class="ni" onclick="setNi(this);location.href='chat.html'"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="nlbl">Chat</span></button>
-  <button class="ni" onclick="setNi(this);location.href='profile.html'"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nlbl">Profile</span></button>
+  <button class="ni" onclick="setNi(this);location.href='{% url 'chat:chat' %}'"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="nlbl">Chat</span></button>
+  <button class="ni" onclick="setNi(this);location.href='{% url 'profile:profile' %}'"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nlbl">Profile</span></button>
 </nav>
 <!-- ── LISTING DETAIL SHEET ── -->
 <div id="ldOv" style="position:fixed;inset:0;z-index:750;background:rgba(0,0,0,.65);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:flex-end;justify-content:center">
@@ -494,7 +494,7 @@ function openDr(id){
     document.getElementById('dsb').textContent=catProviders.length?catProviders.length+' provider'+(catProviders.length!==1?'s':'')+' on campus':'No providers yet';
     document.getElementById('dg').innerHTML=catProviders.length
       ?catProviders.slice(0,6).map(l=>`<div class="di" onclick="closeDr();openListingDetail('${l.id}')" style="cursor:pointer"><div class="dth">${l.img?`<img src="${l.img}" alt="" loading="lazy"/>`:'<div style="width:100%;height:100%;background:var(--inp);display:flex;align-items:center;justify-content:center;font-size:1.4rem">'+s.icon+'</div>'}</div><div><div class="din">${(l.title||l.name||'').substring(0,30)}</div><div class="dip">${l.priceLabel||(l.price?'GH₵ '+Number(l.price).toLocaleString():'Contact')}</div><div class="dir">@${l.sellerUsername||l.seller||''}</div></div></div>`).join('')
-      :`<div style="grid-column:1/-1;padding:1rem;color:var(--m);font-size:.83rem;text-align:center">No services posted yet in this category.<br><button onclick="closeDr();location.href='create-listing.html?type=service'" style="margin-top:.6rem;background:var(--a2);color:#0d0e11;border:none;border-radius:8px;padding:.45rem 1rem;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">+ Post a Service</button></div>`;
+      :`<div style="grid-column:1/-1;padding:1rem;color:var(--m);font-size:.83rem;text-align:center">No services posted yet in this category.<br><button onclick="closeDr();location.href='{% url 'listings:create' %}?type=service'" style="margin-top:.6rem;background:var(--a2);color:#0d0e11;border:none;border-radius:8px;padding:.45rem 1rem;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">+ Post a Service</button></div>`;
   }catch(e){document.getElementById('dg').innerHTML='';}
   DR.classList.add('on');document.body.style.overflow='hidden';
 }
@@ -528,7 +528,7 @@ renderNotifs();
 function openBoost(){
   // Navigate to chat with support context
   try{localStorage.setItem('pu-chat-open',JSON.stringify({username:'support',listing:'Boost Request'}));}catch(e){}
-  location.href='chat.html';
+  location.href='{% url 'chat:chat' %}';
 }
 
 /* ════════════════════════════════════════════
@@ -599,7 +599,7 @@ function _emptyState(type){
     <div style="font-size:2.2rem;margin-bottom:.55rem;opacity:.38">${isProduct?'📦':'🛠️'}</div>
     <div style="font-size:.88rem;font-weight:600;margin-bottom:.28rem">No ${isProduct?'products':'services'} yet</div>
     <div style="font-size:.78rem;color:var(--m);margin-bottom:.9rem">Be the first to list ${isProduct?'something for sale':'a campus service'}</div>
-    <button onclick="location.href='create-listing.html${isProduct?'':'?type=service'}'" style="background:${isProduct?'var(--a)':'var(--a2)'};color:#0d0e11;padding:.5rem 1.2rem;border-radius:9px;border:none;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">+ Post ${isProduct?'a Product':'a Service'}</button>
+    <button onclick="location.href='{% url 'listings:create' %}${isProduct?'':'?type=service'}'" style="background:${isProduct?'var(--a)':'var(--a2)'};color:#0d0e11;padding:.5rem 1.2rem;border-radius:9px;border:none;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer">+ Post ${isProduct?'a Product':'a Service'}</button>
   </div>`;
 }
 
@@ -832,7 +832,7 @@ window.addEventListener('focus', loadAllListings);
     /* Message seller */
     document.getElementById('ldChatBtn').onclick = function(){
       try{ localStorage.setItem('pu-chat-open', JSON.stringify({username:l.sellerUsername||l.seller,listing:l.title||l.name})); }catch(e){}
-      location.href='chat.html';
+      location.href='{% url 'chat:chat' %}';
     };
 
     /* Wishlist / save */
