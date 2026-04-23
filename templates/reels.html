@@ -1,813 +1,560 @@
-{% load static %}
-
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-  <meta name="theme-color" content="#000000" id="themeColorMeta"/>
-  <title>Reels — PU-Connect</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link href="{% static 'css/reels.css' %}" rel="stylesheet"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#000000"/>
+<title>Reels — PU-Connect</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--a:#e8c96a;--a2:#5be5c5;--red:#ff6b6b;--bh:78px;--col-w:min(420px, calc(100dvh * 9 / 16))}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;height:100dvh;background:#000;font-family:'DM Sans',sans-serif;color:#fff;overscroll-behavior:none;overflow:hidden}
+
+/* FEED */
+.feed{position:fixed;inset:0;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;-ms-overflow-style:none;scrollbar-width:none}
+.feed::-webkit-scrollbar{display:none}
+
+/* REEL SLIDE — mobile: full viewport; desktop: centred 9:16 column */
+.reel{position:relative;width:100%;height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center}
+.reel-inner{position:relative;width:var(--col-w);height:100dvh;overflow:hidden;flex-shrink:0}
+@media(min-width:900px){
+  .reel-inner{height:min(100dvh,calc(var(--col-w)*16/9));border-radius:14px;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 28px 72px rgba(0,0,0,.95)}
+}
+
+/* VIDEO */
+.reel-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;cursor:pointer}
+.reel-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:5rem;cursor:pointer}
+
+/* OVERLAY */
+.reel-ov{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,.4) 0%,transparent 22%),linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,.48) 30%,transparent 58%)}
+
+/* PROGRESS */
+.prog-bar{position:absolute;top:0;left:0;right:0;height:3px;z-index:25;background:rgba(255,255,255,.18)}
+.prog-fill{height:100%;background:var(--a);width:0%;transition:width .1s linear}
+
+/* PLAY FLASH */
+.play-flash{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:76px;height:76px;border-radius:50%;background:rgba(0,0,0,.48);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .22s;z-index:30}
+.play-flash.show{opacity:1}
+
+/* TOP BAR */
+.reel-top{position:absolute;top:0;left:0;right:0;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 1rem;padding-top:env(safe-area-inset-top);z-index:20}
+.reel-logo{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;color:var(--a);letter-spacing:-.2px}
+.reel-logo span{color:#fff}
+.top-r{display:flex;gap:.4rem}
+.tib{width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.38);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;backdrop-filter:blur(8px);transition:background .2s}
+.tib:hover{background:rgba(255,255,255,.18)}
+.tib svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+/* BOTTOM INFO */
+.reel-bot{position:absolute;bottom:0;left:0;right:68px;padding:.85rem 1rem calc(var(--bh) + 22px + env(safe-area-inset-bottom));z-index:20}
+@media(min-width:600px){.reel-bot{right:76px}}
+@media(min-width:900px){.reel-bot{right:80px}}
+
+.seller-row{display:flex;align-items:center;gap:.6rem;margin-bottom:.55rem;cursor:pointer}
+.s-av{width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,255,255,.88);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:.88rem;color:#0d0e11;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,#e8c96a,#f5c842)}
+.s-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.s-info{flex:1;min-width:0}
+.s-name{font-size:.9rem;font-weight:700;text-shadow:0 1px 6px rgba(0,0,0,.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s-handle{font-size:.72rem;color:rgba(255,255,255,.7)}
+.flw-btn{padding:.3rem .82rem;border-radius:99px;background:transparent;border:1.5px solid rgba(255,255,255,.88);color:#fff;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;flex-shrink:0}
+.flw-btn.following{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.28);color:rgba(255,255,255,.78)}
+.caption{font-size:.85rem;line-height:1.55;text-shadow:0 1px 6px rgba(0,0,0,.9);margin-bottom:.45rem;word-break:break-word}
+.caption .htag{color:var(--a);font-weight:600}
+.prod-pill{display:inline-flex;align-items:center;gap:.42rem;background:rgba(232,201,106,.16);border:1px solid rgba(232,201,106,.28);backdrop-filter:blur(12px);border-radius:99px;padding:.32rem .8rem;font-size:.78rem;font-weight:600;color:var(--a);cursor:pointer;transition:background .2s;margin-bottom:.45rem}
+.prod-pill:hover{background:rgba(232,201,106,.28)}
+.prod-pill svg{width:12px;height:12px;stroke:var(--a);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.music-row{display:flex;align-items:center;gap:.38rem;font-size:.74rem;color:rgba(255,255,255,.76)}
+.disc{width:20px;height:20px;border-radius:50%;background:var(--a);display:flex;align-items:center;justify-content:center;font-size:.55rem;flex-shrink:0;animation:spin 3s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ACTION RAIL
+   Mobile: inside .reel-inner, right edge
+   Desktop 600+: positioned outside the column (left: 50% + col-w/2 + gap) */
+.reel-rail{position:absolute;right:0;bottom:0;width:64px;padding-bottom:calc(var(--bh) + 22px + env(safe-area-inset-bottom));padding-right:.4rem;display:flex;flex-direction:column;align-items:center;gap:1.3rem;z-index:20}
+@media(min-width:600px){
+  .reel-inner{overflow:visible}
+  .reel-rail{right:auto;left:calc(50% + var(--col-w)/2 + 8px);bottom:calc(var(--bh) + 22px)}
+}
+
+.ract{display:flex;flex-direction:column;align-items:center;gap:.28rem;cursor:pointer}
+.ract-ico{width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.38);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;transition:transform .18s,background .18s;border:1px solid rgba(255,255,255,.08)}
+.ract:hover .ract-ico,.ract:active .ract-ico{transform:scale(1.14)}
+.ract-ico svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round}
+.ract-ico.liked svg{stroke:var(--red);fill:var(--red)}
+.ract-ico.saved svg{stroke:var(--a);fill:var(--a)}
+.ract-lbl{font-size:.64rem;font-weight:600;color:rgba(255,255,255,.9);text-align:center;text-shadow:0 1px 4px rgba(0,0,0,.9)}
+
+/* EMPTY STATE */
+.empty-feed{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem;background:#000;padding:1rem;text-align:center}
+.ef-ico{font-size:3.5rem;opacity:.4}
+.ef-ttl{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700}
+.ef-sub{font-size:.84rem;color:#7a7e8a;max-width:280px;line-height:1.65}
+.ef-btn{margin-top:.3rem;padding:.72rem 1.8rem;border-radius:10px;background:var(--a);color:#0d0e11;border:none;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer}
+
+/* BOTTOM NAV */
+.botnav{position:fixed;bottom:13px;left:50%;transform:translateX(-50%);z-index:400;display:flex;align-items:center;justify-content:space-around;width:min(500px,calc(100vw - 26px));height:var(--bh);padding:0 .7rem;background:rgba(10,10,14,.78);backdrop-filter:blur(36px) saturate(200%) brightness(1.08);-webkit-backdrop-filter:blur(36px) saturate(200%) brightness(1.08);border:1px solid rgba(255,255,255,.12);border-radius:40px;box-shadow:0 8px 32px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.14);transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s;padding-bottom:env(safe-area-inset-bottom)}
+.botnav::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);border-radius:99px}
+.ni{display:flex;flex-direction:column;align-items:center;gap:.2rem;cursor:pointer;position:relative;flex:1;padding:.5rem 0;background:none;border:none;color:rgba(255,255,255,.5);font-family:'DM Sans',sans-serif;transition:color .2s;-webkit-tap-highlight-color:transparent}
+.ni:hover{color:rgba(255,255,255,.8)}.ni.on{color:var(--a)}
+.ni svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ni.on::after{content:'';position:absolute;bottom:.12rem;width:4px;height:4px;border-radius:50%;background:var(--a)}
+.nlbl{font-size:.58rem;font-weight:500}
+.nadd{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--a),#f5c842);border:3px solid rgba(10,10,14,.8);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;box-shadow:0 6px 20px rgba(232,201,106,.5),inset 0 1px 0 rgba(255,255,255,.3);transition:transform .2s;position:relative}
+.nadd::before{content:'';position:absolute;inset:2px;border-radius:50%;background:rgba(255,255,255,.12)}
+.nadd:hover{transform:scale(1.1)}
+.nadd svg{width:21px;height:21px;stroke:#0d0e11;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* SHEETS */
+.sov{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.62);backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .28s}
+.sov.open{opacity:1;pointer-events:all}
+.sbox{width:100%;max-width:540px;background:#1a1c22;border-radius:24px 24px 0 0;border-top:1px solid rgba(255,255,255,.09);transform:translateY(100%);transition:transform .34s cubic-bezier(.4,0,.2,1);padding-bottom:env(safe-area-inset-bottom)}
+.sov.open .sbox{transform:translateY(0)}
+.shdl{width:40px;height:4px;border-radius:2px;background:rgba(255,255,255,.18);margin:0 auto .9rem}
+
+/* UPLOAD */
+#upSheet{padding:1.1rem 1.4rem 2rem;max-height:90dvh;overflow-y:auto}
+.sttl{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#f0eeea;margin-bottom:.2rem}
+.ssub{font-size:.78rem;color:#7a7e8a;margin-bottom:1.1rem}
+.dzn{border:2px dashed rgba(232,201,106,.32);border-radius:16px;padding:1.8rem 1rem;text-align:center;background:rgba(232,201,106,.04);cursor:pointer;transition:border-color .2s,background .2s;position:relative;margin-bottom:.9rem}
+.dzn:hover,.dzn.drag-over{border-color:var(--a);background:rgba(232,201,106,.08)}
+.dzn input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.dz-i{font-size:2.4rem;margin-bottom:.55rem}
+.dz-t{font-size:.9rem;font-weight:600;color:#f0eeea;margin-bottom:.22rem}
+.dz-s{font-size:.74rem;color:#7a7e8a}
+.vpw{position:relative;margin-bottom:.85rem}
+.vprev{width:100%;border-radius:12px;max-height:260px;object-fit:cover;display:block;background:#000}
+.vrm{position:absolute;top:.5rem;right:.5rem;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.65);border:none;color:#fff;font-size:.72rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.uf{margin-bottom:.75rem}
+.uf label{display:block;font-size:.73rem;font-weight:600;color:rgba(232,201,106,.85);letter-spacing:.5px;text-transform:uppercase;margin-bottom:.38rem}
+.uf textarea,.uf select{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:11px;padding:.6rem .85rem;color:#f0eeea;font-family:'DM Sans',sans-serif;font-size:.87rem;outline:none;transition:border-color .22s}
+.uf textarea::placeholder{color:#7a7e8a}
+.uf textarea:focus,.uf select:focus{border-color:rgba(232,201,106,.45);box-shadow:0 0 0 3px rgba(232,201,106,.07)}
+.uf textarea{resize:none;line-height:1.55;min-height:68px}
+.uf select{-webkit-appearance:none;cursor:pointer;color-scheme:dark}
+.ccnt{text-align:right;font-size:.67rem;color:#7a7e8a;margin-top:.2rem}
+.upprog{display:none;margin-top:.65rem}
+.upprog.show{display:block}
+.upplbl{font-size:.77rem;color:#7a7e8a;margin-bottom:.3rem}
+.uptrk{height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
+.upfil{height:100%;background:var(--a);border-radius:3px;width:0%;transition:width .2s}
+.ubtn{width:100%;padding:.82rem;border-radius:12px;background:var(--a);color:#0d0e11;border:none;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;margin-top:.5rem;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:opacity .2s,transform .15s}
+.ubtn:hover:not(:disabled){opacity:.88;transform:translateY(-1px)}
+.ubtn:disabled{opacity:.38;cursor:not-allowed}
+.cbtn{width:100%;padding:.7rem;border-radius:12px;background:rgba(255,255,255,.07);color:#7a7e8a;border:1.5px solid rgba(255,255,255,.1);font-family:'DM Sans',sans-serif;font-size:.86rem;cursor:pointer;margin-top:.42rem}
+
+/* PRODUCT */
+#prodSheet{padding:1.2rem 1.4rem 2rem}
+.ps-img{height:150px;background:#111;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:3.8rem;margin-bottom:.85rem;overflow:hidden}
+.ps-img img{width:100%;height:100%;object-fit:cover;border-radius:14px}
+.ps-bdg{display:inline-block;font-size:.68rem;font-weight:700;padding:.18rem .55rem;border-radius:5px;background:rgba(91,229,197,.14);color:#5be5c5;margin-bottom:.38rem}
+.ps-nm{font-family:'Playfair Display',serif;font-size:1.12rem;font-weight:700;color:#f0eeea;margin-bottom:.18rem}
+.ps-pr{font-size:1.25rem;font-weight:900;color:var(--a);font-family:'Playfair Display',serif;margin-bottom:.22rem}
+.ps-sl{font-size:.77rem;color:#7a7e8a;margin-bottom:.75rem}
+.ps-dv{height:1px;background:rgba(255,255,255,.07);margin-bottom:.75rem}
+.ps-ds{font-size:.85rem;color:#9a9ea8;line-height:1.7;margin-bottom:1rem}
+.ps-a{width:100%;padding:.8rem;border-radius:12px;background:var(--a);color:#0d0e11;border:none;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;margin-bottom:.42rem;transition:opacity .2s}
+.ps-a:hover{opacity:.88}
+.ps-a.gh{background:rgba(255,255,255,.07);color:#9a9ea8;border:1.5px solid rgba(255,255,255,.1);font-weight:500}
+
+/* COMMENTS */
+#cmtSheet{max-height:78dvh;display:flex;flex-direction:column;padding:0}
+.csh{padding:.8rem 1.2rem;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.csttl{font-size:.92rem;font-weight:700;color:#f0eeea}
+.csx{background:none;border:none;color:#7a7e8a;font-size:1.05rem;cursor:pointer}
+.csl{flex:1;overflow-y:auto;padding:.65rem 1.2rem;display:flex;flex-direction:column;gap:.8rem}
+.csl::-webkit-scrollbar{width:3px}
+.csl::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+.ci{display:flex;gap:.6rem;align-items:flex-start}
+.cav{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:.74rem;color:#0d0e11;flex-shrink:0}
+.cb{flex:1}
+.cnm{font-size:.8rem;font-weight:700;color:#f0eeea;margin-bottom:.12rem}
+.ctx{font-size:.82rem;color:#c0c4cc;line-height:1.5}
+.cmt{display:flex;align-items:center;gap:.65rem;margin-top:.22rem}
+.ctm{font-size:.67rem;color:#7a7e8a}
+.clk{font-size:.67rem;color:#7a7e8a;cursor:pointer;transition:color .2s}
+.clk:hover{color:var(--red)}
+.cir{padding:.7rem 1.1rem;border-top:1px solid rgba(255,255,255,.07);display:flex;gap:.5rem;align-items:flex-end;flex-shrink:0;background:#1a1c22}
+.cmav{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--a),#f5c842);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:.76rem;color:#0d0e11;flex-shrink:0}
+.cminp{flex:1;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.1);border-radius:20px;padding:.5rem .85rem;color:#f0eeea;font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none;resize:none;max-height:80px;transition:border-color .22s}
+.cminp:focus{border-color:rgba(232,201,106,.38)}
+.cminp::placeholder{color:#7a7e8a}
+.cmsnd{width:34px;height:34px;border-radius:50%;background:var(--a);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .2s}
+.cmsnd:disabled{opacity:.32;cursor:not-allowed}
+.cmsnd svg{width:14px;height:14px;stroke:#0d0e11;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* SHARE */
+#shrSheet{padding:1rem 1.2rem 2rem}
+.shttl{font-size:.88rem;font-weight:700;color:#f0eeea;text-align:center;margin-bottom:1.1rem}
+.shgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:.65rem;margin-bottom:1.1rem}
+.shi{display:flex;flex-direction:column;align-items:center;gap:.38rem;cursor:pointer;padding:.48rem .3rem;border-radius:12px;transition:background .18s;-webkit-tap-highlight-color:transparent}
+.shi:hover,.shi:active{background:rgba(255,255,255,.08)}
+.shico{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.shlbl{font-size:.67rem;color:#9a9ea8;font-weight:500;text-align:center;line-height:1.35}
+.shlnk{display:flex;gap:.5rem;align-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:.58rem .88rem}
+.shlnktxt{flex:1;font-size:.77rem;color:#9a9ea8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'DM Sans',sans-serif}
+.shcpbtn{background:var(--a);color:#0d0e11;border:none;border-radius:7px;padding:.32rem .72rem;font-size:.75rem;font-weight:700;cursor:pointer;flex-shrink:0;font-family:'DM Sans',sans-serif;transition:background .2s}
+.shcpbtn.copied{background:var(--a2)}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(var(--bh) + 18px);left:50%;transform:translateX(-50%) translateY(20px);background:#1c1f27;border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:.58rem 1.15rem;font-size:.82rem;font-weight:500;color:#f0eeea;box-shadow:0 8px 32px rgba(0,0,0,.65);opacity:0;transition:opacity .28s,transform .28s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
 </head>
 <body>
-
-<!-- ══════════════════════════════════════
-     REEL FEED
-══════════════════════════════════════ -->
 <div class="feed" id="feed"></div>
 
-<!-- Bottom Nav -->
 <nav class="botnav" id="bn">
-  <button class="ni" onclick="location.href='dashboard.html'">
-    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    <span class="nlbl">Home</span>
-  </button>
-  <button class="ni on">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-    <span class="nlbl">Reels</span>
-  </button>
-  <button class="nadd" onclick="openUpload()">
-    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-  </button>
-  <button class="ni" onclick="location.href='chat.html'">
-    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-    <span class="nlbl">Chat</span>
-  </button>
-  <button class="ni" onclick="location.href='profile.html'">
-    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    <span class="nlbl">Profile</span>
-  </button>
+  <button class="ni" onclick="location.href='dashboard.html'"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nlbl">Home</span></button>
+  <button class="ni on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span class="nlbl">Reels</span></button>
+  <button class="nadd" onclick="openUpload()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+  <button class="ni" onclick="location.href='chat.html'"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="nlbl">Chat</span></button>
+  <button class="ni" onclick="location.href='profile.html'"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nlbl">Profile</span></button>
 </nav>
 
-<!-- ══════════════════════════════════════
-     UPLOAD MODAL
-══════════════════════════════════════ -->
-<div class="upload-overlay" id="uploadOverlay" onclick="closeUploadOverlay(event)">
-  <div class="upload-sheet" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">📹 New Reel</div>
-    <div class="sheet-sub">Share a short video of your item, service or campus life</div>
-
-    <!-- Drop zone -->
-    <div class="drop-zone" id="dropZone">
-      <input type="file" id="videoFileInput" accept="video/*" onchange="handleVideoSelect(this.files[0])"/>
-      <div class="dz-icon">🎬</div>
-      <div class="dz-title">Tap to select a video</div>
-      <div class="dz-sub">MP4, MOV, WebM · Max 100MB · Up to 3 min</div>
+<!-- UPLOAD SHEET -->
+<div class="sov" id="upOv" onclick="closeUpload(event)">
+  <div class="sbox" id="upSheet" onclick="event.stopPropagation()">
+    <div style="padding-top:1rem"><div class="shdl"></div></div>
+    <div class="sttl">📹 New Reel</div>
+    <div class="ssub">Share a short video of your item, service or campus life</div>
+    <div class="dzn" id="dzn">
+      <input type="file" id="vfi" accept="video/*" onchange="handleVid(this.files[0])"/>
+      <div class="dz-i">🎬</div><div class="dz-t">Tap to select a video</div>
+      <div class="dz-s">MP4 · MOV · WebM · Max 100 MB · Up to 3 min</div>
     </div>
-
-    <!-- Video preview -->
-    <div class="vid-preview-wrap" id="vidPreviewWrap" style="display:none">
-      <video class="vid-preview show" id="vidPreview" controls playsinline muted></video>
-      <button class="vid-remove" onclick="removeVideo()">✕</button>
+    <div class="vpw" id="vpw" style="display:none">
+      <video class="vprev" id="vprev" controls playsinline muted></video>
+      <button class="vrm" onclick="removeVid()">✕</button>
     </div>
-
-    <!-- Form fields -->
-    <div class="ufield">
+    <div class="uf">
       <label>Caption</label>
-      <textarea id="captionInput" placeholder="Describe your item or service… use #hashtags" maxlength="200" oninput="document.getElementById('captionCount').textContent=this.value.length+' / 200'"></textarea>
-      <div class="char-count" id="captionCount">0 / 200</div>
+      <textarea id="capInp" placeholder="Describe your item… use #hashtags" maxlength="200" oninput="document.getElementById('capCnt').textContent=this.value.length+' / 200'"></textarea>
+      <div class="ccnt" id="capCnt">0 / 200</div>
     </div>
-    <div class="ufield">
+    <div class="uf">
       <label>Linked Listing <span style="font-weight:300;color:#7a7e8a;text-transform:none;letter-spacing:0">(optional)</span></label>
-      <select id="listingSelect">
-        <option value="">— Link to a listing —</option>
-        <option value="1" data-emoji="💻" data-price="GH₵ 1,800">HP Laptop 15.6" Core i7 — GH₵ 1,800</option>
-        <option value="2" data-emoji="⌨️" data-price="GH₵ 280">Mechanical Keyboard — GH₵ 280</option>
-        <option value="3" data-emoji="📚" data-price="GH₵ 45">Organic Chemistry Vol.2 — GH₵ 45</option>
-        <option value="4" data-emoji="🎨" data-price="From GH₵ 50">Graphic Design Services — From GH₵ 50</option>
-        <option value="5" data-emoji="👗" data-price="GH₵ 45">Ankara Dress (Size M) — GH₵ 45</option>
-      </select>
+      <select id="lstSel"><option value="">— Link to a listing —</option></select>
     </div>
-
-    <!-- Progress -->
-    <div class="upload-progress" id="uploadProgress">
-      <div class="up-prog-label" id="uploadLabel">Uploading…</div>
-      <div class="up-prog-track"><div class="up-prog-fill" id="uploadFill"></div></div>
+    <div class="upprog" id="upprog">
+      <div class="upplbl" id="uplbl">Uploading…</div>
+      <div class="uptrk"><div class="upfil" id="upfil"></div></div>
     </div>
-
-    <button class="upload-btn" id="uploadBtn" onclick="publishReel()" disabled>
-      <svg viewBox="0 0 24 24" width="18" height="18"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
-      Upload Reel
+    <button class="ubtn" id="ubtn" onclick="publishReel()" disabled>
+      <svg viewBox="0 0 24 24" width="17" height="17"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>Upload Reel
     </button>
-    <button class="cancel-btn" onclick="closeUpload()">Cancel</button>
+    <button class="cbtn" onclick="closeUpload()">Cancel</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     PRODUCT SHEET
-══════════════════════════════════════ -->
-<div class="product-overlay" id="productOverlay" onclick="closeProduct(event)">
-  <div class="product-sheet" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div class="ps-img" id="psImg">💻</div>
-    <div class="ps-badge">Available</div>
-    <div class="ps-name" id="psName">HP Laptop 15.6" Core i7</div>
-    <div class="ps-price" id="psPrice">GH₵ 1,800</div>
-    <div class="ps-seller" id="psSeller">Listed by @kwame_sell</div>
-    <div class="ps-divider"></div>
-    <div class="ps-desc" id="psDesc">Barely used HP laptop. Intel Core i7, 16GB RAM, 512GB SSD. Battery 6+ hrs. Comes with original charger and bag.</div>
-    <div class="ps-actions">
-      <button class="ps-btn-primary" onclick="location.href='chat.html'">💬 Message Seller</button>
-      <button class="ps-btn-ghost" onclick="closeProduct()">Close</button>
-    </div>
+<!-- PRODUCT SHEET -->
+<div class="sov" id="prodOv" onclick="closeProd(event)">
+  <div class="sbox" id="prodSheet" onclick="event.stopPropagation()">
+    <div class="shdl"></div>
+    <div class="ps-img" id="psImg">📦</div>
+    <span class="ps-bdg" id="psBdg">Available</span>
+    <div class="ps-nm" id="psNm">—</div>
+    <div class="ps-pr" id="psPr">—</div>
+    <div class="ps-sl" id="psSl">—</div>
+    <div class="ps-dv"></div>
+    <div class="ps-ds" id="psDs">—</div>
+    <button class="ps-a" onclick="msgSeller()">💬 Message Seller</button>
+    <button class="ps-a gh" onclick="closeProd()">Close</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     COMMENTS SHEET
-══════════════════════════════════════ -->
-<div class="comments-overlay" id="commentsOverlay" onclick="closeComments(event)">
-  <div class="comments-sheet" onclick="event.stopPropagation()">
-    <div class="cs-head">
-      <div class="cs-title" id="commentsTitle">Comments</div>
-      <button class="cs-close" onclick="closeComments()">✕</button>
-    </div>
-    <div class="cs-list" id="commentsList"></div>
-    <div class="cs-input-row">
-      <div class="cs-my-av" id="myAvatar">KA</div>
-      <textarea class="cs-inp" id="commentInput" placeholder="Add a comment…" rows="1"
-        oninput="autoResizeCs(this);document.getElementById('csSend').disabled=!this.value.trim()"
-        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();postComment()}"></textarea>
-      <button class="cs-send" id="csSend" onclick="postComment()" disabled>
+<!-- COMMENTS SHEET -->
+<div class="sov" id="cmtOv" onclick="closeCmt(event)">
+  <div class="sbox" id="cmtSheet" onclick="event.stopPropagation()">
+    <div class="csh"><div class="csttl" id="csttl">Comments</div><button class="csx" onclick="closeCmt()">✕</button></div>
+    <div class="csl" id="csl"></div>
+    <div class="cir">
+      <div class="cmav" id="cmav">KA</div>
+      <textarea class="cminp" id="cminp" placeholder="Add a comment…" rows="1"
+        oninput="csResize(this);document.getElementById('cmsnd').disabled=!this.value.trim()"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();postCmt()}"></textarea>
+      <button class="cmsnd" id="cmsnd" onclick="postCmt()" disabled>
         <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     SHARE SHEET
-══════════════════════════════════════ -->
-<div class="share-overlay" id="shareOverlay" onclick="closeShare(event)">
-  <div class="share-sheet" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div class="share-title">Share Reel</div>
-    <div class="share-grid">
-      <div class="share-item" onclick="shareAction('chat')"><div class="share-ico" style="background:rgba(232,201,106,.15)">💬</div><div class="share-lbl">Send in Chat</div></div>
-      <div class="share-item" onclick="shareAction('whatsapp')"><div class="share-ico" style="background:rgba(37,211,102,.15)">📱</div><div class="share-lbl">WhatsApp</div></div>
-      <div class="share-item" onclick="shareAction('twitter')"><div class="share-ico" style="background:rgba(29,161,242,.15)">🐦</div><div class="share-lbl">Twitter / X</div></div>
-      <div class="share-item" onclick="shareAction('copy')"><div class="share-ico" style="background:rgba(255,255,255,.07)">🔗</div><div class="share-lbl">Copy Link</div></div>
+<!-- SHARE SHEET -->
+<div class="sov" id="shrOv" onclick="closeShr(event)">
+  <div class="sbox" id="shrSheet" onclick="event.stopPropagation()">
+    <div class="shdl"></div>
+    <div class="shttl">Share Reel</div>
+    <div class="shgrid">
+      <div class="shi" onclick="shareChat()">
+        <div class="shico" style="background:rgba(232,201,106,.15)">💬</div>
+        <div class="shlbl">In-App Chat</div>
+      </div>
+      <div class="shi" onclick="shareWA()">
+        <div class="shico" style="background:rgba(37,211,102,.14)">
+          <svg width="30" height="30" viewBox="0 0 48 48"><circle cx="24" cy="24" r="24" fill="#25d366"/><path fill="#fff" d="M34.7 13.3C32.2 10.8 28.9 9.4 25.4 9.4c-7.3 0-13.2 5.9-13.2 13.2 0 2.3.6 4.6 1.8 6.6L12 38.6l9.6-2.5c1.9 1 4 1.6 6.2 1.6h.1c7.3 0 13.2-5.9 13.2-13.2-.1-3.5-1.5-6.8-3.9-9.2Zm-9.3 20.3c-2 0-3.9-.5-5.6-1.5l-.4-.2-4.1 1.1 1.1-3.9-.3-.4c-1.1-1.7-1.7-3.7-1.7-5.8 0-5.9 4.8-10.7 10.7-10.7 2.9 0 5.6 1.1 7.6 3.1s3.1 4.8 3.1 7.6c.1 5.9-4.7 10.7-10.4 10.7Zm5.9-8c-.3-.2-1.9-.9-2.2-1.1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.4-1.4-.9-.8-1.5-1.7-1.7-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.2-.5 0-.2 0-.4-.1-.5-.1-.2-.7-1.6-1-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.7s1.1 3.1 1.3 3.3c.2.2 2.2 3.3 5.3 4.6.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.9-.8 2.1-1.5.3-.7.3-1.4.2-1.5-.1-.1-.3-.2-.6-.4Z"/></svg>
+        </div>
+        <div class="shlbl">WhatsApp</div>
+      </div>
+      <div class="shi" onclick="shareNative()">
+        <div class="shico" style="background:rgba(255,255,255,.09)">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </div>
+        <div class="shlbl">More</div>
+      </div>
+      <div class="shi" onclick="copyLink()">
+        <div class="shico" style="background:rgba(91,229,197,.12)">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#5be5c5" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <div class="shlbl">Copy Link</div>
+      </div>
     </div>
-    <div class="share-link-row">
-      <span class="share-link-text" id="shareLink">pu-Connect.edu.gh/reels/r001</span>
-      <button class="share-copy-btn" onclick="copyLink()">Copy</button>
+    <div class="shlnk">
+      <span class="shlnktxt" id="shrLnk">pu-connect.edu.gh/reels/…</span>
+      <button class="shcpbtn" id="cpbtn" onclick="copyLink()">Copy</button>
     </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<script>
-/* ══════════════════════════════════════
-   REEL DATA
-══════════════════════════════════════ */
-const REELS=[
-  {
-    id:'r001',
-    src:'',// no video src — shows placeholder bg
-    bg:'linear-gradient(135deg,#1a1508 0%,#2a200a 40%,#0d1117 100%)',
-    bgEmoji:'💻',
-    seller:{name:'Kwame Asante',handle:'@kwame_sell',initials:'KA',avGrad:'linear-gradient(135deg,#e8c96a,#f5c842)'},
-    caption:'This HP laptop is in perfect condition 🔥 Intel Core i7, 16GB RAM. Perfect for engineering students. DM to negotiate! #Laptop #CampusDeal',
-    product:{name:'HP Laptop 15.6" Core i7',price:'GH₵ 1,800',emoji:'💻',desc:'Barely used. Core i7, 16GB RAM, 512GB SSD. Battery lasts 6+ hrs. Original charger included.'},
-    likes:284,comments:34,shares:18,saves:61,liked:false,saved:false,following:false,
-    music:'Campus Vibes Mix • PU-Connect',
-    tags:['#Laptop','#CampusDeal','#Engineering'],
-  },
-  {
-    id:'r002',
-    src:'',
-    bg:'linear-gradient(135deg,#0a1628 0%,#1a2a4a 50%,#0d1117 100%)',
-    bgEmoji:'🎨',
-    seller:{name:'Esi Owusu',handle:'@esi_design',initials:'EO',avGrad:'linear-gradient(135deg,#a78bfa,#7c3aed)'},
-    caption:'Logo design for your campus business 🎨✨ 3 concepts, unlimited revisions, full brand pack. DM me now! #GraphicDesign #CampusBusiness',
-    product:{name:'Graphic Design Services',price:'From GH₵ 80',emoji:'🎨',desc:'Logos, flyers, social media graphics & brand guides. Fast turnaround. Portfolio available on request.'},
-    likes:512,comments:87,shares:43,saves:129,liked:false,saved:false,following:false,
-    music:'Creative Beats • Esi Designs',
-    tags:['#Design','#Logo','#CampusBusiness'],
-  },
-  {
-    id:'r003',
-    src:'',
-    bg:'linear-gradient(135deg,#0d2010 0%,#1a3a1a 50%,#0d1117 100%)',
-    bgEmoji:'📚',
-    seller:{name:'Abena Boateng',handle:'@abena_b',initials:'AB',avGrad:'linear-gradient(135deg,#5be5c5,#2dd4bf)'},
-    caption:'Organic Chemistry 8th edition — barely used, no markings 📚 Science students grab this before it\'s gone! #TextBook #Chemistry #ScienceFaculty',
-    product:{name:'Organic Chemistry Vol. 2',price:'GH₵ 45',emoji:'📚',desc:'8th edition by McMurry. Excellent condition. Only used for one semester. Perfect for Year 1 & 2 students.'},
-    likes:178,comments:29,shares:12,saves:44,liked:false,saved:false,following:false,
-    music:'Study Mode • Campus Playlist',
-    tags:['#TextBook','#Chemistry'],
-  },
-  {
-    id:'r004',
-    src:'',
-    bg:'linear-gradient(135deg,#1a0a00 0%,#3a1800 50%,#0d1117 100%)',
-    bgEmoji:'⌨️',
-    seller:{name:'Kofi Mensah',handle:'@kofi_gear',initials:'KM',avGrad:'linear-gradient(135deg,#fb923c,#ea580c)'},
-    caption:'Keychron K2 mechanical keyboard — barely touched ⌨️🔥 Brown switches, RGB, wireless. Perfect for CS students! #MechKeyboard #TechDeal',
-    product:{name:'Mechanical Keyboard (Keychron K2)',price:'GH₵ 280',emoji:'⌨️',desc:'Brown switches, 84 keys, RGB backlight, Bluetooth + USB. Works with Mac & Windows. Barely used — 3 months old.'},
-    likes:341,comments:52,shares:27,saves:88,liked:false,saved:false,following:false,
-    music:'Tech Vibes • Kofi Gear',
-    tags:['#Keyboard','#Tech','#CSStudent'],
-  },
-  {
-    id:'r005',
-    src:'',
-    bg:'linear-gradient(135deg,#1a0a1a 0%,#2a0a3a 50%,#0d1117 100%)',
-    bgEmoji:'👗',
-    seller:{name:'Adwoa Asante',handle:'@adwoa_fashion',initials:'AA',avGrad:'linear-gradient(135deg,#e8c96a,#f5c842)'},
-    caption:'Ankara dress only worn once 👗🌟 Size M, vibrant colours, perfect for events and celebrations! Grab it before it\'s gone! #Fashion #Ankara #CampusStyle',
-    product:{name:'Ankara Dress (Size M)',price:'GH₵ 45',emoji:'👗',desc:'Beautiful Ankara print dress. Worn once to a party. Excellent condition. Perfect for cultural events.'},
-    likes:623,comments:91,shares:56,saves:147,liked:false,saved:false,following:false,
-    music:'Afrobeats Mix • Adwoa Fashion',
-    tags:['#Fashion','#Ankara','#Style'],
-  },
-];
+<script>/* ── CLOUDINARY UPLOAD ─────────────────────────────────────────
+   Set your own cloud_name and upload_preset below.
+   In Cloudinary dashboard: Settings → Upload → Add upload preset
+   Set "Signing Mode" to "Unsigned" and note the preset name.
+────────────────────────────────────────────────────────────────── */
+const CLOUDINARY_CLOUD  = 'pu-connect';          // ← your cloud name
+const CLOUDINARY_PRESET = 'pu_connect_unsigned';  // ← your upload preset
 
-/* ── STATE ── */
-let currentReelIdx=0;
-let activeVideoEl=null;
-let activeCommentsIdx=null;
-let pendingVideoFile=null;
-let pendingVideoURL=null;
-let uploadedReels=JSON.parse(localStorage.getItem('pu-reels')||'[]');
-
-// Prepend user-uploaded reels
-const ALL_REELS=[...uploadedReels,...REELS];
-
-/* ══════════════════════════════════════
-   BUILD FEED
-══════════════════════════════════════ */
-function buildFeed(){
-  const feed=document.getElementById('feed');
-  feed.innerHTML='';
-  ALL_REELS.forEach((r,i)=>{
-    const el=document.createElement('div');
-    el.className='reel';
-    el.id='reel-'+i;
-    el.dataset.idx=i;
-    el.innerHTML=reelHTML(r,i);
-    feed.appendChild(el);
-  });
-  attachFeedObserver();
-  attachTapHandlers();
-
-  // Assign video src via JS (blob URLs must be set programmatically, not as HTML attributes)
-  document.querySelectorAll('.reel-video[data-src]').forEach(vid=>{
-    const src=vid.dataset.src;
-    if(src){
-      vid.src=src;
-      vid.load();
-    }
-  });
-}
-
-function reelHTML(r,i){
-  const hasVideo=r.src&&r.src.length>0;
-  return `
-    <!-- Progress bar -->
-    <div class="progress-bar"><div class="progress-fill" id="prog-${i}"></div></div>
-
-    <!-- Video or colour placeholder -->
-    ${hasVideo
-      ?`<video class="reel-video" id="vid-${i}" data-src="${r.src}" loop playsinline preload="auto"
-           onclick="togglePlay(${i})" onplay="onVideoPlay(${i})" onpause="onVideoPause(${i})" ontimeupdate="onTimeUpdate(${i})"></video>`
-      :`<div class="reel-bg" style="background:${r.bg}" onclick="togglePlay(${i})" id="vid-${i}">
-          <span style="font-size:6rem;filter:drop-shadow(0 4px 20px rgba(0,0,0,.5))">${r.bgEmoji}</span>
-        </div>`
-    }
-
-    <!-- Gradient overlay -->
-    <div class="reel-overlay"></div>
-
-    <!-- Play/pause flash -->
-    <div class="play-flash" id="flash-${i}">
-      <svg viewBox="0 0 24 24" width="32" height="32"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-    </div>
-
-    <!-- Top bar -->
-    <div class="reel-topbar">
-      <div class="reel-logo">PU-<span>Reels</span></div>
-      <div class="reel-topbar-right">
-        <button class="top-icon-btn" onclick="location.href='dashboard.html'" title="Home">
-          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        </button>
-        <button class="top-icon-btn" onclick="openUpload()" title="Upload">
-          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- Bottom info -->
-    <div class="reel-bottom">
-      <div class="reel-seller-row" onclick="showToast('Viewing @'+${JSON.stringify(r.seller.handle)})">
-        <div class="reel-av" style="background:${r.seller.avGrad}">${r.seller.initials}</div>
-        <div class="reel-seller-info">
-          <div class="reel-seller-name">${r.seller.name}</div>
-          <div class="reel-seller-handle">${r.seller.handle}</div>
-        </div>
-        <button class="follow-btn${r.following?' following':''}" id="follow-${i}" onclick="event.stopPropagation();toggleFollow(${i})">${r.following?'Following':'Follow'}</button>
-      </div>
-      <div class="reel-caption">
-        ${escHtml(r.caption.replace(/#\w+/g,''))}
-        ${r.tags.map(t=>`<span class="tag">${t}</span>`).join(' ')}
-      </div>
-      ${r.product?`
-      <div class="reel-product-pill" onclick="openProduct(${i})">
-        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
-        ${r.product.name} · ${r.product.price}
-      </div>`:''}
-      <div class="reel-music">
-        <div class="music-disc">🎵</div>
-        <span>${r.music||'Original Audio'}</span>
-      </div>
-    </div>
-
-    <!-- Right action rail -->
-    <div class="reel-actions">
-      <div class="ract" onclick="toggleLike(${i})">
-        <div class="ract-ico${r.liked?' liked':''}" id="like-ico-${i}">
-          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-        </div>
-        <div class="ract-lbl" id="like-count-${i}">${fmtNum(r.likes)}</div>
-      </div>
-      <div class="ract" onclick="openComments(${i})">
-        <div class="ract-ico">
-          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        </div>
-        <div class="ract-lbl" id="comment-count-${i}">${fmtNum(r.comments)}</div>
-      </div>
-      <div class="ract" onclick="openShare(${i})">
-        <div class="ract-ico">
-          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        </div>
-        <div class="ract-lbl">${fmtNum(r.shares)}</div>
-      </div>
-      <div class="ract" onclick="toggleSave(${i})">
-        <div class="ract-ico${r.saved?' saved':''}" id="save-ico-${i}">
-          <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
-        </div>
-        <div class="ract-lbl" id="save-count-${i}">${fmtNum(r.saves)}</div>
-      </div>
-    </div>
-  `;
-}
-
-/* ══════════════════════════════════════
-   INTERSECTION OBSERVER — auto play/pause
-══════════════════════════════════════ */
-let reelObserver=null;
-function attachFeedObserver(){
-  if(reelObserver)reelObserver.disconnect();
-  reelObserver=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{
-      if(e.intersectionRatio>=0.7){
-        const idx=parseInt(e.target.dataset.idx);
-        if(currentReelIdx!==idx){
-          pauseReel(currentReelIdx);
-          currentReelIdx=idx;
-        }
-        playReel(idx);
-      }
-    });
-  },{threshold:0.7});
-  document.querySelectorAll('.reel').forEach(r=>reelObserver.observe(r));
-}
-
-function playReel(idx){
-  const r=ALL_REELS[idx];
-  if(!r)return;
-  const el=document.getElementById('vid-'+idx);
-  if(!el||el.tagName!=='VIDEO')return;
-  // If src not yet assigned (can happen on first call), assign it
-  if(!el.src&&el.dataset.src){
-    el.src=el.dataset.src;
-    el.load();
+/**
+ * Upload a File or Blob to Cloudinary.
+ * @param {File|Blob} file
+ * @param {'image'|'video'} resourceType
+ * @returns {Promise<string>} secure_url of the uploaded asset
+ */
+async function uploadToCloudinary(file, resourceType) {
+  resourceType = resourceType || 'image';
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLOUDINARY_PRESET);
+  fd.append('folder', 'pu-connect');
+  const url = 'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/' + resourceType + '/upload';
+  const res = await fetch(url, { method: 'POST', body: fd });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || 'Upload failed (' + res.status + ')');
   }
-  // Play — handle the promise (some browsers return a Promise)
-  const promise=el.play();
-  if(promise!==undefined){
-    promise.catch(err=>{
-      // Autoplay blocked — require a user tap first; this is fine
-      if(err.name!=='AbortError')console.warn('Reel play error:',err.message);
-    });
-  }
-  activeVideoEl=el;
+  const data = await res.json();
+  return data.secure_url;
 }
 
-function pauseReel(idx){
-  const el=document.getElementById('vid-'+idx);
-  if(el&&el.tagName==='VIDEO')el.pause();
-}
 
-function togglePlay(idx){
-  const el=document.getElementById('vid-'+idx);
-  if(!el||el.tagName!=='VIDEO'){
-    flashIcon(idx,'play');return;
-  }
-  if(el.paused){el.play();flashIcon(idx,'play');}
-  else{el.pause();flashIcon(idx,'pause');}
-}
+'use strict';
+const SITE=location.origin||'https://pu-connect.edu.gh';
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtN(n){n=Number(n)||0;if(n>=1e6)return(n/1e6).toFixed(1).replace(/\.0$/,'')+'M';if(n>=1000)return(n/1000).toFixed(1).replace(/\.0$/,'')+'k';return String(n);}
+let toastT;
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2700);}
 
-function flashIcon(idx,type){
-  const f=document.getElementById('flash-'+idx);
-  if(!f)return;
-  f.innerHTML=type==='play'
-    ?'<svg viewBox="0 0 24 24" width="32" height="32" style="fill:#fff;stroke:none"><polygon points="5 3 19 12 5 21 5 3"/></svg>'
-    :'<svg viewBox="0 0 24 24" width="32" height="32" style="fill:none;stroke:#fff;stroke-width:2.5"><line x1="6" y1="4" x2="6" y2="20"/><line x1="18" y1="4" x2="18" y2="20"/></svg>';
-  f.classList.add('show');
-  setTimeout(()=>f.classList.remove('show'),700);
+/* ── FOLLOW SYSTEM (pu-follows) ── */
+function loadF(){try{return JSON.parse(localStorage.getItem('pu-follows')||'{"following":[],"followers":[]}');}catch(e){return{following:[],followers:[]};}}
+function saveF(f){try{localStorage.setItem('pu-follows',JSON.stringify(f));}catch(e){}}
+function isFollowing(u){return loadF().following.includes(u);}
+function follow(u){
+  const f=loadF();
+  if(!f.following.includes(u)){f.following.push(u);saveF(f);}
+  try{const m=JSON.parse(localStorage.getItem('pu-follow-map')||'{}');if(!m[u])m[u]=[];const me=(JSON.parse(localStorage.getItem('pu-profile')||'{}').username||'');if(me&&!m[u].includes(me))m[u].push(me);localStorage.setItem('pu-follow-map',JSON.stringify(m));}catch(e){}
 }
-
-function onVideoPlay(idx){document.getElementById('prog-'+idx).parentElement.style.opacity='1';}
-function onVideoPause(idx){}
-function onTimeUpdate(idx){
-  const el=document.getElementById('vid-'+idx);
-  const prog=document.getElementById('prog-'+idx);
-  if(!el||!prog||!el.duration)return;
-  prog.style.width=(el.currentTime/el.duration*100)+'%';
+function unfollow(u){
+  const f=loadF();f.following=f.following.filter(x=>x!==u);saveF(f);
+  try{const me=(JSON.parse(localStorage.getItem('pu-profile')||'{}').username||'');const m=JSON.parse(localStorage.getItem('pu-follow-map')||'{}');if(m[u])m[u]=m[u].filter(x=>x!==me);localStorage.setItem('pu-follow-map',JSON.stringify(m));}catch(e){}
 }
-
-/* ══════════════════════════════════════
-   TAP TO PLAY / GESTURE HANDLERS
-══════════════════════════════════════ */
-function attachTapHandlers(){
-  // Double-tap to like
-  let lastTap=0;
-  document.getElementById('feed').addEventListener('touchend',e=>{
-    const now=Date.now();
-    if(now-lastTap<300){
-      const reel=e.target.closest('.reel');
-      if(reel){toggleLike(parseInt(reel.dataset.idx));}
-    }
-    lastTap=now;
-  },{passive:true});
-}
-
-/* ══════════════════════════════════════
-   LIKE / SAVE / FOLLOW
-══════════════════════════════════════ */
-function toggleLike(idx){
-  const r=ALL_REELS[idx];if(!r)return;
-  r.liked=!r.liked;
-  r.likes+=r.liked?1:-1;
-  const ico=document.getElementById('like-ico-'+idx);
-  const cnt=document.getElementById('like-count-'+idx);
-  if(ico)ico.className='ract-ico'+(r.liked?' liked':'');
-  if(cnt)cnt.textContent=fmtNum(r.likes);
-  if(r.liked)showToast('❤️ Liked');
-}
-
-function toggleSave(idx){
-  const r=ALL_REELS[idx];if(!r)return;
-  r.saved=!r.saved;
-  r.saves+=r.saved?1:-1;
-  const ico=document.getElementById('save-ico-'+idx);
-  const cnt=document.getElementById('save-count-'+idx);
-  if(ico)ico.className='ract-ico'+(r.saved?' saved':'');
-  if(cnt)cnt.textContent=fmtNum(r.saves);
-  showToast(r.saved?'🔖 Saved to Wishlist':'Removed from saved');
-}
-
-function toggleFollow(idx){
-  const r=ALL_REELS[idx];if(!r)return;
-  r.following=!r.following;
-  const btn=document.getElementById('follow-'+idx);
-  if(btn){btn.textContent=r.following?'Following':'Follow';btn.className='follow-btn'+(r.following?' following':'');}
-  showToast(r.following?`Following ${r.seller.name}`:`Unfollowed ${r.seller.name}`);
-}
-
-/* ══════════════════════════════════════
-   PRODUCT SHEET
-══════════════════════════════════════ */
-function openProduct(idx){
-  const r=ALL_REELS[idx];if(!r?.product)return;
-  document.getElementById('psImg').textContent=r.product.emoji;
-  document.getElementById('psName').textContent=r.product.name;
-  document.getElementById('psPrice').textContent=r.product.price;
-  document.getElementById('psSeller').textContent='Listed by '+r.seller.handle;
-  document.getElementById('psDesc').textContent=r.product.desc;
-  document.getElementById('productOverlay').classList.add('open');
-  pauseReel(idx);
-}
-function closeProduct(e){
-  if(!e||e.target===document.getElementById('productOverlay')){
-    document.getElementById('productOverlay').classList.remove('open');
-    playReel(currentReelIdx);
-  }
-}
-
-/* ══════════════════════════════════════
-   COMMENTS
-══════════════════════════════════════ */
-const COMMENTS_DATA={
-  r001:[
-    {initials:'AB',avClr:'#5be5c5',name:'Abena Boateng',text:'Is this still available? 😍',time:'2h',likes:12},
-    {initials:'EO',avClr:'#a78bfa',name:'Esi Owusu',text:'What processor generation is it?',time:'1h',likes:5},
-    {initials:'KM',avClr:'#fb923c',name:'Kofi Mensah',text:'Price is fair for a Core i7! I bought mine for GH₵ 2,500 😅',time:'45m',likes:23},
-  ],
-  r002:[
-    {initials:'KA',avClr:'#e8c96a',name:'Kwame Asante',text:'Your designs are 🔥🔥 Do you do event posters too?',time:'5h',likes:34},
-    {initials:'AB',avClr:'#5be5c5',name:'Abena Boateng',text:'DM sent! Need a flyer for my club event 🙏',time:'3h',likes:8},
-  ],
-  r003:[
-    {initials:'KM',avClr:'#fb923c',name:'Kofi Mensah',text:'Is this the McMurry edition? Does it have the solutions manual?',time:'1d',likes:3},
-    {initials:'EO',avClr:'#a78bfa',name:'Esi Owusu',text:'I need this so badly 😭 Still available?',time:'18h',likes:7},
-  ],
-  r004:[
-    {initials:'AB',avClr:'#5be5c5',name:'Abena Boateng',text:'What switches? Linear or tactile?',time:'3h',likes:4},
-    {initials:'EO',avClr:'#a78bfa',name:'Esi Owusu',text:'I have the same keyboard! Great choice for programmers 👏',time:'2h',likes:18},
-    {initials:'KA',avClr:'#e8c96a',name:'Kwame Asante',text:'Would you take GH₵ 250?',time:'30m',likes:1},
-  ],
-  r005:[
-    {initials:'KM',avClr:'#fb923c',name:'Kofi Mensah',text:'The colours are so vibrant! 😍',time:'6h',likes:29},
-    {initials:'AB',avClr:'#5be5c5',name:'Abena Boateng',text:'I love the pattern! Any size S available?',time:'4h',likes:11},
-    {initials:'KA',avClr:'#e8c96a',name:'Kwame Asante',text:'Getting this for my sister 🎁',time:'2h',likes:6},
-  ],
+/* Read follow counts — used by profile.html */
+window.getFollowCounts=function(){
+  const f=loadF();
+  const me=(JSON.parse(localStorage.getItem('pu-profile')||'{}').username||'');
+  const m=JSON.parse(localStorage.getItem('pu-follow-map')||'{}');
+  return{following:f.following.length,followers:(m[me]||[]).length};
 };
 
-function openComments(idx){
-  activeCommentsIdx=idx;
-  const r=ALL_REELS[idx];if(!r)return;
-  const key=r.id;
-  const list=COMMENTS_DATA[key]||[];
-  document.getElementById('commentsTitle').textContent=`${fmtNum(r.comments)} Comments`;
-  const cl=document.getElementById('commentsList');
-  cl.innerHTML=list.length?list.map(c=>`
-    <div class="comment-item">
-      <div class="c-av" style="background:${c.avClr};color:#0d0e11">${c.initials}</div>
-      <div class="c-body">
-        <div class="c-name">${c.name}</div>
-        <div class="c-text">${escHtml(c.text)}</div>
-        <div class="c-meta">
-          <span class="c-time">${c.time}</span>
-          <span class="c-like" onclick="likeComment(this)">❤️ Like</span>
-          <span class="c-likes">${c.likes}</span>
-        </div>
+/* ── DATA ── */
+let uploadedReels=JSON.parse(localStorage.getItem('pu-reels')||'[]');
+let ALL=[...uploadedReels];
+let curIdx=0,activeVid=null,activeCmtIdx=null,pendingFile=null,pendingURL=null,shrIdx=null,prodCtx=null;
+
+/* ── REEL HTML ── */
+function reelHTML(r,i){
+  const hasVid=r.src&&r.src.length>0;
+  const handle=(r.seller&&r.seller.handle||'@user').replace('@','');
+  const flw=isFollowing(handle);
+  const av=r.seller&&r.seller.avSrc?`<img src="${escH(r.seller.avSrc)}" alt=""/>`:escH(r.seller&&r.seller.initials||'?');
+  const avBg=r.seller&&r.seller.avGrad||'linear-gradient(135deg,#e8c96a,#f5c842)';
+  const cap=escH(r.caption||'').replace(/#(\w+)/g,'<span class="htag">#$1</span>');
+  return `
+  <div class="reel-inner">
+    <div class="prog-bar"><div class="prog-fill" id="pb-${i}"></div></div>
+    ${hasVid?`<video class="reel-video" id="v-${i}" data-src="${escH(r.src)}" loop playsinline preload="metadata" onclick="togPlay(${i})" onplay="onPl(${i})" ontimeupdate="onTu(${i})"></video>`:`<div class="reel-bg" style="background:${escH(r.bg||'#0d0e11')}" id="v-${i}" onclick="togPlay(${i})"><span style="font-size:6rem;filter:drop-shadow(0 4px 24px rgba(0,0,0,.55))">${r.bgEmoji||'🎬'}</span></div>`}
+    <div class="reel-ov"></div>
+    <div class="play-flash" id="fl-${i}"><svg viewBox="0 0 24 24" width="34" height="34" fill="#fff" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+    <div class="reel-top">
+      <div class="reel-logo">PU-<span>Reels</span></div>
+      <div class="top-r">
+        <button class="tib" onclick="location.href='search.html'"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+        <button class="tib" onclick="openUpload()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
       </div>
-    </div>`).join('')
-    :'<div style="text-align:center;padding:2rem;color:#7a7e8a;font-size:.85rem">No comments yet — be the first!</div>';
-  document.getElementById('commentsOverlay').classList.add('open');
-  pauseReel(idx);
+    </div>
+    <div class="reel-bot">
+      <div class="seller-row" onclick="viewProf('${escH(handle)}')">
+        <div class="s-av" style="background:${avBg}">${av}</div>
+        <div class="s-info">
+          <div class="s-name">${escH(r.seller&&r.seller.name||'User')}</div>
+          <div class="s-handle">@${escH(handle)}</div>
+        </div>
+        <button class="flw-btn${flw?' following':''}" id="fb-${i}" onclick="event.stopPropagation();togFollow(${i},'${escH(handle)}')">${flw?'Following':'Follow'}</button>
+      </div>
+      <div class="caption">${cap}</div>
+      ${r.product?`<div class="prod-pill" onclick="openProd(${i})"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>${escH(r.product.name||'')}${r.product.price?' · '+escH(r.product.price):''}</div>`:''}
+      <div class="music-row"><div class="disc">🎵</div><span>${escH(r.music||'Original Audio')}</span></div>
+    </div>
+    <div class="reel-rail">
+      <div class="ract" onclick="togLike(${i})">
+        <div class="ract-ico${r.liked?' liked':''}" id="li-${i}"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+        <div class="ract-lbl" id="lc-${i}">${fmtN(r.likes)}</div>
+      </div>
+      <div class="ract" onclick="openCmt(${i})">
+        <div class="ract-ico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <div class="ract-lbl" id="cc-${i}">${fmtN(r.comments)}</div>
+      </div>
+      <div class="ract" onclick="openShr(${i})">
+        <div class="ract-ico"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+        <div class="ract-lbl" id="sc-${i}">${fmtN(r.shares)}</div>
+      </div>
+      <div class="ract" onclick="togSave(${i})">
+        <div class="ract-ico${r.saved?' saved':''}" id="sv-${i}"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg></div>
+        <div class="ract-lbl" id="svc-${i}">${fmtN(r.saves)}</div>
+      </div>
+    </div>
+  </div>`;
 }
 
-function closeComments(e){
-  if(!e||e.target===document.getElementById('commentsOverlay')){
-    document.getElementById('commentsOverlay').classList.remove('open');
-    document.getElementById('commentInput').value='';
-    document.getElementById('csSend').disabled=true;
-    playReel(currentReelIdx);
-  }
+/* ── BUILD ── */
+function build(){
+  const feed=document.getElementById('feed');feed.innerHTML='';
+  if(!ALL.length){const e=document.createElement('div');e.className='empty-feed';e.innerHTML=`<div class="ef-ico">🎬</div><div class="ef-ttl">No Reels Yet</div><div class="ef-sub">Be the first to share a video of your product or service on campus.</div><button class="ef-btn" onclick="openUpload()">📹 Post Your First Reel</button>`;feed.appendChild(e);return;}
+  ALL.forEach((r,i)=>{const el=document.createElement('div');el.className='reel';el.id='reel-'+i;el.dataset.idx=String(i);el.innerHTML=reelHTML(r,i);feed.appendChild(el);});
+  attachObs();attachGest();
+  document.querySelectorAll('.reel-video[data-src]').forEach(v=>{if(v.dataset.src){v.src=v.dataset.src;v.load();}});
+  fillLstSel();
 }
 
-function postComment(){
-  const inp=document.getElementById('commentInput');
-  const text=inp.value.trim();if(!text)return;
-  const p=JSON.parse(localStorage.getItem('pu-profile')||'{}');
-  const name=p.name||'Kwame Asante';
-  const ini=(name.split(' ').map(w=>w[0]||'').join('').slice(0,2))||'KA';
-  const item=document.createElement('div');
-  item.className='comment-item';
-  item.innerHTML=`
-    <div class="c-av" style="background:linear-gradient(135deg,#e8c96a,#f5c842);color:#0d0e11">${ini}</div>
-    <div class="c-body">
-      <div class="c-name">${escHtml(name)}</div>
-      <div class="c-text">${escHtml(text)}</div>
-      <div class="c-meta"><span class="c-time">Just now</span><span class="c-like" onclick="likeComment(this)">❤️ Like</span><span class="c-likes">0</span></div>
-    </div>`;
-  const cl=document.getElementById('commentsList');
-  cl.appendChild(item);
-  cl.scrollTop=cl.scrollHeight;
-  inp.value='';inp.style.height='';
-  document.getElementById('csSend').disabled=true;
-  if(activeCommentsIdx!==null){
-    const r=ALL_REELS[activeCommentsIdx];
-    if(r){r.comments++;const cc=document.getElementById('comment-count-'+activeCommentsIdx);if(cc)cc.textContent=fmtNum(r.comments);}
-  }
-}
+/* ── OBSERVER ── */
+let obs=null;
+function attachObs(){if(obs)obs.disconnect();obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.intersectionRatio>=0.65){const idx=parseInt(e.target.dataset.idx,10);if(curIdx!==idx){pauseAt(curIdx);curIdx=idx;}playAt(idx);}});},{threshold:0.65});document.querySelectorAll('.reel').forEach(r=>obs.observe(r));}
+function playAt(i){const v=document.getElementById('v-'+i);if(!v||v.tagName!=='VIDEO')return;if(!v.src&&v.dataset.src){v.src=v.dataset.src;v.load();}const p=v.play();if(p)p.catch(e=>{if(e.name!=='AbortError')console.warn(e.message);});activeVid=v;}
+function pauseAt(i){const v=document.getElementById('v-'+i);if(v&&v.tagName==='VIDEO')v.pause();}
 
-function likeComment(el){
-  const meta=el.parentElement;
-  const cnt=meta.querySelector('.c-likes');
-  if(!cnt)return;
-  const n=parseInt(cnt.textContent)||0;
-  cnt.textContent=el.dataset.liked?n-1:n+1;
-  el.dataset.liked=el.dataset.liked?'':'1';
-  el.textContent=el.dataset.liked?'❤️ Liked':'❤️ Like';
-  el.style.color=el.dataset.liked?'var(--red)':'#7a7e8a';
-}
+/* ── PLAY/PAUSE ── */
+function togPlay(i){const v=document.getElementById('v-'+i);if(!v||v.tagName!=='VIDEO'){flash(i,'play');return;}if(v.paused){v.play();flash(i,'play');}else{v.pause();flash(i,'pause');}}
+function flash(i,t){const f=document.getElementById('fl-'+i);if(!f)return;f.innerHTML=t==='pause'?`<svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#fff" stroke-width="2.5"><line x1="6" y1="4" x2="6" y2="20"/><line x1="18" y1="4" x2="18" y2="20"/></svg>`:`<svg viewBox="0 0 24 24" width="34" height="34" fill="#fff" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;f.classList.add('show');setTimeout(()=>f.classList.remove('show'),700);}
+function onPl(i){const p=document.getElementById('pb-'+i);if(p)p.parentElement.style.opacity='1';}
+function onTu(i){const v=document.getElementById('v-'+i);const p=document.getElementById('pb-'+i);if(v&&p&&v.duration)p.style.width=(v.currentTime/v.duration*100)+'%';}
 
-function autoResizeCs(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,80)+'px';}
+/* ── GESTURES ── */
+function attachGest(){let lt=0;document.getElementById('feed').addEventListener('touchend',e=>{const now=Date.now();if(now-lt<280){const r=e.target.closest('.reel');if(r)togLike(parseInt(r.dataset.idx,10));}lt=now;},{passive:true});}
 
-/* ══════════════════════════════════════
-   SHARE
-══════════════════════════════════════ */
-let shareReelIdx=null;
-function openShare(idx){
-  shareReelIdx=idx;
-  const r=ALL_REELS[idx];
-  document.getElementById('shareLink').textContent=`pu-Connect.edu.gh/reels/${r.id}`;
-  document.getElementById('shareOverlay').classList.add('open');
-  pauseReel(idx);
-}
-function closeShare(e){
-  if(!e||e.target===document.getElementById('shareOverlay')){
-    document.getElementById('shareOverlay').classList.remove('open');
-    playReel(currentReelIdx);
-  }
-}
-function shareAction(type){
-  closeShare();
-  if(type==='chat'){showToast('Opening chat to share…');setTimeout(()=>location.href='chat.html',600);}
-  else if(type==='copy'){copyLink();}
-  else{showToast('Opening '+type+'…');}
-}
-function copyLink(){
-  const link=document.getElementById('shareLink').textContent;
-  navigator.clipboard.writeText(link).then(()=>showToast('🔗 Link copied!'))
-    .catch(()=>showToast('Link copied!'));
-}
+/* ── LIKE / SAVE ── */
+function togLike(i){const r=ALL[i];if(!r)return;r.liked=!r.liked;r.likes=(r.likes||0)+(r.liked?1:-1);const ico=document.getElementById('li-'+i);const cnt=document.getElementById('lc-'+i);if(ico){ico.className='ract-ico'+(r.liked?' liked':'');if(r.liked){ico.style.transform='scale(1.35)';setTimeout(()=>ico.style.transform='',320);}}if(cnt)cnt.textContent=fmtN(r.likes);if(r.liked)toast('❤️ Liked');}
+function togSave(i){const r=ALL[i];if(!r)return;r.saved=!r.saved;r.saves=(r.saves||0)+(r.saved?1:-1);const ico=document.getElementById('sv-'+i);const cnt=document.getElementById('svc-'+i);if(ico)ico.className='ract-ico'+(r.saved?' saved':'');if(cnt)cnt.textContent=fmtN(r.saves);toast(r.saved?'🔖 Saved':'Removed from saved');try{const ids=new Set(JSON.parse(localStorage.getItem('pu-wish-ids')||'[]'));r.saved?ids.add(r.id):ids.delete(r.id);localStorage.setItem('pu-wish-ids',JSON.stringify([...ids]));}catch(e){}}
 
-/* ══════════════════════════════════════
-   UPLOAD MODAL
-══════════════════════════════════════ */
-function openUpload(){
-  document.getElementById('uploadOverlay').classList.add('open');
-  pauseReel(currentReelIdx);
-}
-function closeUpload(){
-  document.getElementById('uploadOverlay').classList.remove('open');
-  removeVideo();
-  document.getElementById('captionInput').value='';
-  document.getElementById('captionCount').textContent='0 / 200';
-  document.getElementById('listingSelect').value='';
-  document.getElementById('uploadProgress').classList.remove('show');
-  playReel(currentReelIdx);
-}
-function closeUploadOverlay(e){
-  if(e.target===document.getElementById('uploadOverlay'))closeUpload();
-}
+/* ── FOLLOW ── */
+function togFollow(i,u){const r=ALL[i];if(!r)return;const was=isFollowing(u);was?unfollow(u):follow(u);const now=!was;r.following=now;toast(now?`✅ Following @${u}`:`Unfollowed @${u}`);ALL.forEach((reel,j)=>{if((reel.seller&&reel.seller.handle||'').replace('@','')=== u){reel.following=now;const b=document.getElementById('fb-'+j);if(b){b.textContent=now?'Following':'Follow';b.className='flw-btn'+(now?' following':'');}}});}
+function viewProf(u){try{localStorage.setItem('pu-view-profile',JSON.stringify({username:u}));}catch(e){}location.href=`profile.html?u=${encodeURIComponent(u)}`;}
 
-function handleVideoSelect(file){
-  if(!file)return;
-  if(file.size>100*1024*1024){showToast('Video too large — max 100MB');return;}
-  pendingVideoFile=file;
-  // Revoke previous blob URL only if it's not being used by a feed video
-  if(pendingVideoURL&&!document.querySelector(`video[src="${pendingVideoURL}"]`)){
-    URL.revokeObjectURL(pendingVideoURL);
-  }
-  pendingVideoURL=URL.createObjectURL(file);
-  const vid=document.getElementById('vidPreview');
-  vid.src=pendingVideoURL;
-  vid.load(); // required to trigger canplay and allow playback
-  // Check duration once metadata loads
-  vid.onloadedmetadata=()=>{
-    if(vid.duration>180){
-      showToast('Video too long — max 3 minutes');
-      removeVideo();
-      return;
-    }
-  };
-  document.getElementById('vidPreviewWrap').style.display='block';
-  document.getElementById('dropZone').style.display='none';
-  document.getElementById('uploadBtn').disabled=false;
-}
+/* ── PRODUCT ── */
+function openProd(i){const r=ALL[i];if(!r||!r.product)return;const p=r.product;const imgEl=document.getElementById('psImg');imgEl.innerHTML='';if(p.img){const im=document.createElement('img');im.src=p.img;im.alt=p.name||'';im.onerror=()=>{imgEl.textContent=p.emoji||'📦';};imgEl.appendChild(im);}else{imgEl.textContent=p.emoji||'📦';}document.getElementById('psBdg').textContent=p.status||'Available';document.getElementById('psNm').textContent=p.name||'—';document.getElementById('psPr').textContent=p.price||'Contact for price';document.getElementById('psSl').textContent='Listed by @'+(r.seller&&r.seller.handle||'').replace('@','');document.getElementById('psDs').textContent=p.desc||'Tap "Message Seller" to get more details.';prodCtx={username:(r.seller&&r.seller.handle||'').replace('@',''),listing:p.name||''};openS('prodOv');pauseAt(curIdx);}
+function closeProd(e){if(!e||e.target===document.getElementById('prodOv')){closeS('prodOv');playAt(curIdx);}}
+function msgSeller(){if(prodCtx){try{localStorage.setItem('pu-chat-open',JSON.stringify(prodCtx));}catch(e){}}location.href='chat.html';}
 
-function removeVideo(){
-  pendingVideoFile=null;
-  if(pendingVideoURL){
-    // Only revoke if no feed video is currently using this URL
-    if(!document.querySelector(`video[src="${pendingVideoURL}"]`)){
-      URL.revokeObjectURL(pendingVideoURL);
-    }
-    pendingVideoURL=null;
-  }
-  const vid=document.getElementById('vidPreview');
-  vid.pause();
-  vid.src='';
-  vid.load();
-  document.getElementById('vidPreviewWrap').style.display='none';
-  document.getElementById('dropZone').style.display='block';
-  document.getElementById('uploadBtn').disabled=true;
-  document.getElementById('videoFileInput').value='';
-}
+/* ── COMMENTS ── */
+const CMTD={};
+function openCmt(i){activeCmtIdx=i;const r=ALL[i];if(!r)return;const key=r.id||('r'+i);const list=CMTD[key]||[];document.getElementById('csttl').textContent=`${fmtN(r.comments||0)} Comment${(r.comments||0)!==1?'s':''}`;const cl=document.getElementById('csl');cl.innerHTML=list.length?list.map(c=>`<div class="ci"><div class="cav" style="background:${c.bg||'linear-gradient(135deg,#e8c96a,#f5c842)'};color:#0d0e11">${escH(c.ini||'?')}</div><div class="cb"><div class="cnm">${escH(c.name||'')}</div><div class="ctx">${escH(c.txt||'')}</div><div class="cmt"><span class="ctm">${c.time||''}</span><span class="clk" onclick="lkCmt(this)">Like</span></div></div></div>`).join(''):'<div style="text-align:center;padding:2rem;color:#7a7e8a;font-size:.84rem">No comments yet — be the first! 💬</div>';const prof=JSON.parse(localStorage.getItem('pu-profile')||'{}');const ini=(prof.name||'?').split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();document.getElementById('cmav').textContent=ini||'KA';openS('cmtOv');pauseAt(curIdx);}
+function closeCmt(e){if(!e||e.target===document.getElementById('cmtOv')){closeS('cmtOv');document.getElementById('cminp').value='';document.getElementById('cmsnd').disabled=true;playAt(curIdx);}}
+function postCmt(){const inp=document.getElementById('cminp');const txt=inp.value.trim();if(!txt)return;const prof=JSON.parse(localStorage.getItem('pu-profile')||'{}');const nm=prof.name||'User';const ini=nm.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();const cl=document.getElementById('csl');const emp=cl.querySelector('div[style]');if(emp)emp.remove();const item=document.createElement('div');item.className='ci';item.innerHTML=`<div class="cav" style="background:linear-gradient(135deg,#e8c96a,#f5c842);color:#0d0e11">${escH(ini)}</div><div class="cb"><div class="cnm">${escH(nm)}</div><div class="ctx">${escH(txt)}</div><div class="cmt"><span class="ctm">Just now</span><span class="clk" onclick="lkCmt(this)">Like</span></div></div>`;cl.appendChild(item);cl.scrollTop=cl.scrollHeight;inp.value='';inp.style.height='';document.getElementById('cmsnd').disabled=true;if(activeCmtIdx!==null){const r=ALL[activeCmtIdx];if(r){const k=r.id||('r'+activeCmtIdx);if(!CMTD[k])CMTD[k]=[];CMTD[k].push({name:nm,ini,txt,time:'Just now',bg:'linear-gradient(135deg,#e8c96a,#f5c842)'});r.comments=(r.comments||0)+1;const el=document.getElementById('cc-'+activeCmtIdx);if(el)el.textContent=fmtN(r.comments);document.getElementById('csttl').textContent=`${fmtN(r.comments)} Comment${r.comments!==1?'s':''}`;}}  }
+function lkCmt(el){el.textContent=el.dataset.l?'Like':'Liked ❤️';el.style.color=el.dataset.l?'#7a7e8a':'var(--red)';el.dataset.l=el.dataset.l?'':1;}
+function csResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,80)+'px';}
 
+/* ── SHARE — REAL IMPLEMENTATIONS ── */
+function getShrData(i){const r=ALL[i]||{};const id=r.id||('reel-'+i);const url=`${SITE}/reels.html?id=${encodeURIComponent(id)}`;const cap=(r.caption||'').substring(0,80);const seller=r.seller&&r.seller.name||'Someone';return{url,id,title:`${cap||'Watch this reel'} — PU-Connect`,text:`${seller} on PU-Connect: ${cap||'Check it out!'}\n`};}
+
+function openShr(i){shrIdx=i;const d=getShrData(i);document.getElementById('shrLnk').textContent=d.url;document.getElementById('cpbtn').textContent='Copy';document.getElementById('cpbtn').classList.remove('copied');const r=ALL[i];if(r){r.shares=(r.shares||0)+1;const el=document.getElementById('sc-'+i);if(el)el.textContent=fmtN(r.shares);}openS('shrOv');pauseAt(curIdx);}
+function closeShr(e){if(!e||e.target===document.getElementById('shrOv')){closeS('shrOv');playAt(curIdx);}}
+
+function shareChat(){if(shrIdx===null)return;const d=getShrData(shrIdx);const r=ALL[shrIdx];try{localStorage.setItem('pu-chat-open',JSON.stringify({username:'',message:`Check out this reel by ${r&&r.seller&&r.seller.name||'a seller'} on PU-Connect: ${d.url}`,type:'reel_share'}));}catch(e){}closeS('shrOv');setTimeout(()=>location.href='chat.html',250);}
+
+function shareWA(){if(shrIdx===null)return;const d=getShrData(shrIdx);const msg=encodeURIComponent(d.text+d.url);window.open(`https://wa.me/?text=${msg}`,'_blank','noopener,noreferrer');closeS('shrOv');toast('Opening WhatsApp…');}
+
+function shareNative(){if(shrIdx===null)return;const d=getShrData(shrIdx);if(navigator.share){navigator.share({title:d.title,text:d.text,url:d.url}).then(()=>toast('Shared!')).catch(err=>{if(err.name!=='AbortError')copyLink();});closeS('shrOv');}else{copyLink();}}
+
+function copyLink(){const link=document.getElementById('shrLnk')&&document.getElementById('shrLnk').textContent||(shrIdx!==null?getShrData(shrIdx).url:`${SITE}/reels.html`);const done=(ok)=>{const b=document.getElementById('cpbtn');if(b){b.textContent=ok?'Copied ✓':'Copy';b.classList.toggle('copied',ok);}toast(ok?'🔗 Link copied!':'Select the link and copy manually');};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(link).then(()=>done(true)).catch(()=>execCopy(link,done));}else{execCopy(link,done);}}
+function execCopy(txt,cb){const ta=document.createElement('textarea');ta.value=txt;ta.style.cssText='position:fixed;top:-9999px;left:-9999px;';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');cb(true);}catch(e){cb(false);}document.body.removeChild(ta);}
+
+/* ── SHEET HELPERS ── */
+function openS(id){document.getElementById(id).classList.add('open');}
+function closeS(id){document.getElementById(id).classList.remove('open');}
+
+/* ── UPLOAD ── */
+function openUpload(){openS('upOv');pauseAt(curIdx);fillLstSel();}
+function closeUpload(e){if(!e||e.target===document.getElementById('upOv')){closeS('upOv');removeVid();document.getElementById('capInp').value='';document.getElementById('capCnt').textContent='0 / 200';document.getElementById('lstSel').value='';document.getElementById('upprog').classList.remove('show');playAt(curIdx);}}
+function fillLstSel(){try{const sel=document.getElementById('lstSel');const lsts=JSON.parse(localStorage.getItem('pu-listings')||'[]');const me=(JSON.parse(localStorage.getItem('pu-profile')||'{}').username||'');const mine=me?lsts.filter(l=>l.sellerUsername===me):lsts;while(sel.options.length>1)sel.remove(1);mine.forEach(l=>{const o=document.createElement('option');o.value=l.id;o.textContent=`${l.title||l.name||'Listing'} — ${l.priceLabel||(l.price?'GH\u20B5 '+Number(l.price).toLocaleString():'Contact')}`;o.dataset.price=l.priceLabel||(l.price?'GH\u20B5 '+Number(l.price).toLocaleString():'');o.dataset.emoji=l.type==='service'?'🛠️':'📦';o.dataset.img=l.img||'';sel.appendChild(o);});}catch(e){}}
+function handleVid(f){if(!f)return;if(f.size>100*1024*1024){toast('Video too large — max 100MB');return;}if(pendingURL&&!document.querySelector(`video[src="${pendingURL}"]`))URL.revokeObjectURL(pendingURL);pendingFile=f;pendingURL=URL.createObjectURL(f);const v=document.getElementById('vprev');v.src=pendingURL;v.load();v.onloadedmetadata=()=>{if(v.duration>180){toast('Max 3 minutes');removeVid();}};document.getElementById('vpw').style.display='block';document.getElementById('dzn').style.display='none';document.getElementById('ubtn').disabled=false;}
+function removeVid(){pendingFile=null;if(pendingURL&&!document.querySelector(`video[src="${pendingURL}"]`))URL.revokeObjectURL(pendingURL);pendingURL=null;const v=document.getElementById('vprev');v.pause();v.src='';v.load();document.getElementById('vpw').style.display='none';document.getElementById('dzn').style.display='block';document.getElementById('ubtn').disabled=true;document.getElementById('vfi').value='';}
 function publishReel(){
-  const caption=document.getElementById('captionInput').value.trim();
-  if(!pendingVideoURL){showToast('Please select a video first');return;}
-  if(!caption){showToast('Please add a caption');return;}
-
-  const btn=document.getElementById('uploadBtn');
+  const cap=document.getElementById('capInp').value.trim();
+  if(!pendingURL){toast('Please select a video first');return;}
+  if(!cap){toast('Please add a caption');return;}
+  const btn=document.getElementById('ubtn');
   btn.disabled=true;btn.textContent='Uploading…';
-
-  // Show progress
-  const prog=document.getElementById('uploadProgress');
-  const fill=document.getElementById('uploadFill');
-  const lbl=document.getElementById('uploadLabel');
+  const prog=document.getElementById('upprog');
   prog.classList.add('show');
+  const fill=document.getElementById('upfil');
+  const lbl=document.getElementById('uplbl');
 
-  // Simulate upload progress
+  // Simulate progress while Cloudinary uploads
   let pct=0;
-  const steps=['Preparing video…','Uploading…','Processing…','Almost done…'];
-  const interval=setInterval(()=>{
-    pct+=Math.random()*18+4;
-    if(pct>=100){pct=100;clearInterval(interval);finishUpload(caption);}
+  const steps=['Preparing…','Uploading to cloud…','Processing…','Almost done…'];
+  const iv=setInterval(()=>{
+    if(pct<85){pct+=Math.random()*8+2;}
     fill.style.width=pct+'%';
     lbl.textContent=steps[Math.min(Math.floor(pct/25),3)];
-  },200);
+  },300);
+
+  // Upload video file to Cloudinary
+  uploadToCloudinary(pendingFile,'video')
+    .then(cloudUrl=>{
+      clearInterval(iv);
+      fill.style.width='100%';
+      lbl.textContent='Done!';
+      finishUpload(cap, cloudUrl);
+    })
+    .catch(err=>{
+      clearInterval(iv);
+      prog.classList.remove('show');
+      btn.disabled=false;
+      btn.textContent='Upload Reel';
+      toast('Upload failed: '+err.message);
+    });
 }
+function finishUpload(cap, cloudUrl){const p=JSON.parse(localStorage.getItem('pu-profile')||'{}');const nm=p.name||'User';const un=p.username||'user';const ini=nm.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'KA';const sel=document.getElementById('lstSel');const opt=sel.options[sel.selectedIndex];const prod=opt.value?{name:opt.text.split(' — ')[0],price:opt.dataset.price||'',emoji:opt.dataset.emoji||'📦',img:opt.dataset.img||'',desc:'Campus listing — tap to view.'}:null;const tags=(cap.match(/#\w+/g)||[]);const reel={id:'r-'+Date.now(),src:cloudUrl||pendingURL,bg:'linear-gradient(135deg,#0d1117,#1c1f27)',bgEmoji:'🎬',seller:{name:nm,handle:'@'+un,initials:ini,avGrad:'linear-gradient(135deg,#e8c96a,#f5c842)',avSrc:p.avatarSrc||''},caption:cap,product:prod,tags,likes:0,comments:0,shares:0,saves:0,liked:false,saved:false,following:false,music:'Original Audio \u00B7 '+nm,uploadedAt:Date.now()};try{const stored=JSON.parse(localStorage.getItem('pu-reels')||'[]');const ts={...reel,src:cloudUrl||'',bg:'linear-gradient(135deg,#0d1117,#1c1f27)'};stored.unshift(ts);if(stored.length>30)stored.splice(30);localStorage.setItem('pu-reels',JSON.stringify(stored));}catch(e){}ALL.unshift(reel);closeUpload();build();document.getElementById('feed').scrollTo({top:0,behavior:'instant'});curIdx=0;setTimeout(()=>playAt(0),350);toast('🎉 Reel published!');}
 
-function finishUpload(caption){
-  const p=JSON.parse(localStorage.getItem('pu-profile')||'{}');
-  const name=p.name||'Kwame Asante';
-  const username=p.username||'kwame_sell';
-  const ini=(name.split(' ').map(w=>w[0]||'').join('').slice(0,2))||'KA';
-  const avSrc=p.avatarSrc||'';
+const dzn=document.getElementById('dzn');
+dzn.addEventListener('dragover',e=>{e.preventDefault();dzn.classList.add('drag-over');});
+dzn.addEventListener('dragleave',()=>dzn.classList.remove('drag-over'));
+dzn.addEventListener('drop',e=>{e.preventDefault();dzn.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('video/'))handleVid(f);else toast('Please drop a video file');});
 
-  // Pick linked listing if any
-  const sel=document.getElementById('listingSelect');
-  const opt=sel.options[sel.selectedIndex];
-  const product=opt.value?{
-    name:opt.text.split(' — ')[0],
-    price:opt.dataset.price||'',
-    emoji:opt.dataset.emoji||'📦',
-    desc:'Campus listing — tap to view details.',
-  }:null;
-
-  const tags=(caption.match(/#\w+/g)||[]);
-  const newReel={
-    id:'r-'+Date.now(),
-    src:pendingVideoURL,
-    bg:'linear-gradient(135deg,#0d1117 0%,#1c1f27 100%)',
-    bgEmoji:'🎬',
-    seller:{name,handle:'@'+username,initials:ini,avGrad:'linear-gradient(135deg,#e8c96a,#f5c842)',avSrc},
-    caption,product,
-    likes:0,comments:0,shares:0,saves:0,liked:false,saved:false,following:false,
-    music:'Original Audio · '+name,
-    tags,
-    uploadedAt:Date.now(),
-  };
-
-  // Persist to localStorage (small reels only — store URL reference)
-  try{
-    const stored=JSON.parse(localStorage.getItem('pu-reels')||'[]');
-    // Store without the blob URL (which won't survive refresh) — just metadata
-    const toStore={...newReel,src:'',bgEmoji:'🎬',bg:'linear-gradient(135deg,#0d1117,#1c1f27)'};
-    stored.unshift(toStore);
-    if(stored.length>20)stored.pop();
-    localStorage.setItem('pu-reels',JSON.stringify(stored));
-  }catch(e){}
-
-  // Insert into feed in-memory (with real blob URL for this session)
-  ALL_REELS.unshift(newReel);
-
-  closeUpload();
-  buildFeed();
-
-  // Scroll to top
-  document.getElementById('feed').scrollTo({top:0,behavior:'smooth'});
-  currentReelIdx=0;
-  setTimeout(()=>playReel(0),400);
-
-  showToast('🎉 Reel published!');
-}
-
-/* ══════════════════════════════════════
-   DRAG & DROP
-══════════════════════════════════════ */
-const dz=document.getElementById('dropZone');
-dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
-dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
-dz.addEventListener('drop',e=>{
-  e.preventDefault();dz.classList.remove('drag-over');
-  const f=e.dataTransfer.files[0];
-  if(f&&f.type.startsWith('video/'))handleVideoSelect(f);
-  else showToast('Please drop a video file');
-});
-
-/* ══════════════════════════════════════
-   UTILITIES
-══════════════════════════════════════ */
-function fmtNum(n){
-  if(n>=1000)return(n/1000).toFixed(1).replace(/\.0$/,'')+'k';
-  return String(n);
-}
-function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
-let toastTimer;
-function showToast(msg){
-  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
-  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
-}
-
-/* ══════════════════════════════════════
-   INIT
-══════════════════════════════════════ */
-buildFeed();
-// Auto-play first reel after a short delay
-setTimeout(()=>playReel(0),300);
+/* ── INIT ── */
+build();
+setTimeout(()=>playAt(0),300);
+(()=>{const id=new URLSearchParams(location.search).get('id');if(id&&ALL.length){const idx=ALL.findIndex(r=>r.id===id);if(idx>0)setTimeout(()=>{const el=document.getElementById('reel-'+idx);if(el){el.scrollIntoView({behavior:'instant'});curIdx=idx;playAt(idx);}},400);}})();
 </script>
 </body>
 </html>

@@ -1,20 +1,310 @@
-{% load static %}
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
   <title>Privacy Policy — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="{% static 'css/privacy.css' %}"/>
+  <style>
+    :root, [data-theme="dark"] {
+      --bg: #0d0e11;
+      --surface: #15171c;
+      --card: #1c1f27;
+      --accent: #5be5c5;
+      --accent2: #e8c96a;
+      --text: #f0eeea;
+      --muted: #7a7e8a;
+      --border: rgba(255,255,255,0.07);
+    }
+    [data-theme="light"] {
+      --bg: #f0ede8;
+      --surface: #e8e4de;
+      --card: #ffffff;
+      --accent: #2aab8e;
+      --accent2: #c9a030;
+      --text: #1a1a1a;
+      --muted: #888888;
+      --border: rgba(0,0,0,0.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.8;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 2.5rem;
+      background: rgba(13,14,17,.9);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900; font-size: 1.35rem;
+      color: var(--accent2); text-decoration: none; letter-spacing: -.5px;
+    }
+    .logo span { color: var(--text); }
+    .nav-right { display: flex; align-items: center; gap: 1.5rem; }
+    .nav-link { text-decoration: none; color: var(--muted); font-size: .88rem; font-weight: 500; transition: color .2s; }
+    .nav-link:hover { color: var(--text); }
+    .nav-btn {
+      background: var(--accent); color: #0d0e11;
+      padding: .5rem 1.2rem; border-radius: 6px;
+      font-size: .88rem; font-weight: 600;
+      text-decoration: none; transition: opacity .2s;
+    }
+    .nav-btn:hover { opacity: .85; }
+    .nav-theme-btn {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; border: none; background: rgba(255,255,255,.06);
+      font-size: 1rem; flex-shrink: 0; transition: transform .3s; color: var(--text);
+    }
+    [data-theme="light"] .nav-theme-btn { background: rgba(0,0,0,.06); }
+    .nav-theme-btn:hover { transform: rotate(22deg); }
+
+    /* ── HERO HEADER ── */
+    .page-hero {
+      position: relative;
+      padding: 5rem 2.5rem 4rem;
+      text-align: center;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-glow {
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(91,229,197,.09) 0%, transparent 65%);
+      top: -100px; left: 50%; transform: translateX(-50%);
+      pointer-events: none;
+    }
+    .page-hero-inner { position: relative; z-index: 1; }
+    .page-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(91,229,197,.1);
+      border: 1px solid rgba(91,229,197,.2);
+      border-radius: 99px; padding: .35rem 1rem;
+      font-size: .75rem; color: var(--accent);
+      font-weight: 500; letter-spacing: .5px;
+      text-transform: uppercase; margin-bottom: 1.2rem;
+    }
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 900; letter-spacing: -1.5px;
+      line-height: 1.05; margin-bottom: 1rem;
+    }
+    .page-title em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .page-meta {
+      color: var(--muted); font-size: .88rem; font-weight: 300;
+      display: flex; align-items: center; justify-content: center; gap: 1.5rem; flex-wrap: wrap;
+      margin-top: .8rem;
+    }
+    .page-meta span { display: flex; align-items: center; gap: .4rem; }
+
+    /* ── LAYOUT ── */
+    .page-layout {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 260px 1fr; gap: 3rem;
+      padding: 4rem 2.5rem;
+      position: relative; z-index: 1;
+    }
+
+    /* ── TOC ── */
+    .toc {
+      position: sticky; top: 90px;
+      align-self: start;
+    }
+    .toc-title {
+      font-size: .75rem; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent);
+      font-weight: 500; margin-bottom: 1rem;
+    }
+    .toc-list { list-style: none; }
+    .toc-list li { margin-bottom: .1rem; }
+    .toc-list a {
+      text-decoration: none; color: var(--muted);
+      font-size: .84rem; font-weight: 400;
+      padding: .4rem .8rem; border-radius: 6px;
+      display: block; transition: background .2s, color .2s;
+      border-left: 2px solid transparent;
+    }
+    .toc-list a:hover { color: var(--text); background: rgba(255,255,255,.04); }
+    .toc-list a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(91,229,197,.06); }
+    .toc-divider { height: 1px; background: var(--border); margin: 1rem 0; }
+    .toc-back {
+      display: flex; align-items: center; gap: .5rem;
+      text-decoration: none; color: var(--muted);
+      font-size: .82rem; padding: .4rem .8rem;
+      border-radius: 6px; transition: color .2s;
+    }
+    .toc-back:hover { color: var(--text); }
+
+    /* ── CONTENT ── */
+    .content { min-width: 0; }
+
+    .intro-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 12px; padding: 1.5rem 1.8rem;
+      margin-bottom: 3rem;
+      font-size: .92rem; color: var(--muted);
+      font-weight: 300; line-height: 1.8;
+    }
+    .intro-box strong { color: var(--text); font-weight: 500; }
+
+    /* Data table */
+    .data-table {
+      width: 100%; border-collapse: collapse;
+      margin: 1.2rem 0; font-size: .86rem;
+    }
+    .data-table th {
+      text-align: left; padding: .7rem 1rem;
+      background: rgba(91,229,197,.06);
+      color: var(--accent); font-weight: 600;
+      font-size: .75rem; letter-spacing: .5px; text-transform: uppercase;
+      border-bottom: 1px solid rgba(91,229,197,.15);
+    }
+    .data-table td {
+      padding: .8rem 1rem;
+      color: var(--muted); font-weight: 300; line-height: 1.7;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+      vertical-align: top;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+
+    .section {
+      margin-bottom: 3.5rem;
+      scroll-margin-top: 100px;
+    }
+    .section-num {
+      font-size: .72rem; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent);
+      font-weight: 600; margin-bottom: .5rem;
+    }
+    .section-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; font-weight: 700;
+      letter-spacing: -.3px; margin-bottom: 1rem;
+      padding-bottom: .8rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .section p {
+      color: var(--muted); font-size: .92rem;
+      font-weight: 300; margin-bottom: 1rem; line-height: 1.85;
+    }
+    .section p:last-child { margin-bottom: 0; }
+    .section p strong { color: var(--text); font-weight: 500; }
+
+    .term-list { list-style: none; margin: 1rem 0; }
+    .term-list li {
+      display: flex; gap: .8rem;
+      color: var(--muted); font-size: .92rem;
+      font-weight: 300; line-height: 1.8;
+      padding: .5rem 0;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+    }
+    .term-list li:last-child { border-bottom: none; }
+    .term-list li::before { content: '—'; color: var(--accent); font-weight: 700; flex-shrink: 0; margin-top: .05rem; }
+
+    .highlight-box {
+      background: rgba(91,229,197,.06);
+      border: 1px solid rgba(91,229,197,.15);
+      border-radius: 10px; padding: 1.2rem 1.5rem;
+      margin: 1.2rem 0;
+      font-size: .88rem; color: var(--muted);
+      font-weight: 300; line-height: 1.8;
+    }
+    .highlight-box strong { color: var(--accent); font-weight: 500; }
+
+    .rights-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+      margin: 1.2rem 0;
+    }
+    .right-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.1rem 1.3rem;
+    }
+    .right-card-title {
+      font-size: .82rem; font-weight: 600;
+      color: var(--text); margin-bottom: .4rem;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .right-card p { font-size: .82rem; color: var(--muted); font-weight: 300; line-height: 1.6; margin: 0; }
+
+    /* ── FOOTER ── */
+    .page-footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 1.1rem; color: var(--accent2); }
+    .footer-logo span { color: var(--text); }
+    .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .footer-links a { text-decoration: none; color: var(--muted); font-size: .82rem; transition: color .2s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy { color: var(--muted); font-size: .78rem; }
+
+    @media (max-width: 860px) {
+      .page-layout { grid-template-columns: 1fr; gap: 0; }
+      .toc { display: none; }
+      .rights-grid { grid-template-columns: 1fr; }
+      nav { padding: 1rem 1.5rem; }
+      .page-hero { padding: 3.5rem 1.5rem 2.5rem; }
+      .page-layout { padding: 2.5rem 1.5rem; }
+      .data-table { font-size: .8rem; }
+      .data-table th, .data-table td { padding: .6rem .7rem; }
+    }
+  
+    @media (max-width: 600px) {
+      .nav-link { display: none; }
+      .page-title { font-size: clamp(1.8rem, 7vw, 2.8rem); letter-spacing: -1px; }
+      .section-heading { font-size: 1.25rem; }
+      .page-meta { flex-direction: column; gap: .6rem; font-size: .8rem; }
+      .data-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .page-footer { flex-direction: column; text-align: center; padding: 1.8rem 1.5rem; }
+      .footer-links { justify-content: center; gap: 1rem; }
+    }
+    @media (max-width: 380px) {
+      .page-layout { padding: 1.5rem 1rem; }
+      .rights-grid .right-card { padding: .9rem 1rem; }
+    }
+  </style>
 </head>
 <body>
 
 <nav>
-  <a href="{% url 'home_view' %}" class="logo">PU-<span>Connect</span></a>
+  <a href="index.html" class="logo">PU-<span>Marketplace</span></a>
   <div class="nav-right">
-  {% include 'footer.html' %}
+    <a href="terms.html" class="nav-link">Terms &amp; Conditions</a>
+    <button class="nav-theme-btn" id="themeBtn">🌞</button>
+    <a href="auth.html" class="nav-btn">Get Started</a>
   </div>
 </nav>
 
@@ -52,8 +342,8 @@
       <li><a href="#p12">12. Contact Us</a></li>
     </ul>
     <div class="toc-divider"></div>
-    <a href="{% url 'terms_view' %}" class="toc-back">📄 Terms &amp; Conditions →</a>
-    <a href="{% url 'Auth_view' %}" class="toc-back">← Back to Sign Up</a>
+    <a href="terms.html" class="toc-back">📄 Terms &amp; Conditions →</a>
+    <a href="auth.html" class="toc-back">← Back to Sign Up</a>
   </aside>
 
   <!-- MAIN CONTENT -->
@@ -66,14 +356,10 @@
     <section class="section" id="p1">
       <div class="section-num">Section 01</div>
       <h2 class="section-heading">Who We Are</h2>
-      <p>PU-Connect ("we", "us", "our") is a campus-based peer-to-peer Connect platform operated under the university. Our platform enables verified students and campus community members to list, buy, and sell goods and services within their university campus.</p>
+      <p>PU-Connect ("we", "us", "our") is a campus-based peer-to-peer marketplace platform operated under the university. Our platform enables verified students and campus community members to list, buy, and sell goods and services within their university campus.</p>
       <div class="highlight-box">
         <strong>Data Controller:</strong> PU-Connect, Student Affairs Technology Division<br>
-
-        📧 privacy@pu-Connect.edu.gh<br>
-
-        📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a5d5d7ccd3c4c6dce5d5d088c8c4d7cec0d1d5c9c4c6c08bc0c1d08bc2cd">[email&#160;protected]</a><br>
-
+        📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e797958e9186849ea79792ca8a86958c8293978b868482c9828392c9808f">[email&#160;protected]</a><br>
         📍 Student Affairs Office, University Campus, Ghana
       </div>
     </section>
@@ -190,10 +476,7 @@
     <section class="section" id="p7">
       <div class="section-num">Section 07</div>
       <h2 class="section-heading">Your Rights</h2>
-
-
-      <p>Depending on your jurisdiction, you may have the following rights regarding your personal data. To exercise any of these rights, contact us at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7d0d0f140b1c1e043d0d0850101c0f1618090d111c1e1853181908531a15">[email&#160;protected]</a></strong>. We will respond within <strong>30 days</strong>.</p>
-
+      <p>Depending on your jurisdiction, you may have the following rights regarding your personal data. To exercise any of these rights, contact us at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d0a0a2b9a6b1b3a990a0a5fdbdb1a2bbb5a4a0bcb1b3b5feb5b4a5feb7b8">[email&#160;protected]</a></strong>. We will respond within <strong>30 days</strong>.</p>
       <div class="rights-grid">
         <div class="right-card">
           <div class="right-card-title">👁️ Right of Access</div>
@@ -256,11 +539,7 @@
       <div class="section-num">Section 09</div>
       <h2 class="section-heading">Children's Privacy</h2>
       <p>PU-Connect is not directed at or intended for use by children under the age of 18. We do not knowingly collect personal data from minors. If we become aware that a user is under 18 years of age, we will take immediate steps to deactivate their account and delete their personal data.</p>
-
-      <p>If you believe a minor has registered on the Platform, please contact us immediately at <strong>privacy@pu-Connect.edu.gh</strong>.</p>
-
-      <p>If you believe a minor has registered on the Platform, please contact us immediately at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="90e0e2f9e6f1f3e9d0e0e5bdfdf1e2fbf5e4e0fcf1f3f5bef5f4e5bef7f8">[email&#160;protected]</a></strong>.</p>
-
+      <p>If you believe a minor has registered on the Platform, please contact us immediately at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9fefedf6e9fefce6dfefeab2f2feedf4faebeff3fefcfab1fafbeab1f8f7">[email&#160;protected]</a></strong>.</p>
     </section>
 
     <section class="section" id="p10">
@@ -275,11 +554,7 @@
         <li>In the event of a data breach that affects your rights and freedoms, we will notify you and the relevant authorities within the timeframes required by law.</li>
       </ul>
       <div class="highlight-box">
-
-        <strong>Your responsibility:</strong> Please choose a strong, unique password and never share your account credentials. If you suspect your account has been compromised, contact us immediately at <strong>support@pu-Connect.edu.gh</strong>.
-
-        <strong>Your responsibility:</strong> Please choose a strong, unique password and never share your account credentials. If you suspect your account has been compromised, contact us immediately at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9feceaefeff0edebdfefeab2f2feedf4faebeff3fefcfab1fafbeab1f8f7">[email&#160;protected]</a></strong>.
-
+        <strong>Your responsibility:</strong> Please choose a strong, unique password and never share your account credentials. If you suspect your account has been compromised, contact us immediately at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="26555356564954526656530b4b47544d4352564a4745430843425308414e">[email&#160;protected]</a></strong>.
       </div>
     </section>
 
@@ -301,50 +576,46 @@
       <p>If you have any questions, concerns, or requests regarding this Privacy Policy or the way we handle your personal data, please contact our Privacy Team:</p>
       <div class="highlight-box">
         <strong>Privacy Team — PU-Connect</strong><br>
-
-        📧 Email: <strong>privacy@pu-Connect.edu.gh</strong><br>
+        📧 Email: <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3747455e4156544e7747421a5a56455c5243475b5654521952534219505f">[email&#160;protected]</a></strong><br>
         📍 Address: Student Affairs Office, University Campus<br>
         🕐 Response Time: Within 30 days of receipt
       </div>
-      <p>For general support queries, please email <strong>support@pu-Connect.edu.gh</strong> or visit our Help Centre on the Platform.</p>
-
-        📧 Email: <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="60101209160103192010154d0d01120b0514100c0103054e0504154e0708">[email&#160;protected]</a></strong><br>
-        📍 Address: Student Affairs Office, University Campus<br>
-        🕐 Response Time: Within 30 days of receipt
-      </div>
-      <p>For general support queries, please email <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6b181e1b1b04191f2b1b1e46060a19000e1f1b070a080e450e0f1e450c03">[email&#160;protected]</a></strong> or visit our Help Centre on the Platform.</p>
-
+      <p>For general support queries, please email <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="62111712120d10162212174f0f0310090716120e0301074c0706174c050a">[email&#160;protected]</a></strong> or visit our Help Centre on the Platform.</p>
     </section>
 
   </main>
 </div>
 
 <footer class="page-footer">
-  <div class="footer-logo">PU-<span>Connect</span></div>
+  <div class="footer-logo">PU-<span>Marketplace</span></div>
   <div class="footer-links">
-    {% include 'footer.html' %}
+    <a href="index.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="terms.html">Terms &amp; Conditions</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="auth.html">Sign Up</a>
   </div>
   <div class="footer-copy">© 2026 PU-Connect. All rights reserved.</div>
 </footer>
 
-<script>
-  const sections = document.querySelectorAll('.section[id]');
-  const tocLinks = document.querySelectorAll('.toc-list a');
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        tocLinks.forEach(l => l.classList.remove('active'));
-        const active = document.querySelector(`.toc-list a[href="#${entry.target.id}"]`);
-        if (active) active.classList.add('active');
-      }
-    });
-  }, { rootMargin: '-20% 0px -70% 0px' });
-
-  sections.forEach(s => observer.observe(s));
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
+/* ── THEME ── */
+(function(){
+  var _H = document.documentElement;
+  var _TB = document.getElementById('themeBtn');
+  var _dark = localStorage.getItem('pu-theme') !== 'light';
+  function applyTheme(d) {
+    _H.setAttribute('data-theme', d ? 'dark' : 'light');
+    if (_TB) _TB.textContent = d ? '🌞' : '🌙';
+    _dark = d;
+    localStorage.setItem('pu-theme', d ? 'dark' : 'light');
+    var m = document.getElementById('themeColorMeta');
+    if (m) m.setAttribute('content', d ? '#0d0e11' : '#f0ede8');
+  }
+  applyTheme(_dark);
+  if (_TB) _TB.addEventListener('click', function(){ applyTheme(!_dark); });
+  window._applyTheme = applyTheme;
+})();
 </script>
 </body>
 </html>
-
- 
-

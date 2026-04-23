@@ -1,24 +1,223 @@
-{% load static %}
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
   <title>Help Centre — PU-Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-   <link href="{% static 'css/help.css'%}" rel="stylesheet"/>
-   <script src="{% static 'js/help.js' %}" defer></script>
+  <style>
+    :root, [data-theme="dark"] {
+      --bg: #0d0e11;
+      --surface: #15171c;
+      --card: #1c1f27;
+      --accent: #e8c96a;
+      --accent2: #5be5c5;
+      --text: #f0eeea;
+      --muted: #7a7e8a;
+      --border: rgba(255,255,255,0.07);
+    }
+    [data-theme="light"] {
+      --bg: #f0ede8;
+      --surface: #e8e4de;
+      --card: #ffffff;
+      --accent: #c9a030;
+      --accent2: #2aab8e;
+      --text: #1a1a1a;
+      --muted: #888888;
+      --border: rgba(0,0,0,0.08);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 2.5rem;
+      background: rgba(13,14,17,.9); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 1.35rem; color: var(--accent); text-decoration: none; letter-spacing: -.5px; }
+    .logo span { color: var(--text); }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--muted); font-size: .88rem; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { background: var(--accent); color: #0d0e11 !important; padding: .5rem 1.2rem; border-radius: 6px; font-weight: 600 !important; }
+    .nav-theme-btn {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; border: none; background: rgba(255,255,255,.06);
+      font-size: 1rem; flex-shrink: 0; transition: transform .3s; color: var(--text);
+    }
+    [data-theme="light"] .nav-theme-btn { background: rgba(0,0,0,.06); }
+    .nav-theme-btn:hover { transform: rotate(22deg); }
+
+    /* HERO + SEARCH */
+    .hero {
+      position: relative; padding: 7rem 2.5rem 5rem; text-align: center;
+      overflow: hidden; border-bottom: 1px solid var(--border);
+    }
+    .hero-glow { position: absolute; width: 700px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(232,201,106,.09) 0%, transparent 65%); top: -150px; left: 50%; transform: translateX(-50%); pointer-events: none; }
+    .hero-badge { display: inline-flex; align-items: center; gap: .5rem; background: rgba(232,201,106,.1); border: 1px solid rgba(232,201,106,.2); border-radius: 99px; padding: .35rem 1rem; font-size: .72rem; color: var(--accent); font-weight: 600; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 1.2rem; }
+    h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 1rem; }
+    h1 em { font-style: normal; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { color: var(--muted); font-size: 1rem; font-weight: 300; max-width: 480px; margin: 0 auto 2.5rem; line-height: 1.8; }
+
+    /* SEARCH */
+    .search-wrap { position: relative; max-width: 560px; margin: 0 auto; }
+    .search-input {
+      width: 100%;
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 1rem 1.2rem 1rem 3.2rem;
+      color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: 1rem; font-weight: 300; outline: none;
+      transition: border-color .25s, box-shadow .25s;
+    }
+    .search-input::placeholder { color: var(--muted); }
+    .search-input:focus { border-color: rgba(232,201,106,.4); box-shadow: 0 0 0 4px rgba(232,201,106,.07); }
+    .search-icon { position: absolute; left: 1.1rem; top: 50%; transform: translateY(-50%); font-size: 1.1rem; pointer-events: none; opacity: .5; }
+    .search-results {
+      position: absolute; top: calc(100% + .5rem); left: 0; right: 0;
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; display: none; box-shadow: 0 16px 40px rgba(0,0,0,.4); z-index: 50;
+    }
+    .search-results.show { display: block; }
+    .search-result-item { padding: .85rem 1.2rem; cursor: pointer; display: flex; align-items: center; gap: .8rem; border-bottom: 1px solid var(--border); transition: background .2s; }
+    .search-result-item:last-child { border-bottom: none; }
+    .search-result-item:hover { background: rgba(255,255,255,.04); }
+    .sri-icon { font-size: 1rem; flex-shrink: 0; }
+    .sri-text { font-size: .88rem; color: var(--muted); font-weight: 300; }
+    .sri-text strong { color: var(--text); font-weight: 500; }
+
+    /* QUICK TOPICS */
+    .quick-topics { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 5rem 2.5rem; }
+    .qt-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; margin-bottom: .5rem; letter-spacing: -.3px; }
+    .qt-sub { color: var(--muted); font-size: .88rem; font-weight: 300; margin-bottom: 2.5rem; }
+    .topics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+    .topic-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 1.8rem; cursor: pointer; text-decoration: none; color: var(--text);
+      transition: transform .3s, border-color .3s;
+      display: block;
+    }
+    .topic-card:hover { transform: translateY(-4px); border-color: rgba(232,201,106,.25); }
+    .topic-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+    .topic-title { font-weight: 600; margin-bottom: .35rem; font-size: .95rem; }
+    .topic-count { font-size: .78rem; color: var(--muted); font-weight: 300; }
+    .topic-arrow { display: flex; align-items: center; justify-content: space-between; margin-top: 1rem; }
+    .topic-arrow span { font-size: .8rem; color: var(--accent); font-weight: 500; }
+
+    /* LAYOUT */
+    .help-layout {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 240px 1fr; gap: 2.5rem;
+      padding: 0 2.5rem 5rem;
+    }
+    .help-sidebar { align-self: start; position: sticky; top: 90px; }
+    .sidebar-title { font-size: .72rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: .8rem; }
+    .sidebar-list { list-style: none; }
+    .sidebar-list li { margin-bottom: .1rem; }
+    .sidebar-list a { display: block; text-decoration: none; color: var(--muted); font-size: .86rem; padding: .4rem .8rem; border-radius: 6px; border-left: 2px solid transparent; transition: all .2s; }
+    .sidebar-list a:hover { color: var(--text); background: rgba(255,255,255,.04); }
+    .sidebar-list a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(232,201,106,.06); }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 1rem 0; }
+
+    /* FAQ SECTIONS */
+    .faq-section { margin-bottom: 3rem; scroll-margin-top: 90px; }
+    .faq-section-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; letter-spacing: -.3px; padding-bottom: .8rem; border-bottom: 1px solid var(--border); margin-bottom: 1rem; display: flex; align-items: center; gap: .7rem; }
+    .faq-section-icon { font-size: 1.2rem; }
+
+    /* ACCORDION */
+    .accordion { display: flex; flex-direction: column; gap: .6rem; }
+    .acc-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color .25s; }
+    .acc-item.open { border-color: rgba(232,201,106,.2); }
+    .acc-trigger {
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 1.4rem; background: none; border: none; cursor: pointer;
+      text-align: left; gap: 1rem;
+    }
+    .acc-question { font-size: .9rem; font-weight: 500; color: var(--text); line-height: 1.5; }
+    .acc-chevron { font-size: .8rem; color: var(--muted); flex-shrink: 0; transition: transform .3s; }
+    .acc-item.open .acc-chevron { transform: rotate(180deg); }
+    .acc-body { max-height: 0; overflow: hidden; transition: max-height .4s ease, padding .3s; }
+    .acc-item.open .acc-body { max-height: 500px; }
+    .acc-content { padding: 0 1.4rem 1.2rem; font-size: .88rem; color: var(--muted); font-weight: 300; line-height: 1.8; }
+    .acc-content a { color: var(--accent); text-decoration: none; }
+    .acc-content a:hover { text-decoration: underline; }
+    .acc-content strong { color: var(--text); font-weight: 500; }
+    .acc-content ul { margin: .7rem 0 .7rem 1.2rem; display: flex; flex-direction: column; gap: .3rem; }
+
+    /* CONTACT SECTION */
+    .contact-section { background: var(--surface); border-top: 1px solid var(--border); position: relative; z-index: 1; }
+    .contact-inner { max-width: 1100px; margin: 0 auto; padding: 5rem 2.5rem; }
+    .contact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2.5rem; }
+    .contact-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; text-align: center; text-decoration: none; color: var(--text); transition: transform .3s, border-color .3s; display: block; }
+    .contact-card:hover { transform: translateY(-4px); border-color: rgba(232,201,106,.25); }
+    .cc-icon { font-size: 2.2rem; display: block; margin-bottom: 1rem; }
+    .cc-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; margin-bottom: .4rem; }
+    .cc-desc { color: var(--muted); font-size: .84rem; font-weight: 300; line-height: 1.65; margin-bottom: 1rem; }
+    .cc-action { font-size: .82rem; color: var(--accent); font-weight: 500; }
+
+    footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 2.5rem; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
+    .footer-logo { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 1.15rem; color: var(--accent); }
+    .footer-logo span { color: var(--text); }
+    .footer-links { display: flex; gap: 1.8rem; flex-wrap: wrap; }
+    .footer-links a { text-decoration: none; color: var(--muted); font-size: .83rem; transition: color .2s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy { color: var(--muted); font-size: .78rem; }
+
+    .eyebrow-label { font-size: .72rem; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 600; color: var(--accent); margin-bottom: .7rem; }
+    h2.block-title { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 2.5vw, 2.2rem); font-weight: 900; letter-spacing: -.5px; margin-bottom: .5rem; }
+    .block-sub { color: var(--muted); font-size: .92rem; font-weight: 300; line-height: 1.8; }
+
+    @media (max-width: 1024px) { .topics-grid { grid-template-columns: repeat(2, 1fr); } .contact-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; } .nav-links { display: none; }
+      .hero { padding: 5rem 1.5rem 4rem; }
+      .quick-topics { padding: 3rem 1.5rem; }
+      .help-layout { grid-template-columns: 1fr; padding: 0 1.5rem 4rem; }
+      .help-sidebar { display: none; }
+      .contact-inner { padding: 3.5rem 1.5rem; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .topics-grid { grid-template-columns: 1fr; }
+      .footer-inner { flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; }
+    }
   
+    @media (max-width: 480px) {
+      h1 { letter-spacing: -1px; }
+      .hero-sub { font-size: .88rem; }
+      .search-input { font-size: .88rem; padding: .78rem 1rem .78rem 2.6rem; }
+      .qt-title { font-size: 1.2rem; }
+      .faq-section-title { font-size: 1.1rem; }
+      .acc-question { font-size: .85rem; }
+      .acc-content { font-size: .83rem; }
+    }
+    @media (max-width: 380px) {
+      .help-layout { padding: 0 1rem 3rem; }
+      .quick-topics { padding: 2rem 1rem; }
+      .contact-inner { padding: 2.5rem 1rem; }
+    }
+  </style>
 </head>
 <body>
 
 <nav>
-  <a href="{%url 'home_view'%}" class="logo">PU-<span>Connect</span></a>
+  <a href="index.html" class="logo">PU-<span>Connect</span></a>
   <ul class="nav-links">
-    {%include 'footer.html'%}
-    <li><a href="{% url 'auth_view'}" class="nav-cta">Get Started</a></li>
+    <li><a href="dashboard.html">Dashboard</a>
+      <a href="about.html">About</a></li>
+    <li><a href="safety.html">Safety</a></li>
+    <li><a href="terms.html">Terms</a></li>
+    <li><button class="nav-theme-btn" id="themeBtn">🌞</button></li>
+    <li><a href="auth.html" class="nav-cta">Get Started</a></li>
   </ul>
 </nav>
 
@@ -94,7 +293,9 @@
     </ul>
     <div class="sidebar-divider"></div>
     <ul class="sidebar-list">
-     {%include 'footer.html'%}
+      <li><a href="safety.html">Safety Guide →</a></li>
+      <li><a href="terms.html">Terms & Conditions →</a></li>
+      <li><a href="privacy.html">Privacy Policy →</a></li>
     </ul>
   </aside>
 
@@ -110,14 +311,14 @@
             <span class="acc-question">What is PU-Connect?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">PU-Connect is a campus-only peer-to-peer Connect built exclusively for university students. It allows verified students to buy, sell, and trade textbooks, electronics, services, and more — safely, within the campus community.</div></div>
+          <div class="acc-body"><div class="acc-content">PU-Connect is a campus-only peer-to-peer marketplace built exclusively for Pentecost University students. It allows verified students to buy, sell, and trade textbooks, electronics, services, and more — safely, within the campus community.</div></div>
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
             <span class="acc-question">Who can use PU-Connect?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">PU-Connect is available to all currently enrolled students, faculty, and accredited staff of the university. You must be 18 or older and must register with a valid email address. All accounts are verified before trading begins.</div></div>
+          <div class="acc-body"><div class="acc-content">PU-Connect is available to all currently enrolled students, faculty, and accredited staff of the university. You must be 13 or older and must register with a valid email address. All accounts are verified before trading begins.</div></div>
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
@@ -180,7 +381,7 @@
             <span class="acc-question">My account was suspended. What do I do?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">If your account was suspended, you should receive an email explaining the reason. If you believe the suspension was in error, you can appeal by emailing <a href="/cdn-cgi/l/email-protection#2a4b5a5a4f4b46596a5a5f07474b58414f5e5a464b494f044f4e5f044d42"><span class="__cf_email__" data-cfemail="b3d2c3c3d6d2dfc0f3c3c69eded2c1d8d6c7c3dfd2d0d69dd6d7c69dd4db">[email&#160;protected]</span></a> with your username and a brief description. We aim to review all appeals within 5 business days.</div></div>
+          <div class="acc-body"><div class="acc-content">If your account was suspended, you should receive an email explaining the reason. If you believe the suspension was in error, you can appeal by emailing <a href="mailto:appeals@pu-Connect.edu.gh">appeals@pu-Connect.edu.gh</a> with your username and a brief description. We aim to review all appeals within 5 business days.</div></div>
         </div>
       </div>
     </div>
@@ -198,7 +399,7 @@
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
-            <span class="acc-question">What can I sell on PU-Connect?</span>
+            <span class="acc-question">What can I sell on PU-Marketplace?</span>
             <span class="acc-chevron">▼</span>
           </button>
           <div class="acc-body"><div class="acc-content">You can sell any legal item or service relevant to campus life, including:
@@ -232,7 +433,7 @@
             <span class="acc-question">Why was my listing removed?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">Listings are removed if they violate our <a href="{% url 'terms_view' %}">Terms of Service</a> — for example, prohibited items, misleading descriptions, or duplicate listings. You'll receive a notification explaining the reason. If you believe the removal was an error, email <a href="/cdn-cgi/l/email-protection#d5a6a0a5a5baa7a195a5a0f8b8b4a7beb0a1a5b9b4b6b0fbb0b1a0fbb2bd"><span class="__cf_email__" data-cfemail="89fafcf9f9e6fbfdc9f9fca4e4e8fbe2ecfdf9e5e8eaeca7ecedfca7eee1">[email&#160;protected]</span></a>.</div></div>
+          <div class="acc-body"><div class="acc-content">Listings are removed if they violate our <a href="terms.html">Terms of Service</a> — for example, prohibited items, misleading descriptions, or duplicate listings. You'll receive a notification explaining the reason. If you believe the removal was an error, email <a href="mailto:support@pentvarsconnect.com">support@pentvarsconnect.com</a>.</div></div>
         </div>
       </div>
     </div>
@@ -260,7 +461,7 @@
             <span class="acc-question">What if the item isn't as described?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">If an item significantly differs from its description and you used our escrow payment system, <strong>do not confirm receipt</strong> — funds won't be released to the seller until you do. Contact us at <a href="/cdn-cgi/l/email-protection#d1a2a4a1a1bea3a591a1a4fcbcb0a3bab4a5a1bdb0b2b4ffb4b5a4ffb6b9"><span class="__cf_email__" data-cfemail="592a2c2929362b2d19292c7434382b323c2d2935383a3c773c3d2c773e31">[email&#160;protected]</span></a> within 24 hours of the meetup to open a dispute.</div></div>
+          <div class="acc-body"><div class="acc-content">If an item significantly differs from its description and you used our escrow payment system, <strong>do not confirm receipt</strong> — funds won't be released to the seller until you do. Contact us at <a href="mailto:support@pentvarsconnect.com">support@pentvarsconnect.com</a> within 24 hours of the meetup to open a dispute.</div></div>
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
@@ -306,7 +507,7 @@
               <li>The seller cancelled the transaction</li>
               <li>The item was proven to be significantly not as described</li>
             </ul>
-            Cash transactions between users are not covered by our refund policy. Always use escrow for protection. Contact <a href="/cdn-cgi/l/email-protection#cab9bfbabaa5b8be8ababfe7a7abb8a1afbebaa6aba9afe4afaebfe4ada2"><span class="__cf_email__" data-cfemail="d6a5a3a6a6b9a4a296a6a3fbbbb7a4bdb3a2a6bab7b5b3f8b3b2a3f8b1be">[email&#160;protected]</span></a> to initiate a refund claim.
+            Cash transactions between users are not covered by our refund policy. Always use escrow for protection. Contact <a href="mailto:support@pentvarsconnect.com">support@pentvarsconnect.com</a> to initiate a refund claim.
           </div></div>
         </div>
         <div class="acc-item">
@@ -328,7 +529,7 @@
             <span class="acc-question">How do I report a user or listing?</span>
             <span class="acc-chevron">▼</span>
           </button>
-          <div class="acc-body"><div class="acc-content">Tap the <strong>⋯ More</strong> menu on any listing or user profile and select <strong>"Report"</strong>. Choose the reason (fraud, prohibited item, harassment, etc.), add details, and submit. Our safety team reviews all reports within 2 hours. You can also email <a href="/cdn-cgi/l/email-protection#bccfdddad9c8c5fcccc991d1ddced7d9c8ccd0dddfd992d9d8c992dbd4"><span class="__cf_email__" data-cfemail="b0c3d1d6d5c4c9f0c0c59dddd1c2dbd5c4c0dcd1d3d59ed5d4c59ed7d8">[email&#160;protected]</span></a> directly.</div></div>
+          <div class="acc-body"><div class="acc-content">Tap the <strong>⋯ More</strong> menu on any listing or user profile and select <strong>"Report"</strong>. Choose the reason (fraud, prohibited item, harassment, etc.), add details, and submit. Our safety team reviews all reports within 2 hours. You can also email <a href="mailto:support@pentvarsconnect.com">support@pentvarsconnect.com</a> directly.</div></div>
         </div>
         <div class="acc-item">
           <button class="acc-trigger" onclick="toggleAcc(this)">
@@ -340,7 +541,7 @@
             1. Do NOT release escrow payment if you haven't already.<br>
             2. Document everything — screenshots of messages, listings, and any receipts.<br>
             3. Report the user through the app (⋯ More → Report).<br>
-            4. Email <a href="/cdn-cgi/l/email-protection#6f1c0e090a1b162f1f1a42020e1d040a1b1f030e0c0a410a0b1a410807"><span class="__cf_email__" data-cfemail="5221333437262b1222277f3f3320393726223e3331377c3736277c353a">[email&#160;protected]</span></a> with your evidence.<br>
+            4. Email <a href="mailto:support@pentvarsconnect.com">support@pentvarsconnect.com</a> with your evidence.<br>
             5. If you've suffered financial loss or feel unsafe, contact campus security.<br><br>
             We take fraud extremely seriously and will act on all substantiated reports.
           </div></div>
@@ -372,17 +573,17 @@
     <h2 class="block-title">Get in Touch with Our Team</h2>
     <p class="block-sub">Can't find what you're looking for? Our support team is here Monday to Friday, 8am – 5pm GMT.</p>
     <div class="contact-grid">
-      <a href="/cdn-cgi/l/email-protection#e1929491918e9395a19194cc8c80938a8495918d808284cf848594cf8689" class="contact-card">
+      <a href="mailto:support@pentvarsconnect.com" class="contact-card">
         <span class="cc-icon">📧</span>
         <div class="cc-title">Email Support</div>
         <p class="cc-desc">Send us a message and we'll get back to you within 24 hours on business days.</p>
-        <div class="cc-action"><span class="__cf_email__" data-cfemail="ed9e989d9d829f99ad9d98c0808c9f8688999d818c8e88c3888998c38a85">[email&#160;protected]</span> →</div>
+        <div class="cc-action">support@pentvarsconnect.com →</div>
       </a>
-      <a href="/cdn-cgi/l/email-protection#b9cad8dfdccdc0f9c9cc94d4d8cbd2dccdc9d5d8dadc97dcddcc97ded1" class="contact-card">
+      <a href="mailto:support@pentvarsconnect.com" class="contact-card">
         <span class="cc-icon">🚨</span>
         <div class="cc-title">Safety Team</div>
         <p class="cc-desc">Report fraud, harassment, or safety concerns. We respond within 2 hours.</p>
-        <div class="cc-action"><span class="__cf_email__" data-cfemail="a1d2c0c7c4d5d8e1d1d48cccc0d3cac4d5d1cdc0c2c48fc4c5d48fc6c9">[email&#160;protected]</span> →</div>
+        <div class="cc-action">support@pentvarsconnect.com →</div>
       </a>
       <a href="safety.html" class="contact-card">
         <span class="cc-icon">🛡️</span>
@@ -398,20 +599,90 @@
   <div class="footer-inner">
     <div class="footer-logo">PU-<span>Connect</span></div>
     <div class="footer-links">
-
-      {% include 'footer.html'%}
-        
-      
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="safety.html">Safety</a>
+      <a href="help.html">Help Centre</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
     </div>
     <div class="footer-copy">© 2026 PU-Connect. All rights reserved.</div>
   </div>
 </footer>
 
-
-
-
-
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   // Accordion
+  function toggleAcc(btn) {
+    const item = btn.closest('.acc-item');
+    const isOpen = item.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.acc-item.open').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
 
+  // Sidebar active
+  const faqSections = document.querySelectorAll('.faq-section[id]');
+  const sideLinks = document.querySelectorAll('.sidebar-list a');
+  const sideObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        sideLinks.forEach(l => l.classList.remove('active'));
+        const a = document.querySelector(`.sidebar-list a[href="#${e.target.id}"]`);
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -65% 0px' });
+  faqSections.forEach(s => sideObs.observe(s));
+
+  // Search
+  const allFAQs = [];
+  document.querySelectorAll('.acc-item').forEach(item => {
+    const q = item.querySelector('.acc-question').textContent;
+    const a = item.querySelector('.acc-content').textContent;
+    const section = item.closest('.faq-section');
+    const sectionId = section ? section.id : '';
+    const sectionTitle = section ? section.querySelector('.faq-section-title').textContent.trim() : '';
+    allFAQs.push({ q, a, sectionId, sectionTitle });
+  });
+
+  function handleSearch(val) {
+    const resultsEl = document.getElementById('searchResults');
+    if (!val || val.length < 2) { resultsEl.classList.remove('show'); return; }
+    const lower = val.toLowerCase();
+    const matches = allFAQs.filter(f => f.q.toLowerCase().includes(lower) || f.a.toLowerCase().includes(lower)).slice(0, 6);
+    if (!matches.length) { resultsEl.innerHTML = '<div class="search-result-item"><span class="sri-icon">🤷</span><span class="sri-text">No results found. Try different keywords.</span></div>'; resultsEl.classList.add('show'); return; }
+    resultsEl.innerHTML = matches.map(m => `<div class="search-result-item" onclick="goToSection('${m.sectionId}','${m.q}')"><span class="sri-icon">❓</span><div class="sri-text"><strong>${m.q}</strong><br>${m.sectionTitle}</div></div>`).join('');
+    resultsEl.classList.add('show');
+  }
+
+  function goToSection(id, question) {
+    document.getElementById('searchResults').classList.remove('show');
+    document.getElementById('searchInput').value = '';
+    const section = document.getElementById(id);
+    if (!section) return;
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Open matching accordion
+    setTimeout(() => {
+      section.querySelectorAll('.acc-question').forEach(q => {
+        if (q.textContent === question) {
+          const item = q.closest('.acc-item');
+          document.querySelectorAll('.acc-item.open').forEach(i => i.classList.remove('open'));
+          item.classList.add('open');
+        }
+      });
+    }, 500);
+  }
+
+  // Close search on outside click
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrap')) document.getElementById('searchResults').classList.remove('show');
+  });
+</script>
+<script>
+const _html=document.documentElement,_tb=document.getElementById('themeBtn');let _dark=true;
+function setTheme(d){_html.setAttribute('data-theme',d?'dark':'light');if(_tb)_tb.textContent=d?'🌞':'🌙';_dark=d;localStorage.setItem('pu-theme',d?'dark':'light');const tm=document.getElementById('themeColorMeta');if(tm)tm.setAttribute('content',d?'#0d0e11':'#f0ede8');}
+const _sv=localStorage.getItem('pu-theme');if(_sv)setTheme(_sv==='dark');else setTheme(true);
+if(_tb)_tb.addEventListener('click',()=>setTheme(!_dark));
+</script>
+</body>
+</html>
