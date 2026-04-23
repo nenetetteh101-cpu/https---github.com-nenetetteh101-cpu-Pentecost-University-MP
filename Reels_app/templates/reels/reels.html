@@ -318,7 +318,37 @@ html,body{height:100%;height:100dvh;background:#000;font-family:'DM Sans',sans-s
 
 <div class="toast" id="toast"></div>
 
-<script>
+<script>/* ── CLOUDINARY UPLOAD ─────────────────────────────────────────
+   Set your own cloud_name and upload_preset below.
+   In Cloudinary dashboard: Settings → Upload → Add upload preset
+   Set "Signing Mode" to "Unsigned" and note the preset name.
+────────────────────────────────────────────────────────────────── */
+const CLOUDINARY_CLOUD  = 'pu-connect';          // ← your cloud name
+const CLOUDINARY_PRESET = 'pu_connect_unsigned';  // ← your upload preset
+
+/**
+ * Upload a File or Blob to Cloudinary.
+ * @param {File|Blob} file
+ * @param {'image'|'video'} resourceType
+ * @returns {Promise<string>} secure_url of the uploaded asset
+ */
+async function uploadToCloudinary(file, resourceType) {
+  resourceType = resourceType || 'image';
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLOUDINARY_PRESET);
+  fd.append('folder', 'pu-connect');
+  const url = 'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/' + resourceType + '/upload';
+  const res = await fetch(url, { method: 'POST', body: fd });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || 'Upload failed (' + res.status + ')');
+  }
+  const data = await res.json();
+  return data.secure_url;
+}
+
+
 'use strict';
 const SITE=location.origin||'https://pu-connect.edu.gh';
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -478,8 +508,43 @@ function closeUpload(e){if(!e||e.target===document.getElementById('upOv')){close
 function fillLstSel(){try{const sel=document.getElementById('lstSel');const lsts=JSON.parse(localStorage.getItem('pu-listings')||'[]');const me=(JSON.parse(localStorage.getItem('pu-profile')||'{}').username||'');const mine=me?lsts.filter(l=>l.sellerUsername===me):lsts;while(sel.options.length>1)sel.remove(1);mine.forEach(l=>{const o=document.createElement('option');o.value=l.id;o.textContent=`${l.title||l.name||'Listing'} — ${l.priceLabel||(l.price?'GH\u20B5 '+Number(l.price).toLocaleString():'Contact')}`;o.dataset.price=l.priceLabel||(l.price?'GH\u20B5 '+Number(l.price).toLocaleString():'');o.dataset.emoji=l.type==='service'?'🛠️':'📦';o.dataset.img=l.img||'';sel.appendChild(o);});}catch(e){}}
 function handleVid(f){if(!f)return;if(f.size>100*1024*1024){toast('Video too large — max 100MB');return;}if(pendingURL&&!document.querySelector(`video[src="${pendingURL}"]`))URL.revokeObjectURL(pendingURL);pendingFile=f;pendingURL=URL.createObjectURL(f);const v=document.getElementById('vprev');v.src=pendingURL;v.load();v.onloadedmetadata=()=>{if(v.duration>180){toast('Max 3 minutes');removeVid();}};document.getElementById('vpw').style.display='block';document.getElementById('dzn').style.display='none';document.getElementById('ubtn').disabled=false;}
 function removeVid(){pendingFile=null;if(pendingURL&&!document.querySelector(`video[src="${pendingURL}"]`))URL.revokeObjectURL(pendingURL);pendingURL=null;const v=document.getElementById('vprev');v.pause();v.src='';v.load();document.getElementById('vpw').style.display='none';document.getElementById('dzn').style.display='block';document.getElementById('ubtn').disabled=true;document.getElementById('vfi').value='';}
-function publishReel(){const cap=document.getElementById('capInp').value.trim();if(!pendingURL){toast('Please select a video first');return;}if(!cap){toast('Please add a caption');return;}const btn=document.getElementById('ubtn');btn.disabled=true;btn.textContent='Uploading\u2026';const prog=document.getElementById('upprog');prog.classList.add('show');const fill=document.getElementById('upfil');const lbl=document.getElementById('uplbl');let pct=0;const steps=['Preparing\u2026','Uploading\u2026','Processing\u2026','Almost done\u2026'];const iv=setInterval(()=>{pct+=Math.random()*18+4;if(pct>=100){pct=100;clearInterval(iv);finishUpload(cap);}fill.style.width=pct+'%';lbl.textContent=steps[Math.min(Math.floor(pct/25),3)];},220);}
-function finishUpload(cap){const p=JSON.parse(localStorage.getItem('pu-profile')||'{}');const nm=p.name||'User';const un=p.username||'user';const ini=nm.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'KA';const sel=document.getElementById('lstSel');const opt=sel.options[sel.selectedIndex];const prod=opt.value?{name:opt.text.split(' — ')[0],price:opt.dataset.price||'',emoji:opt.dataset.emoji||'📦',img:opt.dataset.img||'',desc:'Campus listing — tap to view.'}:null;const tags=(cap.match(/#\w+/g)||[]);const reel={id:'r-'+Date.now(),src:pendingURL,bg:'linear-gradient(135deg,#0d1117,#1c1f27)',bgEmoji:'🎬',seller:{name:nm,handle:'@'+un,initials:ini,avGrad:'linear-gradient(135deg,#e8c96a,#f5c842)',avSrc:p.avatarSrc||''},caption:cap,product:prod,tags,likes:0,comments:0,shares:0,saves:0,liked:false,saved:false,following:false,music:'Original Audio \u00B7 '+nm,uploadedAt:Date.now()};try{const stored=JSON.parse(localStorage.getItem('pu-reels')||'[]');const ts={...reel,src:'',bg:'linear-gradient(135deg,#0d1117,#1c1f27)'};stored.unshift(ts);if(stored.length>30)stored.splice(30);localStorage.setItem('pu-reels',JSON.stringify(stored));}catch(e){}ALL.unshift(reel);closeUpload();build();document.getElementById('feed').scrollTo({top:0,behavior:'instant'});curIdx=0;setTimeout(()=>playAt(0),350);toast('🎉 Reel published!');}
+function publishReel(){
+  const cap=document.getElementById('capInp').value.trim();
+  if(!pendingURL){toast('Please select a video first');return;}
+  if(!cap){toast('Please add a caption');return;}
+  const btn=document.getElementById('ubtn');
+  btn.disabled=true;btn.textContent='Uploading…';
+  const prog=document.getElementById('upprog');
+  prog.classList.add('show');
+  const fill=document.getElementById('upfil');
+  const lbl=document.getElementById('uplbl');
+
+  // Simulate progress while Cloudinary uploads
+  let pct=0;
+  const steps=['Preparing…','Uploading to cloud…','Processing…','Almost done…'];
+  const iv=setInterval(()=>{
+    if(pct<85){pct+=Math.random()*8+2;}
+    fill.style.width=pct+'%';
+    lbl.textContent=steps[Math.min(Math.floor(pct/25),3)];
+  },300);
+
+  // Upload video file to Cloudinary
+  uploadToCloudinary(pendingFile,'video')
+    .then(cloudUrl=>{
+      clearInterval(iv);
+      fill.style.width='100%';
+      lbl.textContent='Done!';
+      finishUpload(cap, cloudUrl);
+    })
+    .catch(err=>{
+      clearInterval(iv);
+      prog.classList.remove('show');
+      btn.disabled=false;
+      btn.textContent='Upload Reel';
+      toast('Upload failed: '+err.message);
+    });
+}
+function finishUpload(cap, cloudUrl){const p=JSON.parse(localStorage.getItem('pu-profile')||'{}');const nm=p.name||'User';const un=p.username||'user';const ini=nm.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'KA';const sel=document.getElementById('lstSel');const opt=sel.options[sel.selectedIndex];const prod=opt.value?{name:opt.text.split(' — ')[0],price:opt.dataset.price||'',emoji:opt.dataset.emoji||'📦',img:opt.dataset.img||'',desc:'Campus listing — tap to view.'}:null;const tags=(cap.match(/#\w+/g)||[]);const reel={id:'r-'+Date.now(),src:cloudUrl||pendingURL,bg:'linear-gradient(135deg,#0d1117,#1c1f27)',bgEmoji:'🎬',seller:{name:nm,handle:'@'+un,initials:ini,avGrad:'linear-gradient(135deg,#e8c96a,#f5c842)',avSrc:p.avatarSrc||''},caption:cap,product:prod,tags,likes:0,comments:0,shares:0,saves:0,liked:false,saved:false,following:false,music:'Original Audio \u00B7 '+nm,uploadedAt:Date.now()};try{const stored=JSON.parse(localStorage.getItem('pu-reels')||'[]');const ts={...reel,src:cloudUrl||'',bg:'linear-gradient(135deg,#0d1117,#1c1f27)'};stored.unshift(ts);if(stored.length>30)stored.splice(30);localStorage.setItem('pu-reels',JSON.stringify(stored));}catch(e){}ALL.unshift(reel);closeUpload();build();document.getElementById('feed').scrollTo({top:0,behavior:'instant'});curIdx=0;setTimeout(()=>playAt(0),350);toast('🎉 Reel published!');}
 
 const dzn=document.getElementById('dzn');
 dzn.addEventListener('dragover',e=>{e.preventDefault();dzn.classList.add('drag-over');});

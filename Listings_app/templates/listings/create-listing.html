@@ -362,8 +362,8 @@ option{background:var(--card);color:var(--t)}
   <div class="suc-i">🎉</div>
   <div class="suc-t">Listing Published!</div>
   <div class="suc-s">Your listing is now live on PU-Connect. Buyers will reach you through in-app chat. It may take a moment to appear in the feed.</div>
-  <a href="listings.html" class="sb">View My Listings</a>
-  <a href="dashboard.html" id="sucViewLink" class="sb tl">Browse Marketplace</a>
+  <a href="{% url 'listings:listings' %}" class="sb">View My Listings</a>
+  <a href="{% url 'Dash_app:dashboard' %}" id="sucViewLink" class="sb tl">Browse Marketplace</a>
   <button class="sb g" onclick="resetForm()">Post Another Listing</button>
 </div>
 
@@ -376,11 +376,55 @@ option{background:var(--card);color:var(--t)}
 </div>
 
 <script>
-/* THEME */
-const H=document.documentElement,TB=document.getElementById('thbtn');
-let dk=localStorage.getItem('pu-theme')!=='light';
-function apTh(d){H.setAttribute('data-theme',d?'dark':'light');TB.textContent=d?'🌞':'🌙';dk=d;localStorage.setItem('pu-theme',d?'dark':'light');const m=document.getElementById('themeColorMeta');if(m)m.setAttribute('content',d?'#0d0e11':'#f0ede8');}
-apTh(dk);TB.onclick=()=>apTh(!dk);
+/* ── THEME ── */
+(function(){
+  var _H = document.documentElement;
+  var _TB = document.getElementById('thbtn');
+  var _dark = localStorage.getItem('pu-theme') !== 'light';
+  function applyTheme(d) {
+    _H.setAttribute('data-theme', d ? 'dark' : 'light');
+    if (_TB) _TB.textContent = d ? '🌞' : '🌙';
+    _dark = d;
+    localStorage.setItem('pu-theme', d ? 'dark' : 'light');
+    var m = document.getElementById('themeColorMeta');
+    if (m) m.setAttribute('content', d ? '#0d0e11' : '#f0ede8');
+  }
+  applyTheme(_dark);
+  if (_TB) _TB.addEventListener('click', function(){ applyTheme(!_dark); });
+  window._applyTheme = applyTheme;
+})();
+
+/* ── CLOUDINARY UPLOAD ─────────────────────────────────────────
+   Set your own cloud_name and upload_preset below.
+   In Cloudinary dashboard: Settings → Upload → Add upload preset
+   Set "Signing Mode" to "Unsigned" and note the preset name.
+────────────────────────────────────────────────────────────────── */
+const CLOUDINARY_CLOUD  = 'pu-connect';          // ← your cloud name
+const CLOUDINARY_PRESET = 'pu_connect_unsigned';  // ← your upload preset
+
+/**
+ * Upload a File or Blob to Cloudinary.
+ * @param {File|Blob} file
+ * @param {'image'|'video'} resourceType
+ * @returns {Promise<string>} secure_url of the uploaded asset
+ */
+async function uploadToCloudinary(file, resourceType) {
+  resourceType = resourceType || 'image';
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLOUDINARY_PRESET);
+  fd.append('folder', 'pu-connect');
+  const url = 'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/' + resourceType + '/upload';
+  const res = await fetch(url, { method: 'POST', body: fd });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || 'Upload failed (' + res.status + ')');
+  }
+  const data = await res.json();
+  return data.secure_url;
+}
+
+
 
 /* STATE */
 let cur=1,cgV='Services',catV='',subV='',condV='Brand New',availV='Available',negV=false,ctaV=false,tags=[],imgs=[];
@@ -503,16 +547,33 @@ function toi(el){if(el.value.includes(',')){el.value.split(',').forEach(v=>addTa
 /* IMAGES */
 function addFiles(files){
   const rem=5-imgs.length;
-  Array.from(files).slice(0,rem).forEach(f=>{
-    if(!f.type.startsWith('image/')){return;}
-    if(f.size>5*1024*1024){sE("photos-em");document.getElementById("photos-em").textContent=`"${f.name.substring(0,30)}" exceeds 5MB limit`;return;}
-    const r=new FileReader();
-    r.onload=e=>{
-      imgs.push({src:e.target.result});
-      renderImgs();
-      if(imgs.length>=1){clrE('photos-em');document.getElementById('dz').style.borderColor='';}
-    };
-    r.readAsDataURL(f);
+  const toUpload=Array.from(files).filter(f=>f.type.startsWith('image/')).slice(0,rem);
+  if(!toUpload.length)return;
+  // Validate sizes
+  for(const f of toUpload){
+    if(f.size>5*1024*1024){sE('photos-em');document.getElementById('photos-em').textContent=`"${f.name.substring(0,30)}" exceeds 5MB limit`;return;}
+  }
+  // Show uploading state
+  const dz=document.getElementById('dz');
+  if(dz){dz.style.borderColor='var(--a)';dz.querySelector('.dz-title').textContent='Uploading...';}
+  Promise.all(toUpload.map(f=>
+    uploadToCloudinary(f,'image').catch(err=>{
+      console.error('Upload error:',err);
+      return null; // skip failed uploads
+    })
+  )).then(urls=>{
+    urls.forEach(url=>{
+      if(url){
+        imgs.push({src:url});
+        clrE('photos-em');
+      }
+    });
+    if(dz){dz.style.borderColor='';dz.querySelector('.dz-title').textContent='Drop photos here or tap to browse';}
+    renderImgs();
+    if(imgs.length>=1){clrE('photos-em');if(dz)dz.style.borderColor='';}
+  }).catch(()=>{
+    if(dz){dz.style.borderColor='';dz.querySelector('.dz-title').textContent='Drop photos here or tap to browse';}
+    sE('photos-em');document.getElementById('photos-em').textContent='Upload failed — check your connection';
   });
 }
 function renderImgs(){
@@ -536,7 +597,7 @@ function fmtPh(el){let v=el.value.replace(/\D/g,'');if(v.length>10)v=v.slice(0,1
 /* NAVIGATION */
 function goNext(){if(!validate(cur))return;cur++;if(cur>5){publish();return;}switchS(cur);}
 function goBack(){if(cur<=1)return;cur--;switchS(cur);}
-function handleBack(){if(cur===1){location.href=sessionStorage.getItem('pu-lf')||'dashboard.html';}else goBack();}
+function handleBack(){if(cur===1){location.href=sessionStorage.getItem('pu-lf')||'{% url 'Dash_app:dashboard' %}';}else goBack();}
 
 function switchS(n){
   for(let i=1;i<=5;i++){const el=document.getElementById('s'+i);if(el)el.style.display=i===n?'block':'none';}
@@ -683,6 +744,138 @@ function loadDraft(){
   }catch(e){sessionStorage.removeItem('pu-draft-listing');}
 }
 
+/* ══════════════════════════════════════
+   EDIT MODE — pre-fill form from existing listing
+══════════════════════════════════════ */
+let _editId = '';   // non-empty = edit mode
+let _editOriginal = null; // the original listing object
+
+function loadForEdit(id){
+  try{
+    const all = JSON.parse(localStorage.getItem('pu-listings')||'[]');
+    const l   = all.find(x=>x.id===id);
+    if(!l){ console.warn('Edit: listing not found',id); return; }
+
+    _editId       = id;
+    _editOriginal = l;
+
+    // ── Step 1: category group (Products / Services)
+    const group = l.type==='service' ? 'Services' : 'Products';
+    const cgEl  = document.querySelector(`[data-cg="${group}"]`);
+    if(cgEl) selCG(cgEl);
+
+    // ── Step 2: category
+    const catEl = document.getElementById('cat');
+    if(catEl && l.category){
+      catEl.value = l.category;
+      onCatCh();
+    }
+
+    // ── Subcategory (after onCatCh populates it)
+    setTimeout(()=>{
+      if(l.subcategory){
+        const sc = document.getElementById('subcat');
+        if(sc) sc.value = l.subcategory;
+      }
+    }, 50);
+
+    // ── Condition (products only)
+    if(l.condition){
+      const cp = document.querySelector(`.cp[data-cv="${l.condition}"]`);
+      if(cp) selCond(cp);
+    }
+
+    // ── Availability
+    if(l.availability) selAvail(l.availability);
+
+    // ── Negotiable
+    negV = !!l.negotiable;
+    document.getElementById('negBtn')?.classList.toggle('on', negV);
+
+    // ── Contact for price
+    ctaV = !!l.contactForPrice;
+    const ctaCk = document.getElementById('ctaCk');
+    if(ctaCk){
+      ctaCk.checked = ctaV;
+      document.getElementById('ctaLbl')?.classList.toggle('on', ctaV);
+      const priceEl = document.getElementById('price');
+      if(priceEl) priceEl.disabled = ctaV;
+    }
+
+    // ── Tags
+    tags = Array.isArray(l.tags) ? [...l.tags] : [];
+    renderTags();
+
+    // ── Simple text fields
+    const fieldMap = {
+      title:  l.title  || l.name || '',
+      brand:  l.brand  || '',
+      desc:   l.description || '',
+      price:  (l.price != null && !ctaV) ? String(l.price) : '',
+      sname:  l.seller || '',
+      phone:  l.phone  || '',
+      meetup: l.meetup || '',
+    };
+    Object.entries(fieldMap).forEach(([fieldId, val])=>{
+      const el = document.getElementById(fieldId);
+      if(el && val) el.value = val;
+    });
+    if(l.title||l.name) countChars('title','tcc',80);
+    if(l.description)   countChars('desc','dcc',1000);
+
+    // ── Restore existing images
+    if(l.images && l.images.length){
+      imgs = l.images.map(src=>({ src }));
+    } else if(l.img){
+      imgs = [{ src: l.img }];
+    }
+    renderImgs();
+
+    // ── UI — change page title and button labels to "Edit" mode
+    const navTitle = document.querySelector('.nav-title');
+    if(navTitle) navTitle.textContent = '✏️ Edit Listing';
+
+    const nxBtn = document.getElementById('nxBtn');
+    if(nxBtn && cur === 5) nxBtn.innerHTML = '💾 Save Changes';
+
+    // Watch step changes to update the final button label
+    document.addEventListener('stepchange', ()=>{
+      const nb = document.getElementById('nxBtn');
+      if(nb && cur===5) nb.innerHTML = '💾 Save Changes';
+    });
+
+    // Show edit banner at top
+    _showEditBanner(l.title||l.name||'listing');
+
+    localStorage.removeItem('pu-edit-listing');
+  }catch(e){ console.error('loadForEdit error:', e); }
+}
+
+function _showEditBanner(title){
+  const inner = document.querySelector('.inner') || document.querySelector('.wrap');
+  if(!inner) return;
+  const banner = document.createElement('div');
+  banner.id = 'edit-banner';
+  banner.style.cssText = [
+    'background:rgba(232,201,106,.1)',
+    'border:1px solid rgba(232,201,106,.25)',
+    'border-radius:11px',
+    'padding:.6rem 1rem',
+    'margin-bottom:.85rem',
+    'display:flex',
+    'align-items:center',
+    'gap:.55rem',
+    'font-size:.8rem',
+    'color:var(--t)',
+  ].join(';');
+  banner.innerHTML = '<span style="font-size:1rem">✏️</span>'
+    + '<span>Editing: <strong style="color:var(--a)">'
+    + title.replace(/</g,'&lt;').substring(0,50)
+    + '</strong></span>'
+    + '<a href="{% url 'listings:listings' %}" style="margin-left:auto;font-size:.75rem;color:var(--m);text-decoration:none">Cancel</a>';
+  inner.insertBefore(banner, inner.firstChild);
+}
+
 /* Attach draft saving to all inputs */
 function attachDraftSave(){
   ['title','brand','desc','price','sname','phone','meetup'].forEach(id=>{
@@ -801,9 +994,33 @@ function publish(){
   // Save to localStorage
   try{
     const existing=JSON.parse(localStorage.getItem('pu-listings')||'[]');
-    existing.unshift(listing);
-    // Keep max 200 listings to avoid storage limits
-    if(existing.length>200)existing.splice(200);
+
+    if(_editId){
+      // ── EDIT MODE: update the existing listing in-place ──
+      const idx = existing.findIndex(x=>x.id===_editId);
+      if(idx>=0){
+        // Preserve fields that shouldn't change on edit
+        const orig = existing[idx];
+        existing[idx] = {
+          ...orig,          // keep: id, postedAt, views, seller info
+          ...listing,       // overwrite with new values
+          id:        orig.id,
+          postedAt:  orig.postedAt,
+          views:     orig.views || 0,
+          seller:    nm || orig.seller,
+          sellerUsername: orig.sellerUsername,
+          updatedAt: Date.now(),
+        };
+      } else {
+        // Listing was deleted while editing — add as new
+        existing.unshift(listing);
+      }
+    } else {
+      // ── CREATE MODE: insert at top ──
+      existing.unshift(listing);
+      if(existing.length>200) existing.splice(200);
+    }
+
     localStorage.setItem('pu-listings',JSON.stringify(existing));
   }catch(e){
     // Storage full — show a friendly error and stop
@@ -813,12 +1030,14 @@ function publish(){
     return;
   }
 
-  // Also update the user profile listing count
-  try{
-    const p=JSON.parse(localStorage.getItem('pu-profile')||'{}');
-    p.listings=(p.listings||0)+1;
-    localStorage.setItem('pu-profile',JSON.stringify(p));
-  }catch(e){}
+  // Also update the user profile listing count (only for new listings)
+  if(!_editId){
+    try{
+      const p=JSON.parse(localStorage.getItem('pu-profile')||'{}');
+      p.listings=(p.listings||0)+1;
+      localStorage.setItem('pu-profile',JSON.stringify(p));
+    }catch(e){}
+  }
 
   // Clear draft
   sessionStorage.removeItem('pu-draft-listing');
@@ -829,11 +1048,20 @@ function publish(){
     document.getElementById('progBar').style.display='none';
     document.getElementById('bwrap').style.display='none';
     document.getElementById('suc').style.display='block';
-    document.getElementById('nttl').textContent='Published!';
+    document.getElementById('nttl').textContent = _editId ? 'Changes Saved!' : 'Published!';
     document.getElementById('blbl').textContent='Done';
-    // Set the "View Listing" link to show this specific listing
-    const viewLink=document.getElementById('sucViewLink');
-    if(viewLink){viewLink.href=cgV==='Services'?'dashboard-services.html':'dashboard-products.html';}
+    // After edit go back to My Listings; after publish go to appropriate dashboard tab
+    const isService = cgV === 'Services';
+    const viewLink = document.getElementById('sucViewLink');
+    if(viewLink){
+      if(_editId){
+        viewLink.href = 'listings.html';
+        viewLink.textContent = 'Back to My Listings';
+      } else {
+        viewLink.href = isService ? 'dashboard.html#services' : 'dashboard.html#products';
+        viewLink.textContent = isService ? 'View in Services' : 'View in Products';
+      }
+    }
     window.scrollTo({top:0,behavior:'smooth'});
   },800);
 }
@@ -883,6 +1111,8 @@ dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');ad
 (function(){
   if(document.referrer)sessionStorage.setItem('pu-lf',document.referrer);
   const p=new URLSearchParams(location.search),t=p.get('type');
+  const editId=p.get('edit')||localStorage.getItem('pu-edit-listing')||'';
+
   if(t==='product'||t==='sell'){
     const el=document.querySelector('[data-cg="Products"]');if(el)selCG(el);
   }else{
@@ -890,8 +1120,14 @@ dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');ad
   }
   showCondF();updProg();updUI();
   attachDraftSave();
-  loadDraft();
-  prefillContact();
+
+  if(editId){
+    // Edit mode: pre-fill form with existing listing data
+    loadForEdit(editId);
+  } else {
+    loadDraft();
+    prefillContact();
+  }
 })();
 
 </script>

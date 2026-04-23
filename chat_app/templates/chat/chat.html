@@ -923,11 +923,53 @@
 
 <script>
 /* ── THEME ── */
-const H=document.documentElement,TB=document.getElementById('thbtn');
-let dark=localStorage.getItem('pu-theme')!=='light';
-function apTh(d){H.setAttribute('data-theme',d?'dark':'light');TB.textContent=d?'🌞':'🌙';dark=d;localStorage.setItem('pu-theme',d?'dark':'light');const m=document.getElementById('themeColorMeta');if(m)m.setAttribute('content',d?'#0d0e11':'#f0ede8');}
-apTh(dark);
-TB.addEventListener('click',()=>apTh(!dark));
+(function(){
+  var _H = document.documentElement;
+  var _TB = document.getElementById('thbtn');
+  var _dark = localStorage.getItem('pu-theme') !== 'light';
+  function applyTheme(d) {
+    _H.setAttribute('data-theme', d ? 'dark' : 'light');
+    if (_TB) _TB.textContent = d ? '🌞' : '🌙';
+    _dark = d;
+    localStorage.setItem('pu-theme', d ? 'dark' : 'light');
+    var m = document.getElementById('themeColorMeta');
+    if (m) m.setAttribute('content', d ? '#0d0e11' : '#f0ede8');
+  }
+  applyTheme(_dark);
+  if (_TB) _TB.addEventListener('click', function(){ applyTheme(!_dark); });
+  window._applyTheme = applyTheme;
+})();
+
+/* ── CLOUDINARY UPLOAD ─────────────────────────────────────────
+   Set your own cloud_name and upload_preset below.
+   In Cloudinary dashboard: Settings → Upload → Add upload preset
+   Set "Signing Mode" to "Unsigned" and note the preset name.
+────────────────────────────────────────────────────────────────── */
+const CLOUDINARY_CLOUD  = 'pu-connect';          // ← your cloud name
+const CLOUDINARY_PRESET = 'pu_connect_unsigned';  // ← your upload preset
+
+/**
+ * Upload a File or Blob to Cloudinary.
+ * @param {File|Blob} file
+ * @param {'image'|'video'} resourceType
+ * @returns {Promise<string>} secure_url of the uploaded asset
+ */
+async function uploadToCloudinary(file, resourceType) {
+  resourceType = resourceType || 'image';
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLOUDINARY_PRESET);
+  fd.append('folder', 'pu-connect');
+  const url = 'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/' + resourceType + '/upload';
+  const res = await fetch(url, { method: 'POST', body: fd });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || 'Upload failed (' + res.status + ')');
+  }
+  const data = await res.json();
+  return data.secure_url;
+}
+
 
 /* ── CONVERSATION DATA ── */
 const CONVS=[];
@@ -1259,19 +1301,25 @@ function triggerPhotoUpload(){
 function handlePhotoUpload(files){
   if(!files.length)return;
   pendingPhotos=[];
-  const readers=Array.from(files).slice(0,6).map(f=>new Promise(res=>{
-    const r=new FileReader();
-    r.onload=e=>{pendingPhotos.push(e.target.result);res();};
-    r.readAsDataURL(f);
-  }));
-  Promise.all(readers).then(()=>{
-    // Show preview modal
-    const grid=document.getElementById('photoPreviewGrid');
+  const validFiles=Array.from(files).filter(f=>f.type.startsWith('image/')).slice(0,6);
+  if(!validFiles.length)return;
+  // Show uploading indicator
+  const grid=document.getElementById('photoPreviewGrid');
+  grid.innerHTML='<div style="padding:1.5rem;text-align:center;color:var(--m);font-size:.84rem">Uploading photos...</div>';
+  document.getElementById('photoPreviewModal').classList.add('open');
+  document.getElementById('photoFileInput').value='';
+  Promise.all(validFiles.map(f=>
+    uploadToCloudinary(f,'image').catch(err=>{console.error(err);return null;})
+  )).then(urls=>{
+    pendingPhotos=urls.filter(Boolean);
+    if(!pendingPhotos.length){
+      document.getElementById('photoPreviewModal').classList.remove('open');
+      return;
+    }
     grid.innerHTML=pendingPhotos.map(src=>`<img src="${src}" alt="preview"/>`).join('');
     document.getElementById('photoCount').textContent=`${pendingPhotos.length} photo${pendingPhotos.length>1?'s':''}`;
-    document.getElementById('photoPreviewModal').classList.add('open');
-    // Reset file input
-    document.getElementById('photoFileInput').value='';
+  }).catch(()=>{
+    document.getElementById('photoPreviewModal').classList.remove('open');
   });
 }
 

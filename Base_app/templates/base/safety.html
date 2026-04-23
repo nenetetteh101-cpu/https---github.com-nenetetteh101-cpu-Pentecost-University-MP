@@ -445,6 +445,24 @@
 </footer>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* ── THEME ── */
+(function(){
+  var _H = document.documentElement;
+  var _TB = document.getElementById('themeBtn');
+  var _dark = localStorage.getItem('pu-theme') !== 'light';
+  function applyTheme(d) {
+    _H.setAttribute('data-theme', d ? 'dark' : 'light');
+    if (_TB) _TB.textContent = d ? '🌞' : '🌙';
+    _dark = d;
+    localStorage.setItem('pu-theme', d ? 'dark' : 'light');
+    var m = document.getElementById('themeColorMeta');
+    if (m) m.setAttribute('content', d ? '#0d0e11' : '#f0ede8');
+  }
+  applyTheme(_dark);
+  if (_TB) _TB.addEventListener('click', function(){ applyTheme(!_dark); });
+  window._applyTheme = applyTheme;
+})();
+
   const reveals = document.querySelectorAll('.reveal');
   const obs = new IntersectionObserver((e) => e.forEach(el => { if (el.isIntersecting) el.target.classList.add('visible'); }), { threshold: 0.08 });
   reveals.forEach(el => obs.observe(el));

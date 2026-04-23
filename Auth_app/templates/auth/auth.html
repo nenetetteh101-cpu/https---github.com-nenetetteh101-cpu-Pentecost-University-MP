@@ -587,7 +587,7 @@
   <div class="pg1 panel-glow"></div>
   <div class="pg2 panel-glow"></div>
 
-  <a href="index.html" class="panel-logo">PU-<span>Marketplace</span></a>
+  <a href="{% url 'base:home' %}" class="panel-logo">PU-<span>Marketplace</span></a>
 
   <div class="panel-content">
     <div class="panel-eyebrow">Campus Commerce</div>
@@ -636,10 +636,10 @@
 
     <!-- Mobile only -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem;">
-      <a href="index.html" class="mobile-logo">PU-<span>Marketplace</span></a>
+      <a href="{% url 'base:home' %}" class="mobile-logo">PU-<span>Marketplace</span></a>
       <button id="authThemeBtn" onclick="authToggleTheme()" style="width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:var(--input-bg);font-size:1rem;flex-shrink:0;transition:transform .3s;">🌞</button>
     </div>
-    <a href="index.html" class="back-home">← Back to Home</a>
+    <a href="{% url 'base:home' %}" class="back-home">← Back to Home</a>
 
     <!-- Tabs -->
     <div class="auth-tabs">
@@ -671,7 +671,7 @@
         <span class="field-error" id="login-pw-err">Password is required.</span>
       </div>
 
-      <a href="help.html#account" class="forgot-link">Forgot password?</a>
+      <a href="{% url 'base:help' %}#account" class="forgot-link">Forgot password?</a>
 
       <button class="btn-submit" id="login-btn" onclick="handleLogin()">
         Log In to Campus
@@ -763,7 +763,7 @@
       <div class="check-group">
         <input type="checkbox" id="su-terms" />
         <label for="su-terms">
-          I agree to the <a href="terms.html" target="_blank">Terms of Service</a> and <a href="privacy.html" target="_blank">Privacy Policy</a>. I confirm I am a current student of the university.
+          I agree to the <a href="{% url 'base:terms' %}" target="_blank">Terms of Service</a> and <a href="{% url 'base:privacy' %}" target="_blank">Privacy Policy</a>. I confirm I am a current student of the university.
         </label>
       </div>
       <span class="field-error" id="su-terms-err" style="margin-top:-.6rem;margin-bottom:.8rem;">You must agree to the terms.</span>

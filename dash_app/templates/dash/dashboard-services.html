@@ -258,31 +258,34 @@
   <div class="sbh"><div class="sbl">PU-<span>Connect</span></div><button class="sbx" onclick="closeSb()">✕</button></div>
   <div class="sbsec">Navigate</div>
   <ul class="sbul">
-    <li><a href="index.html"><span class="ico">🏠</span>Home</a></li>
-    <li><a href="dashboard.html"><span class="ico">⚡</span>Dashboard</a></li>
-    <li><a href="search.html"><span class="ico">🔍</span>Search</a></li>
-    <li><a href="dashboard-products.html"><span class="ico">📦</span>Products</a></li>
-    <li><a href="dashboard-services.html" class="act"><span class="ico">🛠️</span>Services</a></li>
-    <li><a href="wishlist.html"><span class="ico">❤️</span>Wishlist</a></li>
-    <li><a href="orders.html"><span class="ico">🛒</span>My Orders</a></li>
-    <li><a href="listings.html"><span class="ico">🏷️</span>My Listings</a></li>
+    <li><a href="{% url 'base:home' %}"><span class="ico">🏠</span>Home</a></li>
+    <li><a href="{% url 'Dash_app:dashboard' %}" class="act"><span class="ico">⚡</span>Dashboard</a></li>
+    <li><a href="{% url 'Dash_app:dashboard_services' %}"><span class="ico">🛠️</span>Services</a></li>
+    <li><a href="{% url 'listings:wishlist' %}"><span class="ico">❤️</span>Wishlist</a></li>
+    <li><a href="{% url 'orders:orders' %}"><span class="ico">🛒</span>My Orders</a></li>
+    <li><a href="{% url 'listings:listings' %}"><span class="ico">🏷️</span>My Listings</a></li>
   </ul>
   <div class="sbd"></div>
   <div class="sbsec">Account</div>
   <ul class="sbul">
-    <li><a href="profile.html"><span class="ico">👤</span>Profile</a></li>
+    <li><a href="{% url 'profile:profile' %}"><span class="ico">👤</span>Profile</a></li>
+  </ul>
+  <div class="sbd"></div>
+  <div class="sbsec">Account</div>
+  <ul class="sbul">
+    <li><a href="{% url 'profile:profile' %}"><span class="ico">👤</span>Profile</a></li>
   </ul>
   <div class="sbd"></div>
   <div class="sbsec">Info &amp; Legal</div>
   <ul class="sbul">
-    <li><a href="about.html"><span class="ico">ℹ️</span>About Us</a></li>
-    <li><a href="safety.html"><span class="ico">🛡️</span>Safety</a></li>
-    <li><a href="help.html"><span class="ico">❓</span>Help Centre</a></li>
-    <li><a href="privacy.html"><span class="ico">🔒</span>Privacy Policy</a></li>
-    <li><a href="terms.html"><span class="ico">📄</span>Terms &amp; Conditions</a></li>
+    <li><a href="{% url 'base:about' %}"><span class="ico">ℹ️</span>About Us</a></li>
+    <li><a href="{% url 'base:safety' %}"><span class="ico">🛡️</span>Safety</a></li>
+    <li><a href="{% url 'base:help' %}"><span class="ico">❓</span>Help Centre</a></li>
+    <li><a href="{% url 'base:privacy' %}"><span class="ico">🔒</span>Privacy Policy</a></li>
+    <li><a href="{% url 'base:terms' %}"><span class="ico">📄</span>Terms &amp; Conditions</a></li>
   </ul>
   <div class="sbd"></div>
-  <ul class="sbul"><li><a href="auth.html" style="color:var(--red)"><span class="ico">🚪</span>Log Out</a></li></ul>
+  <ul class="sbul"><li><a href="{% url 'auth:auth_view' %}" style="color:var(--red)"><span class="ico">🚪</span>Log Out</a></li></ul>
   <div class="sbft">© 2026 PU-Connect<br>Built for campus, by students.</div>
 </aside>
 
@@ -408,6 +411,60 @@
     <span class="nlbl">Profile</span>
   </button>
 </nav>
+
+<!-- ── LISTING DETAIL SHEET ── -->
+<div id="ldOv" style="position:fixed;inset:0;z-index:750;background:rgba(0,0,0,.65);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:flex-end;justify-content:center">
+  <div id="ldSheet" style="width:100%;max-width:580px;background:var(--card);border-radius:24px 24px 0 0;border-top:1px solid rgba(255,255,255,.1);max-height:88dvh;overflow-y:auto;transform:translateY(100%);transition:transform .38s cubic-bezier(.4,0,.2,1)">
+    <!-- Handle + close -->
+    <div style="position:sticky;top:0;z-index:2;background:var(--card);padding:.75rem 1.1rem .4rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.06)">
+      <div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.15);margin:0 auto;flex:1;max-width:36px"></div>
+      <button id="ldClose" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:var(--m);cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">✕</button>
+    </div>
+    <!-- Photo gallery -->
+    <div id="ldGallery" style="width:100%;aspect-ratio:4/3;background:var(--inp);overflow:hidden;position:relative;max-height:280px"></div>
+    <!-- Photo dots -->
+    <div id="ldDots" style="display:flex;justify-content:center;gap:.35rem;padding:.5rem 0 0"></div>
+    <!-- Body -->
+    <div style="padding:1.1rem 1.2rem 1.4rem">
+      <!-- Type + category badges -->
+      <div id="ldBadges" style="display:flex;gap:.4rem;margin-bottom:.6rem;flex-wrap:wrap"></div>
+      <!-- Title -->
+      <div id="ldTitle" style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:900;letter-spacing:-.3px;line-height:1.25;margin-bottom:.4rem"></div>
+      <!-- Price -->
+      <div id="ldPrice" style="font-size:1.25rem;font-weight:800;color:var(--a);font-family:'Playfair Display',serif;margin-bottom:.5rem"></div>
+      <!-- Seller row -->
+      <div style="display:flex;align-items:center;gap:.6rem;padding:.6rem 0;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:.85rem">
+        <div id="ldAv" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--a),#f5c842);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#0d0e11;flex-shrink:0;font-family:'Playfair Display',serif"></div>
+        <div style="flex:1;min-width:0">
+          <div id="ldSellerName" style="font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+          <div id="ldSellerMeta" style="font-size:.7rem;color:var(--m)"></div>
+        </div>
+        <div id="ldStatus" style="font-size:.65rem;font-weight:700;padding:.2rem .55rem;border-radius:5px"></div>
+      </div>
+      <!-- Detail rows -->
+      <div id="ldRows" style="display:flex;flex-direction:column;gap:.45rem;margin-bottom:.9rem"></div>
+      <!-- Description -->
+      <div id="ldDescWrap" style="display:none;margin-bottom:.9rem">
+        <div style="font-size:.7rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--m);margin-bottom:.4rem">Description</div>
+        <div id="ldDesc" style="font-size:.85rem;line-height:1.7;color:var(--t)"></div>
+      </div>
+      <!-- Tags -->
+      <div id="ldTagsWrap" style="display:none;margin-bottom:1rem">
+        <div style="font-size:.7rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--m);margin-bottom:.4rem">Tags</div>
+        <div id="ldTags" style="display:flex;flex-wrap:wrap;gap:.35rem"></div>
+      </div>
+      <!-- Actions -->
+      <div style="display:flex;flex-direction:column;gap:.5rem">
+        <button id="ldChatBtn" style="width:100%;padding:.85rem;border-radius:12px;background:var(--a);color:#0d0e11;border:none;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:opacity .2s">💬 Message Seller</button>
+        <div style="display:flex;gap:.5rem">
+          <button id="ldWishBtn" style="flex:1;padding:.7rem;border-radius:12px;background:rgba(255,255,255,.06);color:var(--t);border:1px solid rgba(255,255,255,.1);font-family:'DM Sans',sans-serif;font-size:.84rem;cursor:pointer">🤍 Save</button>
+          <button id="ldShareBtn" style="flex:1;padding:.7rem;border-radius:12px;background:rgba(255,255,255,.06);color:var(--t);border:1px solid rgba(255,255,255,.1);font-family:'DM Sans',sans-serif;font-size:.84rem;cursor:pointer">🔗 Share</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <script>
 const html=document.documentElement,tb=document.getElementById('thbtn');let dark=true;
@@ -905,58 +962,6 @@ function openBoost(){
 
 </script>
 
-<!-- ── LISTING DETAIL SHEET ── -->
-<div id="ldOv" style="position:fixed;inset:0;z-index:750;background:rgba(0,0,0,.65);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:flex-end;justify-content:center">
-  <div id="ldSheet" style="width:100%;max-width:580px;background:var(--card);border-radius:24px 24px 0 0;border-top:1px solid rgba(255,255,255,.1);max-height:88dvh;overflow-y:auto;transform:translateY(100%);transition:transform .38s cubic-bezier(.4,0,.2,1)">
-    <!-- Handle + close -->
-    <div style="position:sticky;top:0;z-index:2;background:var(--card);padding:.75rem 1.1rem .4rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.06)">
-      <div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.15);margin:0 auto;flex:1;max-width:36px"></div>
-      <button id="ldClose" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:var(--m);cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">✕</button>
-    </div>
-    <!-- Photo gallery -->
-    <div id="ldGallery" style="width:100%;aspect-ratio:4/3;background:var(--inp);overflow:hidden;position:relative;max-height:280px"></div>
-    <!-- Photo dots -->
-    <div id="ldDots" style="display:flex;justify-content:center;gap:.35rem;padding:.5rem 0 0"></div>
-    <!-- Body -->
-    <div style="padding:1.1rem 1.2rem 1.4rem">
-      <!-- Type + category badges -->
-      <div id="ldBadges" style="display:flex;gap:.4rem;margin-bottom:.6rem;flex-wrap:wrap"></div>
-      <!-- Title -->
-      <div id="ldTitle" style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:900;letter-spacing:-.3px;line-height:1.25;margin-bottom:.4rem"></div>
-      <!-- Price -->
-      <div id="ldPrice" style="font-size:1.25rem;font-weight:800;color:var(--a);font-family:'Playfair Display',serif;margin-bottom:.5rem"></div>
-      <!-- Seller row -->
-      <div style="display:flex;align-items:center;gap:.6rem;padding:.6rem 0;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:.85rem">
-        <div id="ldAv" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--a),#f5c842);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#0d0e11;flex-shrink:0;font-family:'Playfair Display',serif"></div>
-        <div style="flex:1;min-width:0">
-          <div id="ldSellerName" style="font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
-          <div id="ldSellerMeta" style="font-size:.7rem;color:var(--m)"></div>
-        </div>
-        <div id="ldStatus" style="font-size:.65rem;font-weight:700;padding:.2rem .55rem;border-radius:5px"></div>
-      </div>
-      <!-- Detail rows -->
-      <div id="ldRows" style="display:flex;flex-direction:column;gap:.45rem;margin-bottom:.9rem"></div>
-      <!-- Description -->
-      <div id="ldDescWrap" style="display:none;margin-bottom:.9rem">
-        <div style="font-size:.7rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--m);margin-bottom:.4rem">Description</div>
-        <div id="ldDesc" style="font-size:.85rem;line-height:1.7;color:var(--t)"></div>
-      </div>
-      <!-- Tags -->
-      <div id="ldTagsWrap" style="display:none;margin-bottom:1rem">
-        <div style="font-size:.7rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--m);margin-bottom:.4rem">Tags</div>
-        <div id="ldTags" style="display:flex;flex-wrap:wrap;gap:.35rem"></div>
-      </div>
-      <!-- Actions -->
-      <div style="display:flex;flex-direction:column;gap:.5rem">
-        <button id="ldChatBtn" style="width:100%;padding:.85rem;border-radius:12px;background:var(--a);color:#0d0e11;border:none;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:opacity .2s">💬 Message Seller</button>
-        <div style="display:flex;gap:.5rem">
-          <button id="ldWishBtn" style="flex:1;padding:.7rem;border-radius:12px;background:rgba(255,255,255,.06);color:var(--t);border:1px solid rgba(255,255,255,.1);font-family:'DM Sans',sans-serif;font-size:.84rem;cursor:pointer">🤍 Save</button>
-          <button id="ldShareBtn" style="flex:1;padding:.7rem;border-radius:12px;background:rgba(255,255,255,.06);color:var(--t);border:1px solid rgba(255,255,255,.1);font-family:'DM Sans',sans-serif;font-size:.84rem;cursor:pointer">🔗 Share</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>

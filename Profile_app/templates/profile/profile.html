@@ -690,11 +690,53 @@
 
 <script>
 /* ── THEME ── */
-const H=document.documentElement,TB=document.getElementById('thbtn');
-let dark=localStorage.getItem('pu-theme')!=='light';
-function apTh(d){H.setAttribute('data-theme',d?'dark':'light');TB.textContent=d?'🌞':'🌙';dark=d;localStorage.setItem('pu-theme',d?'dark':'light');const m=document.getElementById('themeColorMeta');if(m)m.setAttribute('content',d?'#0d0e11':'#f0ede8');const dt=document.getElementById('darkToggle');if(dt)dt.checked=d;}
-apTh(dark);TB.onclick=()=>apTh(!dark);
-function toggleDarkMode(cb){apTh(cb.checked);}
+(function(){
+  var _H = document.documentElement;
+  var _TB = document.getElementById('thbtn');
+  var _dark = localStorage.getItem('pu-theme') !== 'light';
+  function applyTheme(d) {
+    _H.setAttribute('data-theme', d ? 'dark' : 'light');
+    if (_TB) _TB.textContent = d ? '🌞' : '🌙';
+    _dark = d;
+    localStorage.setItem('pu-theme', d ? 'dark' : 'light');
+    var m = document.getElementById('themeColorMeta');
+    if (m) m.setAttribute('content', d ? '#0d0e11' : '#f0ede8');
+  }
+  applyTheme(_dark);
+  if (_TB) _TB.addEventListener('click', function(){ applyTheme(!_dark); });
+  window._applyTheme = applyTheme;
+})();
+
+/* ── CLOUDINARY UPLOAD ─────────────────────────────────────────
+   Set your own cloud_name and upload_preset below.
+   In Cloudinary dashboard: Settings → Upload → Add upload preset
+   Set "Signing Mode" to "Unsigned" and note the preset name.
+────────────────────────────────────────────────────────────────── */
+const CLOUDINARY_CLOUD  = 'pu-connect';          // ← your cloud name
+const CLOUDINARY_PRESET = 'pu_connect_unsigned';  // ← your upload preset
+
+/**
+ * Upload a File or Blob to Cloudinary.
+ * @param {File|Blob} file
+ * @param {'image'|'video'} resourceType
+ * @returns {Promise<string>} secure_url of the uploaded asset
+ */
+async function uploadToCloudinary(file, resourceType) {
+  resourceType = resourceType || 'image';
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLOUDINARY_PRESET);
+  fd.append('folder', 'pu-connect');
+  const url = 'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/' + resourceType + '/upload';
+  const res = await fetch(url, { method: 'POST', body: fd });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || 'Upload failed (' + res.status + ')');
+  }
+  const data = await res.json();
+  return data.secure_url;
+}
+
 
 /* ── PROFILE DATA ── */
 const DEFAULT={name:'',username:'',bio:'',faculty:'',location:'',phone:'',avatarSrc:'',onlineStatus:true};
@@ -757,15 +799,13 @@ document.getElementById('inlineNameInput').addEventListener('keydown',e=>{
 function handleDirectAvatarUpload(input){
   const file=input.files[0];if(!file)return;
   if(file.size>5*1024*1024){showToast('Photo too large — max 5MB');return;}
-  const r=new FileReader();
-  r.onload=e=>{
-    const src=e.target.result;
-    const p=loadProfile();p.avatarSrc=src;
+  showToast('Uploading photo...');
+  uploadToCloudinary(file,'image').then(url=>{
+    const p=loadProfile();p.avatarSrc=url;
     saveProfileData(p);applyProfile(p);
     localStorage.setItem('pu-profile-updated',Date.now());
     showToast('Profile photo updated 📷');
-  };
-  r.readAsDataURL(file);
+  }).catch(()=>showToast('Upload failed — check your connection'));
   input.value='';
 }
 
@@ -886,18 +926,17 @@ function updateBioCount(el){document.getElementById('bioCount').textContent=`${e
 function handleAvatarUpload(input){
   const file=input.files[0];if(!file)return;
   if(file.size>5*1024*1024){showToast('Photo too large — max 5MB');return;}
-  const r=new FileReader();
-  r.onload=e=>{
-    const src=e.target.result;
-    document.getElementById('modalAvatarImg').src=src;
+  showToast('Uploading photo...');
+  uploadToCloudinary(file,'image').then(url=>{
+    document.getElementById('modalAvatarImg').src=url;
     document.getElementById('modalAvatarImg').style.display='block';
     document.getElementById('modalAvatarInitials').style.display='none';
-    document.getElementById('avatarImg').src=src;
+    document.getElementById('avatarImg').src=url;
     document.getElementById('avatarImg').style.display='block';
     document.getElementById('avatarInitials').style.display='none';
-    document.getElementById('editModal').dataset.pendingAvatar=src;
-  };
-  r.readAsDataURL(file);
+    document.getElementById('editModal').dataset.pendingAvatar=url;
+    showToast('Photo ready — save profile to apply');
+  }).catch(()=>showToast('Upload failed — check your connection'));
 }
 
 let _pendingSave=null;

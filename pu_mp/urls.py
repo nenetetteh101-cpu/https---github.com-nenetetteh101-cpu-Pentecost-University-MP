@@ -14,13 +14,17 @@ urlpatterns = [
     # Base app (includes: home, about, help, terms, privacy, safety, contact)
     path('', include('Base_app.urls')),
 
-
-
-        # Authentication
+    # Authentication
     path('auth/', include('Auth_app.urls')),
     
     # Main apps
-  
+    path('dashboard/', include('dash_app.urls')),
+    path('listings/', include('Listings_app.urls')),
+    path('orders/', include('Orders_app.urls')),
+    path('profile/', include('Profile_app.urls')),
+    path('chat/', include('chat_app.urls')),
+    path('search/', include('search_app.urls')),
+    path('reels/', include('Reels_app.urls')),
 ]
 
 # Media & Static files

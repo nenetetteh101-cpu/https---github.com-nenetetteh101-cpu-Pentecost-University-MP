@@ -1,22 +1,24 @@
 <ul class="sbul">
-    <li><a href="{% url 'home_view' %}"><span class="ico">🏠</span>Home</a></li>
-    <li><a href="{% url 'dashboard_view' %}" class="act"><span class="ico">⚡</span>Dashboard</a></li>
-    <li><a href="{% url 'dashboard_services_view' %}"><span class="ico">🛠️</span>Services</a></li>
-    <li><a href="{% url 'wishlist_view' %}"><span class="ico">❤️</span>Wishlist</a></li>
-    <li><a href="{% url 'orders_view' %}"><span class="ico">🛒</span>My Orders</a></li>
-    <li><a href="{% url 'listings_view' %}"><span class="ico">🏷️</span>My Listings</a></li>
+    <li><a href="{% url 'base:home' %}"><span class="ico">🏠</span>Home</a></li>
+    <li><a href="{% url 'Dash_app:dashboard' %}" class="act"><span class="ico">⚡</span>Dashboard</a></li>
+    <li><a href="{% url 'Dash_app:dashboard_services' %}"><span class="ico">🛠️</span>Services</a></li>
+    <li><a href="{% url 'listings:wishlist' %}"><span class="ico">❤️</span>Wishlist</a></li>
+    <li><a href="{% url 'orders:orders' %}"><span class="ico">🛒</span>My Orders</a></li>
+    <li><a href="{% url 'listings:listings' %}"><span class="ico">🏷️</span>My Listings</a></li>
   </ul>
   <div class="sbd"></div>
   <div class="sbsec">Account</div>
   <ul class="sbul">
-    <li><a href="{% url 'profile_view' %}"><span class="ico">👤</span>Profile</a></li>
+    <li><a href="{% url 'profile:profile' %}"><span class="ico">👤</span>Profile</a></li>
   </ul>
   <div class="sbd"></div>
   <div class="sbsec">Info</div>
   <ul class="sbul">
-    {% include 'footer.html' %}
+    <li><a href="{% url 'base:help' %}"><span class="ico">❓</span>Help Center</a></li>
+    <li><a href="{% url 'base:terms' %}"><span class="ico">📄</span>Terms of Service</a></li>
+    <li><a href="{% url 'base:privacy' %}"><span class="ico">🔒</span>Privacy Policy</a></li>
   </ul>
   <div class="sbd"></div>
   <ul class="sbul">
-    <li><a href="{% url 'Auth_view' %}" style="color:var(--red)"><span class="ico">🚪</span>Log Out</a></li>
+    <li><a href="{% url 'auth:auth_view' %}" style="color:var(--red)"><span class="ico">🚪</span>Log Out</a></li>
   </ul>

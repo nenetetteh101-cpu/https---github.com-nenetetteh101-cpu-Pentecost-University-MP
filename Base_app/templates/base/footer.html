@@ -1,6 +1,15 @@
-
-    <li><a href="{%url 'about_view' %}"><span class="ico">ℹ️</span>About Us</a></li>
-    <li><a href="{%url 'safety_view' %}"><span class="ico">🛡️</span>Safety</a></li>
-    <li><a href="{%url 'help_view' %}"><span class="ico">❓</span>Help Centre</a></li>
-    <li><a href="{%url 'privacy_view' %}"><span class="ico">🔒</span>Privacy Policy</a></li>
-    <li><a href="{%url 'terms_view' %}"><span class="ico">📄</span>Terms &amp; Conditions</a></li>
+ <footer>
+  <div class="footer-inner">
+    <div class="footer-logo">PU-<span>Connect</span></div>
+    <div class="footer-links">
+      <a href="{% url 'base:home' %} ]">Home</a>
+    <a href="{% url 'base:dashboard' %}">Dashboard</a>
+      <a href="{% url 'base:about' %}">About</a>
+      <a href="{% url 'base:safety' %}">Safety</a>
+      <a href="{% url 'base:help' %}">Help Centre</a>
+      <a href="{% url 'base:privacy' %}">Privacy</a>
+      <a href="{% url 'base:terms' %}">Terms</a>
+    </div>
+    <div class="footer-copy">© 2026 PU-Connect. All rights reserved.</div>
+  </div>
+</footer>

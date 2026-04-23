@@ -1,9 +1,15 @@
 import json
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login 
 from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from django.shortcuts import render
+
+from django.contrib.auth.models import User
+
+from django.db import IntegrityError
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 
 
@@ -58,12 +64,7 @@ def login_view(request):
 
 
 
-import json
-from django.contrib.auth.models import User
-from django.http import JsonResponse
-from django.db import IntegrityError
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
+
 
 def signup_api(request):
     if request.method == 'POST':
@@ -123,4 +124,16 @@ def login_page(request):
 # Additional views for registration, password reset, etc. can be added here as needed.
 
 def Auth_view(request):
-    return render(request, 'auth/auth.html')
+    """
+    Authentication Page (Login/Signup)
+    GET /auth/auth-view
+    
+    Displays:
+    - Login form
+    - Signup form
+    """
+    context = {
+        'page_title': 'Login/Sign Up - PU-Marketplace',
+        'page_description': 'Join the PU-Marketplace community.',
+    }
+    return render(request, 'auth/auth.html', context)
