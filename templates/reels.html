@@ -199,6 +199,34 @@ html,body{height:100%;height:100dvh;background:#000;font-family:'DM Sans',sans-s
 /* TOAST */
 .toast{position:fixed;bottom:calc(var(--bh) + 18px);left:50%;transform:translateX(-50%) translateY(20px);background:#1c1f27;border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:.58rem 1.15rem;font-size:.82rem;font-weight:500;color:#f0eeea;box-shadow:0 8px 32px rgba(0,0,0,.65);opacity:0;transition:opacity .28s,transform .28s;pointer-events:none;z-index:999;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── REEL OWNER MENU ── */
+.own-btn{position:absolute;top:.85rem;right:.6rem;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.42);backdrop-filter:blur(8px);border:none;color:#fff;font-size:1.2rem;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:25;line-height:1;letter-spacing:1px;transition:background .2s}
+.own-btn:hover{background:rgba(0,0,0,.6)}
+/* Edit caption sheet */
+#editCapOv,#delReelOv{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+#editCapOv.open,#delReelOv.open{opacity:1;pointer-events:all}
+#editCapSheet,#delReelSheet{width:100%;max-width:500px;background:var(--card,#1c1f27);border-radius:22px 22px 0 0;border-top:1px solid rgba(255,255,255,.1);padding:1.2rem 1.4rem 2.6rem;transform:translateY(100%);transition:transform .32s cubic-bezier(.4,0,.2,1)}
+#editCapOv.open #editCapSheet,#delReelOv.open #delReelSheet{transform:translateY(0)}
+.esheet-handle{width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.15);margin:0 auto .9rem}
+.esheet-title{font-size:1rem;font-weight:700;margin-bottom:.9rem;font-family:'Playfair Display',serif}
+.esheet-cap-ta{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:.75rem .9rem;color:#f0eeea;font-family:'DM Sans',sans-serif;font-size:.88rem;line-height:1.6;resize:none;outline:none;min-height:90px}
+.esheet-cap-ta:focus{border-color:rgba(232,201,106,.5)}
+.esheet-save{width:100%;margin-top:.7rem;padding:.8rem;border-radius:11px;background:#e8c96a;color:#0d0e11;border:none;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer}
+.esheet-cancel{width:100%;margin-top:.45rem;padding:.72rem;border-radius:11px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.08);font-family:'DM Sans',sans-serif;font-size:.86rem;cursor:pointer}
+/* Delete confirm */
+.del-ico{font-size:2.2rem;text-align:center;margin-bottom:.5rem}
+.del-msg{font-size:.84rem;color:rgba(255,255,255,.6);text-align:center;margin-bottom:1.1rem;line-height:1.6}
+.del-confirm{width:100%;padding:.8rem;border-radius:11px;background:#ff6b6b;color:#fff;border:none;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;margin-bottom:.45rem}
+/* owner action menu sheet */
+#ownMenuOv{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+#ownMenuOv.open{opacity:1;pointer-events:all}
+#ownMenuSheet{width:100%;max-width:500px;background:var(--card,#1c1f27);border-radius:22px 22px 0 0;border-top:1px solid rgba(255,255,255,.1);padding:1.2rem 1.4rem 2.6rem;transform:translateY(100%);transition:transform .32s cubic-bezier(.4,0,.2,1)}
+#ownMenuOv.open #ownMenuSheet{transform:translateY(0)}
+.omenu-row{display:flex;align-items:center;gap:.9rem;padding:.8rem .5rem;border-radius:11px;cursor:pointer;font-size:.9rem;font-weight:500;transition:background .18s}
+.omenu-row:hover{background:rgba(255,255,255,.06)}
+.omenu-row svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.omenu-del{color:#ff6b6b}
 </style>
 </head>
 <body>
@@ -319,32 +347,58 @@ html,body{height:100%;height:100dvh;background:#000;font-family:'DM Sans',sans-s
 <div class="toast" id="toast"></div>
 
 <script>/* ── CLOUDINARY UPLOAD ─────────────────────────────────────────
-   Set your own cloud_name and upload_preset below.
-   In Cloudinary dashboard: Settings → Upload → Add upload preset
-   Set "Signing Mode" to "Unsigned" and note the preset name.
+   Fill in your Cloudinary cloud name and unsigned upload preset.
+   In Cloudinary dashboard: Settings → Upload → Upload presets
+   → Add preset → set Signing Mode to "Unsigned".
 ────────────────────────────────────────────────────────────────── */
-const CLOUDINARY_CLOUD  = 'pu-connect';          // ← your cloud name
-const CLOUDINARY_PRESET = 'pu_connect_unsigned';  // ← your upload preset
+const CLOUDINARY_CLOUD  = 'dlzzszwa4';   // ← replace with your cloud name
+const CLOUDINARY_PRESET = 'pu-connect'; // ← replace with your unsigned preset name
 
 /**
- * Upload a File or Blob to Cloudinary.
+ * Upload a File or Blob to Cloudinary using an unsigned upload preset.
  * @param {File|Blob} file
  * @param {'image'|'video'} resourceType
  * @returns {Promise<string>} secure_url of the uploaded asset
  */
 async function uploadToCloudinary(file, resourceType) {
   resourceType = resourceType || 'image';
+
+  // Guard: catch missing config before hitting the network
+  if (!CLOUDINARY_CLOUD || CLOUDINARY_CLOUD === 'your_cloud_name') {
+    throw new Error('Cloudinary cloud name not set. Open the file and fill in CLOUDINARY_CLOUD.');
+  }
+  if (!CLOUDINARY_PRESET || CLOUDINARY_PRESET === 'your_upload_preset') {
+    throw new Error('Cloudinary upload preset not set. Open the file and fill in CLOUDINARY_PRESET.');
+  }
+
   const fd = new FormData();
   fd.append('file', file);
   fd.append('upload_preset', CLOUDINARY_PRESET);
   fd.append('folder', 'pu-connect');
+
   const url = 'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/' + resourceType + '/upload';
-  const res = await fetch(url, { method: 'POST', body: fd });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error?.message || 'Upload failed (' + res.status + ')');
+
+  let res;
+  try {
+    res = await fetch(url, { method: 'POST', body: fd });
+  } catch (networkErr) {
+    throw new Error('Network error — could not reach Cloudinary. Check your internet connection.');
   }
-  const data = await res.json();
+
+  // Parse response body regardless of status code
+  let data;
+  try { data = await res.json(); } catch (_) { data = {}; }
+
+  // Cloudinary errors: either non-2xx status OR body contains { error: { message } }
+  if (!res.ok || data.error) {
+    const msg = (data.error && data.error.message) || ('HTTP ' + res.status);
+    throw new Error(msg);
+  }
+
+  if (!data.secure_url) {
+    throw new Error('Cloudinary did not return a URL. Response: ' + JSON.stringify(data).slice(0, 120));
+  }
+
   return data.secure_url;
 }
 
@@ -391,7 +445,7 @@ function reelHTML(r,i){
   const avBg=r.seller&&r.seller.avGrad||'linear-gradient(135deg,#e8c96a,#f5c842)';
   const cap=escH(r.caption||'').replace(/#(\w+)/g,'<span class="htag">#$1</span>');
   return `
-  <div class="reel-inner">
+  <div class="reel-inner" id="reel-${i}">
     <div class="prog-bar"><div class="prog-fill" id="pb-${i}"></div></div>
     ${hasVid?`<video class="reel-video" id="v-${i}" data-src="${escH(r.src)}" loop playsinline preload="metadata" onclick="togPlay(${i})" onplay="onPl(${i})" ontimeupdate="onTu(${i})"></video>`:`<div class="reel-bg" style="background:${escH(r.bg||'#0d0e11')}" id="v-${i}" onclick="togPlay(${i})"><span style="font-size:6rem;filter:drop-shadow(0 4px 24px rgba(0,0,0,.55))">${r.bgEmoji||'🎬'}</span></div>`}
     <div class="reel-ov"></div>
@@ -403,6 +457,7 @@ function reelHTML(r,i){
         <button class="tib" onclick="openUpload()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
       </div>
     </div>
+    ${isMyReel(r)?`<button class="own-btn" onclick="event.stopPropagation();openOwnMenu(${i})" title="Manage reel">···</button>`:''}
     <div class="reel-bot">
       <div class="seller-row" onclick="viewProf('${escH(handle)}')">
         <div class="s-av" style="background:${avBg}">${av}</div>
@@ -541,7 +596,7 @@ function publishReel(){
       prog.classList.remove('show');
       btn.disabled=false;
       btn.textContent='Upload Reel';
-      toast('Upload failed: '+err.message);
+      toast('Upload failed: '+(err&&err.message?err.message:'Check your Cloudinary cloud name and preset.'));
     });
 }
 function finishUpload(cap, cloudUrl){const p=JSON.parse(localStorage.getItem('pu-profile')||'{}');const nm=p.name||'User';const un=p.username||'user';const ini=nm.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'KA';const sel=document.getElementById('lstSel');const opt=sel.options[sel.selectedIndex];const prod=opt.value?{name:opt.text.split(' — ')[0],price:opt.dataset.price||'',emoji:opt.dataset.emoji||'📦',img:opt.dataset.img||'',desc:'Campus listing — tap to view.'}:null;const tags=(cap.match(/#\w+/g)||[]);const reel={id:'r-'+Date.now(),src:cloudUrl||pendingURL,bg:'linear-gradient(135deg,#0d1117,#1c1f27)',bgEmoji:'🎬',seller:{name:nm,handle:'@'+un,initials:ini,avGrad:'linear-gradient(135deg,#e8c96a,#f5c842)',avSrc:p.avatarSrc||''},caption:cap,product:prod,tags,likes:0,comments:0,shares:0,saves:0,liked:false,saved:false,following:false,music:'Original Audio \u00B7 '+nm,uploadedAt:Date.now()};try{const stored=JSON.parse(localStorage.getItem('pu-reels')||'[]');const ts={...reel,src:cloudUrl||'',bg:'linear-gradient(135deg,#0d1117,#1c1f27)'};stored.unshift(ts);if(stored.length>30)stored.splice(30);localStorage.setItem('pu-reels',JSON.stringify(stored));}catch(e){}ALL.unshift(reel);closeUpload();build();document.getElementById('feed').scrollTo({top:0,behavior:'instant'});curIdx=0;setTimeout(()=>playAt(0),350);toast('🎉 Reel published!');}
@@ -555,6 +610,138 @@ dzn.addEventListener('drop',e=>{e.preventDefault();dzn.classList.remove('drag-ov
 build();
 setTimeout(()=>playAt(0),300);
 (()=>{const id=new URLSearchParams(location.search).get('id');if(id&&ALL.length){const idx=ALL.findIndex(r=>r.id===id);if(idx>0)setTimeout(()=>{const el=document.getElementById('reel-'+idx);if(el){el.scrollIntoView({behavior:'instant'});curIdx=idx;playAt(idx);}},400);}})();
+
+/* ══════════════════════════════════════════════════════════
+   OWNER REEL MANAGEMENT — delete & edit caption
+══════════════════════════════════════════════════════════ */
+let _ownMenuIdx = -1; // which reel the menu is open for
+
+function isMyReel(r) {
+  try {
+    const me = (JSON.parse(localStorage.getItem('pu-profile') || '{}').username || '').toLowerCase();
+    if (!me) return false;
+    const handle = (r.seller && r.seller.handle || '').replace('@', '').toLowerCase();
+    return handle === me;
+  } catch(e) { return false; }
+}
+
+function openOwnMenu(i) {
+  _ownMenuIdx = i;
+  document.getElementById('ownMenuOv').classList.add('open');
+  pauseAt(i);
+}
+function closeOwnMenu(e) {
+  if (e && e.target !== document.getElementById('ownMenuOv')) return;
+  document.getElementById('ownMenuOv').classList.remove('open');
+}
+
+/* ── Edit caption ── */
+function openEditCap() {
+  if (_ownMenuIdx < 0) return;
+  document.getElementById('ownMenuOv').classList.remove('open');
+  const r = ALL[_ownMenuIdx];
+  document.getElementById('editCapTa').value = r ? (r.caption || '') : '';
+  document.getElementById('editCapOv').classList.add('open');
+}
+function closeEditCap(e) {
+  if (e && e.target !== document.getElementById('editCapOv')) return;
+  document.getElementById('editCapOv').classList.remove('open');
+}
+function saveEditCap() {
+  if (_ownMenuIdx < 0) return;
+  const newCap = document.getElementById('editCapTa').value.trim();
+  // Update in-memory
+  if (ALL[_ownMenuIdx]) ALL[_ownMenuIdx].caption = newCap;
+  // Update in localStorage
+  try {
+    const stored = JSON.parse(localStorage.getItem('pu-reels') || '[]');
+    const id = ALL[_ownMenuIdx] && ALL[_ownMenuIdx].id;
+    if (id) {
+      const entry = stored.find(x => x.id === id);
+      if (entry) entry.caption = newCap;
+      localStorage.setItem('pu-reels', JSON.stringify(stored));
+    }
+  } catch(e) {}
+  document.getElementById('editCapOv').classList.remove('open');
+  // Rebuild just the caption display without full re-render
+  const capEl = document.querySelector('#reel-' + _ownMenuIdx + ' .caption');
+  if (capEl) {
+    capEl.innerHTML = escH(newCap).replace(/#(\w+)/g, '<span class="htag">#$1</span>');
+  } else {
+    build(); // fallback full rebuild
+  }
+  toast('Caption updated ✅');
+}
+
+/* ── Delete reel ── */
+function openDelReel() {
+  document.getElementById('ownMenuOv').classList.remove('open');
+  document.getElementById('delReelOv').classList.add('open');
+}
+function closeDelReel(e) {
+  if (e && e.target !== document.getElementById('delReelOv')) return;
+  document.getElementById('delReelOv').classList.remove('open');
+}
+function confirmDelReel() {
+  if (_ownMenuIdx < 0) return;
+  const id = ALL[_ownMenuIdx] && ALL[_ownMenuIdx].id;
+  // Remove from in-memory array
+  ALL.splice(_ownMenuIdx, 1);
+  // Remove from localStorage
+  try {
+    const stored = JSON.parse(localStorage.getItem('pu-reels') || '[]');
+    const newStored = stored.filter(x => x.id !== id);
+    localStorage.setItem('pu-reels', JSON.stringify(newStored));
+  } catch(e) {}
+  document.getElementById('delReelOv').classList.remove('open');
+  _ownMenuIdx = -1;
+  // Rebuild feed — scroll to start if we deleted the first reel
+  build();
+  const newTop = Math.max(0, curIdx - 1);
+  curIdx = Math.min(newTop, ALL.length - 1);
+  if (ALL.length > 0) setTimeout(() => playAt(curIdx), 300);
+  toast('Reel deleted');
+}
+
 </script>
+
+<!-- OWNER MENU SHEET -->
+<div id="ownMenuOv" onclick="closeOwnMenu(event)">
+  <div id="ownMenuSheet" onclick="event.stopPropagation()">
+    <div class="esheet-handle"></div>
+    <div class="omenu-row" onclick="openEditCap()">
+      <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Edit Caption
+    </div>
+    <div class="omenu-row omenu-del" onclick="openDelReel()">
+      <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+      Delete Reel
+    </div>
+  </div>
+</div>
+
+<!-- EDIT CAPTION SHEET -->
+<div id="editCapOv" onclick="closeEditCap(event)">
+  <div id="editCapSheet" onclick="event.stopPropagation()">
+    <div class="esheet-handle"></div>
+    <div class="esheet-title">✏️ Edit Caption</div>
+    <textarea class="esheet-cap-ta" id="editCapTa" maxlength="200" placeholder="Write a caption…"></textarea>
+    <button class="esheet-save" onclick="saveEditCap()">Save Changes</button>
+    <button class="esheet-cancel" onclick="closeEditCap()">Cancel</button>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM SHEET -->
+<div id="delReelOv" onclick="closeDelReel(event)">
+  <div id="delReelSheet" onclick="event.stopPropagation()">
+    <div class="esheet-handle"></div>
+    <div class="del-ico">🗑️</div>
+    <div class="esheet-title" style="text-align:center">Delete this Reel?</div>
+    <div class="del-msg">This reel will be permanently removed and can't be undone.</div>
+    <button class="del-confirm" onclick="confirmDelReel()">Delete Reel</button>
+    <button class="esheet-cancel" onclick="closeDelReel()">Cancel</button>
+  </div>
+</div>
+
 </body>
 </html>

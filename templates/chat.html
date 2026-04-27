@@ -941,32 +941,58 @@
 })();
 
 /* ── CLOUDINARY UPLOAD ─────────────────────────────────────────
-   Set your own cloud_name and upload_preset below.
-   In Cloudinary dashboard: Settings → Upload → Add upload preset
-   Set "Signing Mode" to "Unsigned" and note the preset name.
+   Fill in your Cloudinary cloud name and unsigned upload preset.
+   In Cloudinary dashboard: Settings → Upload → Upload presets
+   → Add preset → set Signing Mode to "Unsigned".
 ────────────────────────────────────────────────────────────────── */
-const CLOUDINARY_CLOUD  = 'pu-connect';          // ← your cloud name
-const CLOUDINARY_PRESET = 'pu_connect_unsigned';  // ← your upload preset
+const CLOUDINARY_CLOUD  = 'dlzzszwa4';   // ← replace with your cloud name
+const CLOUDINARY_PRESET = 'pu-connect'; // ← replace with your unsigned preset name
 
 /**
- * Upload a File or Blob to Cloudinary.
+ * Upload a File or Blob to Cloudinary using an unsigned upload preset.
  * @param {File|Blob} file
  * @param {'image'|'video'} resourceType
  * @returns {Promise<string>} secure_url of the uploaded asset
  */
 async function uploadToCloudinary(file, resourceType) {
   resourceType = resourceType || 'image';
+
+  // Guard: catch missing config before hitting the network
+  if (!CLOUDINARY_CLOUD || CLOUDINARY_CLOUD === 'your_cloud_name') {
+    throw new Error('Cloudinary cloud name not set. Open the file and fill in CLOUDINARY_CLOUD.');
+  }
+  if (!CLOUDINARY_PRESET || CLOUDINARY_PRESET === 'your_upload_preset') {
+    throw new Error('Cloudinary upload preset not set. Open the file and fill in CLOUDINARY_PRESET.');
+  }
+
   const fd = new FormData();
   fd.append('file', file);
   fd.append('upload_preset', CLOUDINARY_PRESET);
   fd.append('folder', 'pu-connect');
+
   const url = 'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/' + resourceType + '/upload';
-  const res = await fetch(url, { method: 'POST', body: fd });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error?.message || 'Upload failed (' + res.status + ')');
+
+  let res;
+  try {
+    res = await fetch(url, { method: 'POST', body: fd });
+  } catch (networkErr) {
+    throw new Error('Network error — could not reach Cloudinary. Check your internet connection.');
   }
-  const data = await res.json();
+
+  // Parse response body regardless of status code
+  let data;
+  try { data = await res.json(); } catch (_) { data = {}; }
+
+  // Cloudinary errors: either non-2xx status OR body contains { error: { message } }
+  if (!res.ok || data.error) {
+    const msg = (data.error && data.error.message) || ('HTTP ' + res.status);
+    throw new Error(msg);
+  }
+
+  if (!data.secure_url) {
+    throw new Error('Cloudinary did not return a URL. Response: ' + JSON.stringify(data).slice(0, 120));
+  }
+
   return data.secure_url;
 }
 
@@ -1308,9 +1334,8 @@ function handlePhotoUpload(files){
   grid.innerHTML='<div style="padding:1.5rem;text-align:center;color:var(--m);font-size:.84rem">Uploading photos...</div>';
   document.getElementById('photoPreviewModal').classList.add('open');
   document.getElementById('photoFileInput').value='';
-  Promise.all(validFiles.map(f=>
-    uploadToCloudinary(f,'image').catch(err=>{console.error(err);return null;})
-  )).then(urls=>{
+  Promise.all(validFiles.map(f=>uploadToCloudinary(f,'image')))
+  .then(urls=>{
     pendingPhotos=urls.filter(Boolean);
     if(!pendingPhotos.length){
       document.getElementById('photoPreviewModal').classList.remove('open');
@@ -1318,8 +1343,11 @@ function handlePhotoUpload(files){
     }
     grid.innerHTML=pendingPhotos.map(src=>`<img src="${src}" alt="preview"/>`).join('');
     document.getElementById('photoCount').textContent=`${pendingPhotos.length} photo${pendingPhotos.length>1?'s':''}`;
-  }).catch(()=>{
+  }).catch(err=>{
     document.getElementById('photoPreviewModal').classList.remove('open');
+    const msg='Upload failed: '+(err&&err.message?err.message:'Check your Cloudinary cloud name and preset.');
+    // Show as toast if available, else alert
+    if(typeof showToast==='function') showToast(msg); else alert(msg);
   });
 }
 

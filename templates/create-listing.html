@@ -395,32 +395,58 @@ option{background:var(--card);color:var(--t)}
 })();
 
 /* ── CLOUDINARY UPLOAD ─────────────────────────────────────────
-   Set your own cloud_name and upload_preset below.
-   In Cloudinary dashboard: Settings → Upload → Add upload preset
-   Set "Signing Mode" to "Unsigned" and note the preset name.
+   Fill in your Cloudinary cloud name and unsigned upload preset.
+   In Cloudinary dashboard: Settings → Upload → Upload presets
+   → Add preset → set Signing Mode to "Unsigned".
 ────────────────────────────────────────────────────────────────── */
-const CLOUDINARY_CLOUD  = 'pu-connect';          // ← your cloud name
-const CLOUDINARY_PRESET = 'pu_connect_unsigned';  // ← your upload preset
+const CLOUDINARY_CLOUD  = 'dlzzszwa4';   // ← replace with your cloud name
+const CLOUDINARY_PRESET = 'pu-connect'; // ← replace with your unsigned preset name
 
 /**
- * Upload a File or Blob to Cloudinary.
+ * Upload a File or Blob to Cloudinary using an unsigned upload preset.
  * @param {File|Blob} file
  * @param {'image'|'video'} resourceType
  * @returns {Promise<string>} secure_url of the uploaded asset
  */
 async function uploadToCloudinary(file, resourceType) {
   resourceType = resourceType || 'image';
+
+  // Guard: catch missing config before hitting the network
+  if (!CLOUDINARY_CLOUD || CLOUDINARY_CLOUD === 'your_cloud_name') {
+    throw new Error('Cloudinary cloud name not set. Open the file and fill in CLOUDINARY_CLOUD.');
+  }
+  if (!CLOUDINARY_PRESET || CLOUDINARY_PRESET === 'your_upload_preset') {
+    throw new Error('Cloudinary upload preset not set. Open the file and fill in CLOUDINARY_PRESET.');
+  }
+
   const fd = new FormData();
   fd.append('file', file);
   fd.append('upload_preset', CLOUDINARY_PRESET);
   fd.append('folder', 'pu-connect');
+
   const url = 'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/' + resourceType + '/upload';
-  const res = await fetch(url, { method: 'POST', body: fd });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error?.message || 'Upload failed (' + res.status + ')');
+
+  let res;
+  try {
+    res = await fetch(url, { method: 'POST', body: fd });
+  } catch (networkErr) {
+    throw new Error('Network error — could not reach Cloudinary. Check your internet connection.');
   }
-  const data = await res.json();
+
+  // Parse response body regardless of status code
+  let data;
+  try { data = await res.json(); } catch (_) { data = {}; }
+
+  // Cloudinary errors: either non-2xx status OR body contains { error: { message } }
+  if (!res.ok || data.error) {
+    const msg = (data.error && data.error.message) || ('HTTP ' + res.status);
+    throw new Error(msg);
+  }
+
+  if (!data.secure_url) {
+    throw new Error('Cloudinary did not return a URL. Response: ' + JSON.stringify(data).slice(0, 120));
+  }
+
   return data.secure_url;
 }
 
@@ -553,28 +579,23 @@ function addFiles(files){
   for(const f of toUpload){
     if(f.size>5*1024*1024){sE('photos-em');document.getElementById('photos-em').textContent=`"${f.name.substring(0,30)}" exceeds 5MB limit`;return;}
   }
-  // Show uploading state
+  const em=document.getElementById('photos-em');
   const dz=document.getElementById('dz');
-  if(dz){dz.style.borderColor='var(--a)';dz.querySelector('.dz-title').textContent='Uploading...';}
-  Promise.all(toUpload.map(f=>
-    uploadToCloudinary(f,'image').catch(err=>{
-      console.error('Upload error:',err);
-      return null; // skip failed uploads
+  const dzTitle=dz&&dz.querySelector('.dz-title');
+  if(dzTitle)dzTitle.textContent='Uploading...';
+  clrE('photos-em');
+
+  Promise.all(toUpload.map(f=>uploadToCloudinary(f,'image')))
+    .then(urls=>{
+      urls.forEach(url=>{ if(url){ imgs.push({src:url}); }});
+      if(dzTitle)dzTitle.textContent='Drop photos here or tap to browse';
+      renderImgs();
     })
-  )).then(urls=>{
-    urls.forEach(url=>{
-      if(url){
-        imgs.push({src:url});
-        clrE('photos-em');
-      }
+    .catch(err=>{
+      if(dzTitle)dzTitle.textContent='Drop photos here or tap to browse';
+      sE('photos-em');
+      if(em)em.textContent='Upload failed: '+(err&&err.message?err.message:'Check your Cloudinary cloud name and preset.');
     });
-    if(dz){dz.style.borderColor='';dz.querySelector('.dz-title').textContent='Drop photos here or tap to browse';}
-    renderImgs();
-    if(imgs.length>=1){clrE('photos-em');if(dz)dz.style.borderColor='';}
-  }).catch(()=>{
-    if(dz){dz.style.borderColor='';dz.querySelector('.dz-title').textContent='Drop photos here or tap to browse';}
-    sE('photos-em');document.getElementById('photos-em').textContent='Upload failed — check your connection';
-  });
 }
 function renderImgs(){
   const g=document.getElementById('ig');g.innerHTML='';
