@@ -1,8 +1,17 @@
+import django
 from django.shortcuts import render
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import Profile 
+from django.views.decorators.http import require_POST
+
+import json
+
+
 
 # Create your views here.
 
-
+@login_required(login_url='auth:auth_view')
 def profile(request):
     """
     User Profile Page
@@ -22,7 +31,7 @@ def profile(request):
     }
     return render(request, 'profile/profile.html', context)
 
-
+@login_required(login_url='auth:auth_view')
 def settings(request):
     """
     Profile Settings Page
@@ -40,3 +49,63 @@ def settings(request):
     }
     return render(request, 'profile/settings.html', context)
 
+
+
+
+
+@login_required(login_url='auth:auth_view')
+    
+def get_my_profile(request):
+    """Sends DB data to the frontend on load."""
+    
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    return JsonResponse({
+        'username': request.user.username,
+        'name': request.user.get_full_name() or request.user.username,
+        'bio': profile.bio or "",
+        'faculty': profile.faculty or "",
+        'location': profile.location or "",
+        'phone': profile.phone or "",
+        'avatarSrc': profile.avatar_url or "", # This is the unique image link
+    })
+    
+    return JsonResponse({
+        'username': request.user.username,
+        # 'name' is what kills the "KA" (Kadeer Ahmed) initials
+        'name': request.user.get_full_name() or request.user.username,
+        'bio': profile.bio or "",
+        'avatarSrc': profile.avatar_url or "", # Your Cloudinary or image link
+    })
+    
+   
+
+    # This line is the fix: it fetches the profile or creates one if missing
+  
+
+# Profile_app/views.py
+# Ensure your Profile model is imported
+
+
+
+
+
+
+
+
+@login_required(login_url='auth:auth_view')
+@require_POST
+def update_profile_api(request):
+    """Receives data and Cloudinary links to save in DB."""
+    try:
+        data = json.loads(request.body)
+        p = request.user.profile
+        p.bio = data.get('bio', '')
+        p.faculty = data.get('faculty', '')
+        p.location = data.get('location', '')
+        p.phone = data.get('phone', '')
+        if data.get('avatarSrc'):
+            p.avatar_url = data.get('avatarSrc')
+        p.save()
+        return JsonResponse({'status': 'success'})
+    except Exception as e:
+        return JsonResponse({'status': 'error'}, status=400)

@@ -229,18 +229,27 @@ window.addEventListener('scroll',()=>{if(!tk){requestAnimationFrame(()=>{const y
 /* ════════════════════════════════════
    DATA — read from localStorage
 ════════════════════════════════════ */
-function loadMyListings(){
-  try{
-    const all=JSON.parse(localStorage.getItem('pu-listings')||'[]');
-    // Show only listings belonging to the current user
-    // Identity: match by sellerUsername stored in pu-profile, or fall back to all if no profile
-    const profile=JSON.parse(localStorage.getItem('pu-profile')||'{}');
-    const myUsername=profile.username||'';
-    return myUsername
-      ? all.filter(l=>l.sellerUsername===myUsername||l.seller===profile.name)
-      : all;
-  }catch(e){return[];}
+async function renderListings() {
+    const response = await fetch('/listings/api/listings/me/');
+    const data = await response.json();
+    const container = document.getElementById('listingsContainer'); // Your grid ID
+
+    container.innerHTML = data.listings.map(item => `
+        <div class="listing-card">
+            <div class="img-container">
+                <!-- Pulling directly from the Cloudinary URL string -->
+                <img src="${item.image}" alt="${item.title}" loading="lazy">
+                <span class="status-badge">${item.status}</span>
+            </div>
+            <div class="details">
+                <h3>${item.title}</h3>
+                <p class="price">₵${item.price}</p>
+                <p class="category">${item.category}</p>
+            </div>
+        </div>
+    `).join('');
 }
+
 
 function saveListings(arr){
   try{
@@ -288,10 +297,26 @@ function fmtPrice(n){
 /* ════════════════════════════════════
    RENDER
 ════════════════════════════════════ */
-function renderListings(){
-  const vis=LISTINGS.filter(l=>activeLt==='all'||l.status===activeLt);
-  const c=document.getElementById('ll');
+async function renderListings() {
+    const response = await fetch('/listings/api/listings/me/');
+    const data = await response.json();
+    const container = document.getElementById('listingsContainer'); // Your grid ID
 
+    container.innerHTML = data.listings.map(item => `
+        <div class="listing-card">
+            <div class="img-container">
+                <!-- Pulling directly from the Cloudinary URL string -->
+                <img src="${item.image}" alt="${item.title}" loading="lazy">
+                <span class="status-badge">${item.status}</span>
+            </div>
+            <div class="details">
+                <h3>${item.title}</h3>
+                <p class="price">₵${item.price}</p>
+                <p class="category">${item.category}</p>
+            </div>
+        </div>
+    `).join('');
+}
   if(!LISTINGS.length){
     c.innerHTML=`
       <div style="text-align:center;padding:3.5rem 1rem">
@@ -346,7 +371,7 @@ function renderListings(){
     </div>`
 ;
   }).join('');
-}
+
 
 /* ════════════════════════════════════
    FILTER
@@ -452,7 +477,7 @@ function showToast(msg){
   t.textContent=msg;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(20px)';},2600);
 }
-
+const CLOUDINARY_URL = 'CLOUDINARY_URL=cloudinary://<447185761678285>:<f5U_ORRnpxl8C18-oo_K0ZJYkUU>@dffumfggm';
 /* ════════════════════════════════════
    INIT + LIVE REFRESH
 ════════════════════════════════════ */
@@ -468,6 +493,74 @@ window.addEventListener('focus',()=>{
     updateStats();
   }
 });
+</script>
+<script>
+  // Configuration constants
+async function renderListings() {
+    const response = await fetch('/listings/api/listings/me/');
+    const data = await response.json();
+    const container = document.getElementById('listingsContainer'); // Your grid ID
+
+    container.innerHTML = data.listings.map(item => `
+        <div class="listing-card">
+            <div class="img-container">
+                <!-- Pulling directly from the Cloudinary URL string -->
+                <img src="${item.image}" alt="${item.title}" loading="lazy">
+                <span class="status-badge">${item.status}</span>
+            </div>
+            <div class="details">
+                <h3>${item.title}</h3>
+                <p class="price">₵${item.price}</p>
+                <p class="category">${item.category}</p>
+            </div>
+        </div>
+    `).join('');
+}
+async function refreshListingsFromServer() {
+ 
+
+    try {
+        const response = await fetch('/listings/api/listings/me/');
+        const data = await response.json();
+        
+        // Update the global state with DB data
+        LISTINGS = data.listings; 
+        
+        // Now render and update stats
+        renderListings();
+        updateStats();
+    } catch (error) {
+        console.error("Failed to fetch from DB:", error);
+    }
+}
+
+// Call this on page load instead of just loading from localStorage
+window.onload = refreshListingsFromServer;
+
+// Replace your existing loadMyListings with this:
+async function loadMyListings() {
+    try {
+        const response = await fetch('/listings/api/listings/me/'); // Hits Source 6 view
+        const data = await response.json();
+        
+        if (data.listings) {
+            // Update the global LISTINGS array with real DB data
+            LISTINGS = data.listings;
+            renderListings();
+            updateStats();
+        }
+    } catch (error) {
+        console.error("Error loading from database:", error);
+        // Fallback to local storage if DB fails
+        const saved = localStorage.getItem('myListings');
+        if (saved) {
+            LISTINGS = JSON.parse(saved);
+            renderListings();
+        }
+    }
+}
+
+
 </script>
 </body>
 </html>

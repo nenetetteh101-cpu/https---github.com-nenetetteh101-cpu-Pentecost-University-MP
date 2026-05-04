@@ -363,6 +363,7 @@ option{background:var(--card);color:var(--t)}
   <div class="suc-t">Listing Published!</div>
   <div class="suc-s">Your listing is now live on PU-Connect. Buyers will reach you through in-app chat. It may take a moment to appear in the feed.</div>
   <a href="{% url 'listings:listings' %}" class="sb">View My Listings</a>
+
   <a href="{% url 'Dash_app:dashboard' %}" id="sucViewLink" class="sb tl">Browse Marketplace</a>
   <button class="sb g" onclick="resetForm()">Post Another Listing</button>
 </div>
@@ -376,6 +377,23 @@ option{background:var(--card);color:var(--t)}
 </div>
 
 <script>
+// This function retrieves the CSRF token required by Django for POST requests
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 /* ── THEME ── */
 (function(){
   var _H = document.documentElement;
@@ -395,32 +413,59 @@ option{background:var(--card);color:var(--t)}
 })();
 
 /* ── CLOUDINARY UPLOAD ─────────────────────────────────────────
-   Set your own cloud_name and upload_preset below.
-   In Cloudinary dashboard: Settings → Upload → Add upload preset
-   Set "Signing Mode" to "Unsigned" and note the preset name.
+   Fill in your Cloudinary cloud name and unsigned upload preset.
+   In Cloudinary dashboard: Settings → Upload → Upload presets
+   → Add preset → set Signing Mode to "Unsigned".
 ────────────────────────────────────────────────────────────────── */
-const CLOUDINARY_CLOUD  = 'pu-connect';          // ← your cloud name
-const CLOUDINARY_PRESET = 'pu_connect_unsigned';  // ← your upload preset
+const CLOUDINARY_CLOUD  = 'dffumfggm';   // ← replace with your cloud name
+const CLOUDINARY_PRESET = 'LISTINGS'; // ← replace with your unsigned preset name
 
 /**
- * Upload a File or Blob to Cloudinary.
+ * Upload a File or Blob to Cloudinary using an unsigned upload preset.
  * @param {File|Blob} file
  * @param {'image'|'video'} resourceType
  * @returns {Promise<string>} secure_url of the uploaded asset
  */
 async function uploadToCloudinary(file, resourceType) {
   resourceType = resourceType || 'image';
+
+  // Guard: catch missing config before hitting the network
+// Guard: Just check if they are empty
+if (!CLOUDINARY_CLOUD) {
+  throw new Error('Cloudinary cloud name is empty.');
+}
+if (!CLOUDINARY_PRESET) {
+  throw new Error('Cloudinary upload preset is empty.');
+}
+
   const fd = new FormData();
   fd.append('file', file);
   fd.append('upload_preset', CLOUDINARY_PRESET);
-  fd.append('folder', 'pu-connect');
+  fd.append('folder', 'LISTINGS');
+
   const url = 'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/' + resourceType + '/upload';
-  const res = await fetch(url, { method: 'POST', body: fd });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error?.message || 'Upload failed (' + res.status + ')');
+
+  let res;
+  try {
+    res = await fetch(url, { method: 'POST', body: fd });
+  } catch (networkErr) {
+    throw new Error('Network error — could not reach Cloudinary. Check your internet connection.');
   }
-  const data = await res.json();
+
+  // Parse response body regardless of status code
+  let data;
+  try { data = await res.json(); } catch (_) { data = {}; }
+
+  // Cloudinary errors: either non-2xx status OR body contains { error: { message } }
+  if (!res.ok || data.error) {
+    const msg = (data.error && data.error.message) || ('HTTP ' + res.status);
+    throw new Error(msg);
+  }
+
+  if (!data.secure_url) {
+    throw new Error('Cloudinary did not return a URL. Response: ' + JSON.stringify(data).slice(0, 120));
+  }
+
   return data.secure_url;
 }
 
@@ -553,28 +598,26 @@ function addFiles(files){
   for(const f of toUpload){
     if(f.size>5*1024*1024){sE('photos-em');document.getElementById('photos-em').textContent=`"${f.name.substring(0,30)}" exceeds 5MB limit`;return;}
   }
-  // Show uploading state
+  if (files.length > 0) {
+      listingState.imageFile = files[0]; 
+  }
+  const em=document.getElementById('photos-em');
   const dz=document.getElementById('dz');
-  if(dz){dz.style.borderColor='var(--a)';dz.querySelector('.dz-title').textContent='Uploading...';}
-  Promise.all(toUpload.map(f=>
-    uploadToCloudinary(f,'image').catch(err=>{
-      console.error('Upload error:',err);
-      return null; // skip failed uploads
+  const dzTitle=dz&&dz.querySelector('.dz-title');
+  if(dzTitle)dzTitle.textContent='Uploading...';
+  clrE('photos-em');
+
+  Promise.all(toUpload.map(f=>uploadToCloudinary(f,'image')))
+    .then(urls=>{
+      urls.forEach(url=>{ if(url){ imgs.push({src:url}); }});
+      if(dzTitle)dzTitle.textContent='Drop photos here or tap to browse';
+      renderImgs();
     })
-  )).then(urls=>{
-    urls.forEach(url=>{
-      if(url){
-        imgs.push({src:url});
-        clrE('photos-em');
-      }
+    .catch(err=>{
+      if(dzTitle)dzTitle.textContent='Drop photos here or tap to browse';
+      sE('photos-em');
+      if(em)em.textContent='Upload failed: '+(err&&err.message?err.message:'Check your Cloudinary cloud name and preset.');
     });
-    if(dz){dz.style.borderColor='';dz.querySelector('.dz-title').textContent='Drop photos here or tap to browse';}
-    renderImgs();
-    if(imgs.length>=1){clrE('photos-em');if(dz)dz.style.borderColor='';}
-  }).catch(()=>{
-    if(dz){dz.style.borderColor='';dz.querySelector('.dz-title').textContent='Drop photos here or tap to browse';}
-    sE('photos-em');document.getElementById('photos-em').textContent='Upload failed — check your connection';
-  });
 }
 function renderImgs(){
   const g=document.getElementById('ig');g.innerHTML='';
@@ -597,7 +640,7 @@ function fmtPh(el){let v=el.value.replace(/\D/g,'');if(v.length>10)v=v.slice(0,1
 /* NAVIGATION */
 function goNext(){if(!validate(cur))return;cur++;if(cur>5){publish();return;}switchS(cur);}
 function goBack(){if(cur<=1)return;cur--;switchS(cur);}
-function handleBack(){if(cur===1){location.href=sessionStorage.getItem('pu-lf')||'{% url 'Dash_app:dashboard' %}';}else goBack();}
+function handleBack(){if(cur===1){location.href=sessionStorage.getItem('pu-lf')||'dashboard.html';}else goBack();}
 
 function switchS(n){
   for(let i=1;i<=5;i++){const el=document.getElementById('s'+i);if(el)el.style.display=i===n?'block':'none';}
@@ -872,7 +915,7 @@ function _showEditBanner(title){
     + '<span>Editing: <strong style="color:var(--a)">'
     + title.replace(/</g,'&lt;').substring(0,50)
     + '</strong></span>'
-    + '<a href="{% url 'listings:listings' %}" style="margin-left:auto;font-size:.75rem;color:var(--m);text-decoration:none">Cancel</a>';
+    + '<a href="listings.html" style="margin-left:auto;font-size:.75rem;color:var(--m);text-decoration:none">Cancel</a>';
   inner.insertBefore(banner, inner.firstChild);
 }
 
@@ -932,7 +975,9 @@ function buildReview(){
 function publish(){
   const nb=document.getElementById('nxBtn');
   nb.disabled=true;
+
   nb.textContent='⏳ Publishing…';
+  handleFinalSubmit();
 
   // Collect all form data
   const title=document.getElementById('title').value.trim();
@@ -990,6 +1035,7 @@ function publish(){
     postedAt:Date.now(),
     views:0,
   };
+  
 
   // Save to localStorage
   try{
@@ -1061,9 +1107,17 @@ function publish(){
         viewLink.href = isService ? 'dashboard.html#services' : 'dashboard.html#products';
         viewLink.textContent = isService ? 'View in Services' : 'View in Products';
       }
+      
     }
     window.scrollTo({top:0,behavior:'smooth'});
   },800);
+
+
+  
+  
+
+  // Add it here, before the function ends
+  
 }
 
 /* Publish error display */
@@ -1129,6 +1183,146 @@ dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');ad
     prefillContact();
   }
 })();
+
+
+
+</script>
+<script>
+// Configuration constants
+
+// Use the API endpoint, not the environment string
+const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/dffumfggm/image/upload`;
+const UPLOAD_PRESET = 'LISTINGS';
+
+// This object tracks the state across your 5 steps
+let listingState = {
+    category: '',    // From Step 1
+    title: '',       // From Step 2
+    price: '',       // From Step 2
+    imageFile: null, // From Step 3 (The actual File object)
+    description: '', // From Step 4
+    condition: ''    // From Step 5
+};
+
+
+  async function handleFinalSubmit() {
+    try {
+        // Show a loading state on your progress bar or button
+        toggleLoading(true); 
+
+        // --- HANDSHAKE 1: Upload to Cloudinary ---
+        const imageFormData = new FormData();
+        imageFormData.append('file', listingState.imageFile);
+        imageFormData.append('upload_preset', UPLOAD_PRESET);
+
+        const cloudRes = await fetch(CLOUDINARY_URL, {
+            method: 'POST',
+            body: imageFormData
+        });
+        
+        const cloudData = await cloudRes.json();
+        const finalImageUrl = cloudData.secure_url; // This is the URL string
+
+        // --- HANDSHAKE 2: Save to Django ---
+        const djangoRes = await fetch('/listings/api/create/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken') // Standard Django security
+            },
+            body: JSON.stringify({
+                title: listingState.title,
+                price: listingState.price,
+                description: listingState.description,
+                category: listingState.category,
+                condition: listingState.condition,
+                image_url: finalImageUrl // Sending the string URL to your view
+            })
+        });
+
+        if (djangoRes.ok) {
+            showSuccessScreen(); // Triggers your 'suc' div and hides 'bwrap'
+        }
+    } catch (error) {
+        showToast("Upload failed. Please try again."); // Your existing toast logic
+    } finally {
+        toggleLoading(false);
+    }
+}
+// Example of what your Create Listing submit should look like
+async function handleFormSubmit(formData) {
+    const response = await fetch('/listings/api/create/', {
+        method: 'POST',
+        body: formData, // Includes your image from Cloudinary and text fields
+    });
+    
+    if (response.ok) {
+        // Only after a successful DB save, redirect to My Listings
+        window.location.href = "{% url 'listings:listings' %}";
+    }
+}
+
+async function handleFinalSubmit() {
+  // Inside handleFinalSubmit, before the fetch call
+  const selectedCondition = document.querySelector('.condition-btn.active')?.innerText || "New";
+
+  const finalData = {
+    title: document.getElementById('it').value,
+    price: document.getElementById('ip').value,
+    category: catV, // Ensure this matches your variable name (capital V)
+    image_url: finalImageUrl,
+    condition: selectedCondition, // This is the missing piece
+    description: document.getElementById('id').value
+};
+
+    try {
+        if (!listingState.imageFile) {
+            console.error("No image selected");
+            return;
+        }
+
+        // 1. Upload to Cloudinary
+        const imageFormData = new FormData();
+        imageFormData.append('file', listingState.imageFile);
+        imageFormData.append('upload_preset', UPLOAD_PRESET);
+
+        const cloudRes = await fetch(CLOUDINARY_UPLOAD_URL, {
+            method: 'POST',
+            body: imageFormData
+        });
+        
+        const cloudData = await cloudRes.json();
+        const finalImageUrl = cloudData.secure_url;
+
+        // 2. Save to Django
+        const djangoRes = await fetch('/listings/api/create/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken') // Ensure this function exists
+            },
+            body: JSON.stringify({
+                title: document.getElementById('title').value,
+                price: document.getElementById('price').value,
+                description: document.getElementById('desc').value,
+                category: catV,
+                image_url: finalImageUrl 
+            })
+        });
+
+        if (djangoRes.ok) {
+            // Success logic
+            document.getElementById('suc').style.display = 'block';
+        } else {
+            const errData = await djangoRes.text();
+            console.error("Server Error:", errData);
+        }
+    } catch (error) {
+        console.error("Upload failed:", error);
+    }
+}
+
+
 
 </script>
 </body>

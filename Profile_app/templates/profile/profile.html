@@ -374,7 +374,18 @@
   <div id="profileInfo">
     <!-- Inline name edit — tap pencil to activate -->
     <div class="name-row">
-      <div class="prof-name" id="dispName">Your Name</div>
+      <div class="avatar-wrapper" id="avatarEl">
+        
+        <!-- Change from this: -->
+        
+
+         <!-- To this: -->
+         <h2 id="dispName"></h2>
+
+        <p id="profileUsername"></p>
+  
+  </div>
+</div>
       <button class="name-edit-btn" id="nameEditBtn" onclick="toggleNameEdit()" title="Edit name">
         <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
       </button>
@@ -712,8 +723,8 @@
    In Cloudinary dashboard: Settings → Upload → Add upload preset
    Set "Signing Mode" to "Unsigned" and note the preset name.
 ────────────────────────────────────────────────────────────────── */
-const CLOUDINARY_CLOUD  = 'pu-connect';          // ← your cloud name
-const CLOUDINARY_PRESET = 'pu_connect_unsigned';  // ← your upload preset
+const CLOUDINARY_CLOUD  = 'dhrmhq6lo';          // ← your cloud name
+const CLOUDINARY_PRESET = 'PU_CONNECT';  // ← your upload preset
 
 /**
  * Upload a File or Blob to Cloudinary.
@@ -1267,7 +1278,214 @@ window.addEventListener('storage', e=>{
     if(_viewedUsername)_syncFollowBtn(_viewedUsername);
   }
 });
+
 </script>
+<script>
+(function() {
+    // 1. CSRF Security Helper
+    const getCSRF = () => document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1];
+
+    // 2. OVERRIDE: The Save Function
+    // This intercepts your partner's logic and forces it to talk to Django
+    window._doSaveProfile = async function(name, username, p) {
+        const payload = {
+            name: name,
+            username: username,
+            bio: document.getElementById('editBio').value.trim(),
+            faculty: document.getElementById('editFaculty').value,
+            location: document.getElementById('editLocation').value,
+            phone: document.getElementById('editPhone').value.trim(),
+            avatarSrc: document.getElementById('editModal').dataset.pendingAvatar || p.avatarSrc
+        };
+
+        try {
+            const res = await fetch('/profile/api/profile/update/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRF() },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                saveProfileData(payload); // Partner's local save
+                applyProfile(payload);    // Partner's UI update
+                document.getElementById('editModal').classList.remove('open');
+                showToast('Synced to Cloud ✅');
+            } else {
+                showToast('Error: Session Expired');
+            }
+        } catch (e) {
+            showToast('Connection failed');
+        }
+    };
+
+    // 3. THE HANDSHAKE: Sync on Page Load
+    async function syncWithDjango() {
+        try {
+            const res = await fetch('/profile/api/profile/me/');
+            if (res.ok) {
+                const data = await res.json();
+                applyProfile(data);    // Force UI to show real DB data
+                saveProfileData(data); // Sync local cache
+            } else if (res.status === 403) {
+                window.location.href = '/auth.html';
+            }
+        } catch (e) { console.warn("Working in local-only mode."); }
+    }
+
+    // Initialize the sync
+    syncWithDjango();
+})();
+async function syncWithDjango() {
+    try {
+        const res = await fetch('/profile/api/profile/me/');
+        if (res.ok) {
+            const serverData = await res.json();
+            
+            // If the user hasn't set a display name, use their username
+            if (!serverData.name || serverData.name.trim() === "") {
+                serverData.name = serverData.username;
+            }
+
+            // Save to local storage and refresh UI
+            saveProfileData(serverData); 
+            applyProfile(serverData); 
+            console.log("Logged in as:", serverData.username);
+        } else {
+            // If not logged in, redirect to auth
+            window.location.href = '/auth.html';
+        }
+    } catch (e) { 
+        console.error("Connection to database failed. Showing offline data.");
+        applyProfile(loadProfile()); // Fallback to local storage if offline
+    }
+}
+
+// Ensure this runs when the page loads
+document.addEventListener('DOMContentLoaded', syncWithDjango);
+
+
+function applyProfile(p){
+  const nameEl = document.getElementById('dispName');
+  if(nameEl) nameEl.textContent = p.name || p.username || "User"; // Fallback to username if name is empty
+
+  const userEl = document.getElementById('dispUsername');
+  if(userEl) userEl.textContent = `@${p.username} · Member since Jan 2025`;
+
+  const bioEl = document.getElementById('dispBio');
+  if(bioEl) bioEl.textContent = p.bio || "No bio added yet.";
+
+  // Handle Initials and Avatar
+  const ini = initials(p.name || p.username) || '?';
+  const initEl = document.getElementById('avatarInitials');
+  const modalInitEl = document.getElementById('modalAvatarInitials');
+  
+  if(initEl) initEl.textContent = ini;
+  if(modalInitEl) modalInitEl.textContent = ini;
+
+  if(p.avatarSrc){
+    const imgEl = document.getElementById('avatarImg');
+    if(imgEl) {
+      imgEl.src = p.avatarSrc;
+      imgEl.style.display = 'block';
+      if(initEl) initEl.style.display = 'none';
+    }
+  }
+}
+
+function handleDirectAvatarUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  
+  showToast('Uploading to Cloudinary...');
+  
+  uploadToCloudinary(file, 'image').then(url => {
+    const p = loadProfile();
+    p.avatarSrc = url; // This is the Cloudinary secure_url
+    
+    // IMPORTANT: You must save this URL to your database here
+    // so it persists after refresh.
+    saveProfileData(p); 
+    applyProfile(p);
+    
+    // Trigger your Django sync if applicable
+    if (window._doSaveProfile) {
+        _doSaveProfile(p.name, p.username, p);
+    }
+    
+    showToast('Profile photo updated! 📷');
+  }).catch(err => {
+    console.error(err);
+    showToast('Upload failed. Check console.');
+  });
+}
+
+function applyProfile(p) {
+  // ... existing name/username logic ...
+  
+  const avatarImg = document.getElementById('avatarImg');
+  const avatarInitials = document.getElementById('avatarInitials');
+  
+  if (p.avatarSrc && p.avatarSrc.trim() !== "") {
+    avatarImg.src = p.avatarSrc;
+    avatarImg.style.display = 'block';
+    avatarInitials.style.display = 'none';
+    
+    // Also update the modal preview if it exists
+    const modalImg = document.getElementById('modalAvatarImg');
+    if (modalImg) {
+      modalImg.src = p.avatarSrc;
+      modalImg.style.display = 'block';
+      document.getElementById('modalAvatarInitials').style.display = 'none';
+    }
+  } else {
+    avatarImg.style.display = 'none';
+    avatarInitials.style.display = 'block';
+  }
+}
+
+function handleLogout() {
+    // Clear the specific profile key
+    localStorage.removeItem('vibe_profile_data'); 
+    // Or clear everything if you want a fresh start
+    localStorage.clear(); 
+    
+    // Redirect to login page
+    window.location.href = '/login.html';
+}
+
+async function syncWithDjango() {
+    try {
+        const res = await fetch('/profile/api/profile/me/');
+        if (res.ok) {
+            const serverData = await res.json();
+            const localData = loadProfile();
+
+            // Check if the IDs or Usernames differ
+            if (serverData.username !== localData.username) {
+                console.log("Account switch detected. Refreshing UI...");
+                saveProfileData(serverData);
+                applyProfile(serverData); // This updates the name immediately
+            }
+        } else {
+            // If the session is invalid, redirect to login
+            window.location.href = '/auth.html';
+        }
+    } catch (e) {
+        console.error("Auto-sync failed:", e);
+    }
+}
+
+
+// Re-sync data whenever the user switches back to this tab
+window.addEventListener('focus', () => {
+    syncWithDjango();
+});
+
+// Also run it once immediately when the script loads
+syncWithDjango();
+
+</script>
+
 <!-- USERNAME CHANGE CONFIRMATION MODAL -->
 <div class="modal-overlay" id="usernameConfirmModal" onclick="closeUsernameConfirm(event)">
   <div class="modal-sheet" onclick="event.stopPropagation()">

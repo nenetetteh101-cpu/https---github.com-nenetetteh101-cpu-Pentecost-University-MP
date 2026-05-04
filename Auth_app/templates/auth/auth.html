@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+ {% load socialaccount %}
+ <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
@@ -634,6 +635,7 @@
 
   <div class="auth-box">
 
+{% csrf_token %}
     <!-- Mobile only -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem;">
       <a href="{% url 'base:home' %}" class="mobile-logo">PU-<span>Marketplace</span></a>
@@ -1113,9 +1115,31 @@ async function handleLogin() {
 }
  
   // ── SOCIAL AUTH ──
-  function handleSocial(provider) {
-    showToast(`Connecting to ${provider}…`, provider === 'Google' ? '🔵' : '⚫');
-  }
+  
+   
+
+    // 1. Define the URL first
+    // Check: Are there spaces inside the quotes? Ensure it looks exactly like this:
+    const GOOGLE_LOGIN_URL = "{% provider_login_url 'google' next='' %}";
+
+    function handleSocial(provider) {
+        console.log("Button clicked for:", provider); // Debugging line
+        
+        if (provider === 'Google') {
+            showToast('Connecting to Google...', '🔵');
+            
+            setTimeout(() => {
+                // 2. Redirect using the variable
+                window.location.href = GOOGLE_LOGIN_URL;
+            }, 1000);
+        }
+    }
+
+   
+
+
+    // Django will replace the tag below with the actual link
+   
 
   // ── THEME TOGGLE ──
   let authDark = localStorage.getItem('pu-theme') !== 'light';

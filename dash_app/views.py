@@ -1,8 +1,10 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
 #===================================================2024-06-01: Added dashboard view and template rendering
+@login_required(login_url='auth:auth_view')
 def dashboard(request):
     """
     User Dashboard
@@ -21,7 +23,7 @@ def dashboard(request):
     }
     return render(request, 'dash/dashboard.html', context)
 
-
+@login_required(login_url='auth:auth_view')
 def dashboard_services(request):
     """
     Dashboard Services Page
@@ -38,3 +40,21 @@ def dashboard_services(request):
         # Add any additional context data needed for the services page here
     }
     return render(request, 'dash/dashboard-services.html', context)
+
+@login_required(login_url='auth:auth_view')
+def dashboard_products(request):
+    """
+    Dashboard Products Page
+    GET /dashboard/products/
+    
+    Displays:
+    - Available products
+    - Product listings and details
+    """
+    context = {
+        'page_title': 'Products - PU-Marketplace',
+        'page_description': 'Browse and manage products on PU-Marketplace.',
+        # Add any additional context data needed for the products page here
+    }
+    return render(request, 'dash/dashboard-products.html', context)
+    

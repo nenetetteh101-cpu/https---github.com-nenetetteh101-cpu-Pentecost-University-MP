@@ -8,6 +8,7 @@ django = "*"
 contrib = "*"
 pythin = "*"
 pillow = "*"
+django-allauth = {extras = ["socialaccount"], version = "*"}
 
 [dev-packages]
 

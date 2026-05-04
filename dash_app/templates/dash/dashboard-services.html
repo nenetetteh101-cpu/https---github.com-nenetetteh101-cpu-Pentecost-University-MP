@@ -390,27 +390,9 @@
   <div class="nplist" id="nlist"></div>
 </div>
 
-<nav class="botnav" id="bn">
-  <button class="ni" onclick="location.href='{% url 'Dash_app:dashboard' %}'" title="Home">
-    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    <span class="nlbl">Home</span>
-  </button>
-  <button class="ni" onclick="location.href='{% url 'reels:reels' %}'" title="Reels">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-    <span class="nlbl">Reels</span>
-  </button>
-  <button class="nadd" onclick="location.href='{% url 'listings:create' %}'" title="Add listing">
-    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-  </button>
-  <button class="ni" onclick="location.href='{% url 'chat:chat' %}'" title="Chat">
-    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-    <span class="nlbl">Chat</span>
-  </button>
-  <button class="ni" onclick="location.href='{% url 'profile:profile' %}'" title="Profile">
-    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    <span class="nlbl">Profile</span>
-  </button>
-</nav>
+<!--bottomnav-->
+
+{% include 'dash/bot_nav.html'%}
 
 <!-- ── LISTING DETAIL SHEET ── -->
 <div id="ldOv" style="position:fixed;inset:0;z-index:750;background:rgba(0,0,0,.65);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:flex-end;justify-content:center">

@@ -25,8 +25,9 @@ urlpatterns = [
     path('chat/', include('chat_app.urls')),
     path('search/', include('search_app.urls')),
     path('reels/', include('Reels_app.urls')),
+    path("accounts/", include("allauth.urls")),# Include allauth URLs for social authentication
+    
 ]
-
 # Media & Static files
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
