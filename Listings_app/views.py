@@ -2,6 +2,11 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
+import json
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from .models import Listing
 #from . import Listing
 # Create your views here.
 
@@ -66,11 +71,7 @@ def create_listing(request):
     return render(request, 'listings/create-listing.html', context)
 
 
-import json
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from django.contrib.auth.decorators import login_required
-from .models import Listing
+
 
 @login_required
 @require_POST

@@ -1119,6 +1119,57 @@ function publish(){
   // Add it here, before the function ends
   
 }
+async function publish() {
+    const nb = document.getElementById('nxBtn');
+    nb.disabled = true;
+    nb.textContent = '⏳ Publishing...';
+
+    try {
+        // 1. Check if an image exists
+        if (imgs.length === 0) {
+            throw new Error("Please upload at least one image.");
+        }
+
+        // 2. Prepare Data from the form fields
+        const payload = {
+            title: document.getElementById('title').value,
+            price: document.getElementById('price').value,
+            description: document.getElementById('desc').value,
+            category: cgV, // This comes from your global variable
+            condition: condV, // This comes from your global variable
+            image_url: imgs[0].src // Use the URL already returned by Cloudinary
+        };
+
+        // 3. Call the Django API
+        const response = await fetch('/listings/api/create/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            // Show the success UI
+            document.getElementById('progBar').style.display = 'none';
+            document.getElementById('bwrap').style.display = 'none';
+            document.getElementById('s5').style.display = 'none';
+            document.getElementById('suc').style.display = 'block';
+        } else {
+            alert("Server Error: " + result.message);
+            nb.disabled = false;
+            nb.textContent = '🚀 Publish Listing';
+        }
+    } catch (error) {
+        console.error("Submission failed:", error);
+        alert(error.message);
+        nb.disabled = false;
+        nb.textContent = '🚀 Publish Listing';
+    }
+}
 
 /* Publish error display */
 function showPublishError(msg){
