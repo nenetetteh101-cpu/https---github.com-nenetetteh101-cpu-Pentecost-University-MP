@@ -2,6 +2,9 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
+ 
+    
+ 
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="theme-color" content="#0d0e11" id="themeColorMeta"/>
   <title>My Profile — PU-Connect</title>
@@ -590,8 +593,8 @@
     <div class="dz-title">⚠️ Danger Zone</div>
     <div class="dz-desc">Deactivating hides your listings and profile. Deleting is permanent — all data removed within 90 days.</div>
     <div style="display:flex;gap:.6rem;flex-wrap:wrap">
-      <button class="dz-btn" id="deactivateBtn" onclick="deactivateAccount()">Deactivate Account</button>
-      <button class="dz-btn" onclick="if(confirm('Are you sure? This cannot be undone.'))location.href='{% url 'auth:auth_view' %}'">Delete Account</button>
+      <button class="dz-btn" id="deactivateBtn" onclick="handleDeactivate()">Deactivate Account</button>
+      <button class="dz-btn" onclick="handleDeleteAccount()">Delete Account</button>
     </div>
   </div>
 
@@ -1483,6 +1486,42 @@ window.addEventListener('focus', () => {
 
 // Also run it once immediately when the script loads
 syncWithDjango();
+
+// Function to handle Logout
+function handleLogout() {
+    window.location.href = "{% url 'profile:logout' %}";
+}
+
+// Function to handle Deactivation
+async function handleDeactivate() {
+    if (confirm("Are you sure you want to deactivate your account? You can reactivate it later by contacting support.")) {
+        const response = await fetch("{% url 'profile:deactivate_account' %}", {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+        });
+        if (response.ok) window.location.href = "/"; // Redirect to landing
+    }
+}
+
+// Function to handle Account Deletion
+async function handleDeleteAccount() {
+    const confirmation = prompt("Type 'DELETE' to confirm you want to permanently erase your account.");
+    if (confirmation === 'DELETE') {
+        const response = await fetch("{% url 'profile:delete_account' %}", {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+        });
+        if (response.ok) window.location.href = "/";
+    }
+}
+
+
+// Example of how your menu items might look in your script
+const menuItems = [
+    { label: 'Logout', icon: 'logout-icon', onClick: handleLogout },
+    { label: 'Deactivate', icon: 'pause-icon', onClick: handleDeactivate },
+    { label: 'Delete Account', icon: 'trash-icon', onClick: handleDeleteAccount, danger: true }
+];
 
 </script>
 

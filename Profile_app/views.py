@@ -3,13 +3,20 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Profile 
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST 
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+from django.views.decorators.cache import never_cache
 
+from django.contrib import messages
+from Listings_app.models import Listing 
 import json
 
 
 
 # Create your views here.
+
+@never_cache
 
 @login_required(login_url='auth:auth_view')
 def profile(request):
@@ -54,7 +61,7 @@ def settings(request):
 
 
 @login_required(login_url='auth:auth_view')
-    
+@never_cache
 def get_my_profile(request):
     """Sends DB data to the frontend on load."""
     
@@ -109,3 +116,30 @@ def update_profile_api(request):
         return JsonResponse({'status': 'success'})
     except Exception as e:
         return JsonResponse({'status': 'error'}, status=400)
+
+
+# Ensure your Listing model is imported
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('auth:auth_view') # Standard redirect works for logout
+
+@login_required
+def deactivate_account(request):
+    if request.method == 'POST':
+        user = request.user
+        user.is_active = False
+        user.save()
+        logout(request)
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'failed'}, status=400)
+
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        user = request.user
+        user.delete() # This deletes listings too due to CASCADE
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'failed'}, status=400)
+
